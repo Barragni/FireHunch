@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
@@ -10,20 +11,18 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float mouseSensitivity = 150f;
 
     private CharacterController characterController;
+    private Camera playerCamera;
 
     private float verticalRotation;
 
-    private Camera playerCamera;
-
-    private bool canMove = true;
+    private bool canMove;
 
     private void Start()
     {
         characterController = GetComponent<CharacterController>();
-
         playerCamera = GetComponentInChildren<Camera>();
 
-        LockCursor();
+        SetMovementEnabled(false);
     }
 
     private void Update()
@@ -89,23 +88,52 @@ public class PlayerController : MonoBehaviour
 
         if (enabled)
         {
-            LockCursor();
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
         else
         {
-            UnlockCursor();
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
     }
 
-    private void LockCursor()
+    public Camera GetPlayerCamera()
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        return playerCamera;
     }
 
-    private void UnlockCursor()
+    public IEnumerator LookAtTarget(Transform target, float duration)
     {
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        canMove = false;
+
+        Vector3 direction =
+            target.position - playerCamera.transform.position;
+
+        Quaternion startRotation =
+            transform.rotation;
+
+        Quaternion targetRotation =
+            Quaternion.LookRotation(
+                new Vector3(direction.x, 0f, direction.z)
+            );
+
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+
+            transform.rotation =
+                Quaternion.Slerp(
+                    startRotation,
+                    targetRotation,
+                    elapsed / duration
+                );
+
+            yield return null;
+        }
+
+        transform.rotation = targetRotation;
     }
 }
