@@ -67,5 +67,5 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "Fire-Hunch.slnx"
+    "dotnet.defaultSolution": "Fire Hunch.slnx"
 }

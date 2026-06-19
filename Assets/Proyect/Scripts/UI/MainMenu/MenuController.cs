@@ -19,8 +19,7 @@ public class MainMenuController : MonoBehaviour
 
     private void PlayGame()
     {
-        // Carga la escena de nivel usando su nombre exacto
-        SceneManager.LoadScene("level1");
+        SceneManager.LoadScene("ComicIntro");
     }
 
     private void ToggleOptions()
