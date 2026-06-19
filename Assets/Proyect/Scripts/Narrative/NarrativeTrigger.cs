@@ -3,8 +3,11 @@ using System.Collections;
 
 public class NarrativeTrigger : MonoBehaviour
 {
-    [Header("UI")]
-    [SerializeField] private DialogueUI dialogueUI;
+    [Header("Sistema de diálogo")]
+    [SerializeField] private DialoguePlayer dialoguePlayer;
+
+    [Header("Secuencia a reproducir")]
+    [SerializeField] private DialogueSequence dialogueSequence;
 
     [Header("Punto que la cámara observará")]
     [SerializeField] private Transform focusTarget;
@@ -29,11 +32,15 @@ public class NarrativeTrigger : MonoBehaviour
         triggered = true;
 
         StartCoroutine(
-            PlaySequence(other.GetComponent<PlayerController>())
+            PlaySequence(
+                other.GetComponent<PlayerController>()
+            )
         );
     }
 
-    private IEnumerator PlaySequence(PlayerController player)
+    private IEnumerator PlaySequence(
+        PlayerController player
+    )
     {
         player.SetMovementEnabled(false);
 
@@ -44,9 +51,8 @@ public class NarrativeTrigger : MonoBehaviour
             )
         );
 
-        dialogueUI.ShowDialogue(
-            "Marcos",
-            "Algo no está bien. Debería revisar la sala de servidores."
+        dialoguePlayer.Play(
+            dialogueSequence
         );
     }
 }
