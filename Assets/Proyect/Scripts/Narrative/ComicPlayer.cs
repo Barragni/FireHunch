@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class ComicPlayer : MonoBehaviour
@@ -7,9 +8,12 @@ public class ComicPlayer : MonoBehaviour
     [Header("Secuencia de viñetas")]
     [SerializeField] private ComicSequence sequence;
 
-    [Header("Referencias UI")]
+    [Header("Elementos de la interfaz")]
     [SerializeField] private Image panelImage;
     [SerializeField] private TMP_Text panelText;
+
+    [Header("Escena a cargar al finalizar la secuencia")]
+    [SerializeField] private string nextScene;
 
     private int currentPanel = 0;
 
@@ -17,7 +21,7 @@ public class ComicPlayer : MonoBehaviour
     {
         if (sequence == null)
         {
-            Debug.LogError("No se asignó ninguna secuencia.");
+            Debug.LogError("No se asignó ninguna secuencia de viñetas.");
             return;
         }
 
@@ -50,10 +54,22 @@ public class ComicPlayer : MonoBehaviour
 
         if (currentPanel >= sequence.panels.Count)
         {
-            Debug.Log("Fin de la secuencia.");
+            EndSequence();
             return;
         }
 
         ShowCurrentPanel();
+    }
+
+    private void EndSequence()
+    {
+        if (!string.IsNullOrEmpty(nextScene))
+        {
+            SceneManager.LoadScene(nextScene);
+        }
+        else
+        {
+            Debug.LogWarning("No se configuró una escena de destino.");
+        }
     }
 }

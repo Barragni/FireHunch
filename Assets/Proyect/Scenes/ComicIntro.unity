@@ -494,6 +494,7 @@ MonoBehaviour:
   sequence: {fileID: 11400000, guid: 104e4918241921b439a4d754dca6f139, type: 2}
   panelImage: {fileID: 1251611984}
   panelText: {fileID: 1611932205}
+  nextScene: OfficeFloor
 --- !u!4 &1179782890
 Transform:
   m_ObjectHideFlags: 0
