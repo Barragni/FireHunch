@@ -11,20 +11,37 @@ public class ComicPlayer : MonoBehaviour
     [Header("Secuencia Intro")]
     [SerializeField] private ComicSequence introSequence;
 
-    [Header("UI")]
+    [Header("UI Comic")]
     [SerializeField] private Image panelImage;
-
     [SerializeField] private TMP_Text panelText;
+
+    [Header("Panel de muerte")]
+    [SerializeField] private DeathPanelUI deathPanelUI;
 
     [Header("Escena después de la intro")]
     [SerializeField] private string introNextScene;
 
     private ComicSequence currentSequence;
-
     private int currentPanel;
 
     private void Start()
     {
+        if (deathPanelUI != null)
+        {
+            deathPanelUI.Panel.SetActive(false);
+
+            deathPanelUI.RetryButton.onClick.RemoveAllListeners();
+            deathPanelUI.MenuButton.onClick.RemoveAllListeners();
+
+            deathPanelUI.RetryButton.onClick.AddListener(
+                RetryDecision
+            );
+
+            deathPanelUI.MenuButton.onClick.AddListener(
+                ReturnToMenu
+            );
+        }
+
         if (isIntroSequence)
         {
             currentSequence = introSequence;
@@ -63,14 +80,14 @@ public class ComicPlayer : MonoBehaviour
 
         if (currentPanel >= currentSequence.panels.Count)
         {
-            EndSequence();
+            HandleEnd();
             return;
         }
 
         ShowCurrentPanel();
     }
 
-    private void EndSequence()
+    private void HandleEnd()
     {
         if (isIntroSequence)
         {
@@ -89,15 +106,35 @@ public class ComicPlayer : MonoBehaviour
             DecisionOutcomeType.Death
         )
         {
-            SceneManager.LoadScene(
-                "DeathScene"
-            );
+            deathPanelUI.Panel.SetActive(true);
+
+            deathPanelUI.FeedbackText.text =
+                option.deathFeedback;
 
             return;
         }
 
         SceneManager.LoadScene(
             option.nextScene
+        );
+    }
+
+    private void RetryDecision()
+    {
+        SceneManager.LoadScene(
+            "OfficeFloor"
+        );
+    }
+
+    private void ReturnToMenu()
+    {
+        if (GameState.Instance != null)
+        {
+            GameState.Instance.ResetData();
+        }
+
+        SceneManager.LoadScene(
+            "Menu"
         );
     }
 }
