@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class DialoguePlayer : MonoBehaviour
@@ -5,11 +6,14 @@ public class DialoguePlayer : MonoBehaviour
     [SerializeField] private DialogueUI dialogueUI;
 
     private DialogueSequence currentSequence;
+
     private int currentLineIndex;
 
     private bool isPlaying;
 
     public bool IsPlaying => isPlaying;
+
+    public event Action OnDialogueFinished;
 
     private void Update()
     {
@@ -27,7 +31,9 @@ public class DialoguePlayer : MonoBehaviour
     public void Play(DialogueSequence sequence)
     {
         currentSequence = sequence;
+
         currentLineIndex = 0;
+
         isPlaying = true;
 
         ShowCurrentLine();
@@ -58,5 +64,7 @@ public class DialoguePlayer : MonoBehaviour
         isPlaying = false;
 
         dialogueUI.HideDialogue();
+
+        OnDialogueFinished?.Invoke();
     }
 }

@@ -3,19 +3,24 @@ using System.Collections;
 
 public class NarrativeTrigger : MonoBehaviour
 {
-    [Header("Sistema de diálogo")]
+    [Header("Diálogo")]
     [SerializeField] private DialoguePlayer dialoguePlayer;
 
-    [Header("Secuencia a reproducir")]
     [SerializeField] private DialogueSequence dialogueSequence;
 
-    [Header("Punto que la cámara observará")]
+    [Header("Decisión")]
+    [SerializeField] private DecisionPlayer decisionPlayer;
+
+    [SerializeField] private DecisionSequence decisionSequence;
+
+    [Header("Cámara")]
     [SerializeField] private Transform focusTarget;
 
-    [Header("Tiempo de transición")]
     [SerializeField] private float focusDuration = 1.5f;
 
     private bool triggered;
+
+    private PlayerController currentPlayer;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -31,28 +36,40 @@ public class NarrativeTrigger : MonoBehaviour
 
         triggered = true;
 
+        currentPlayer =
+            other.GetComponent<PlayerController>();
+
         StartCoroutine(
-            PlaySequence(
-                other.GetComponent<PlayerController>()
-            )
+            PlaySequence()
         );
     }
 
-    private IEnumerator PlaySequence(
-        PlayerController player
-    )
+    private IEnumerator PlaySequence()
     {
-        player.SetMovementEnabled(false);
+        currentPlayer.SetMovementEnabled(false);
 
-        yield return player.StartCoroutine(
-            player.LookAtTarget(
+        yield return currentPlayer.StartCoroutine(
+            currentPlayer.LookAtTarget(
                 focusTarget,
                 focusDuration
             )
         );
 
+        dialoguePlayer.OnDialogueFinished +=
+            HandleDialogueFinished;
+
         dialoguePlayer.Play(
             dialogueSequence
+        );
+    }
+
+    private void HandleDialogueFinished()
+    {
+        dialoguePlayer.OnDialogueFinished -=
+            HandleDialogueFinished;
+
+        decisionPlayer.ShowDecision(
+            decisionSequence
         );
     }
 }

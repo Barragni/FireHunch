@@ -129,6 +129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 72990916}
   - component: {fileID: 72990917}
+  - component: {fileID: 72990918}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -166,6 +167,20 @@ MonoBehaviour:
   score: 0
   hasValentina: 0
   hasBeto: 0
+  currentNode: 
+  decisionHistory: []
+--- !u!114 &72990918
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 72990915}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8be5d6c491c06314fb80dc7f0c9417de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BootstrapLoader
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

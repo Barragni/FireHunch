@@ -5,31 +5,37 @@ using UnityEngine.UI;
 
 public class ComicPlayer : MonoBehaviour
 {
-    [Header("Secuencia de viñetas")]
-    [SerializeField] private ComicSequence sequence;
+    [Header("Modo Intro")]
+    [SerializeField] private bool isIntroSequence;
 
-    [Header("Elementos de la interfaz")]
+    [Header("Secuencia Intro")]
+    [SerializeField] private ComicSequence introSequence;
+
+    [Header("UI")]
     [SerializeField] private Image panelImage;
+
     [SerializeField] private TMP_Text panelText;
 
-    [Header("Escena a cargar al finalizar la secuencia")]
-    [SerializeField] private string nextScene;
+    [Header("Escena después de la intro")]
+    [SerializeField] private string introNextScene;
 
-    private int currentPanel = 0;
+    private ComicSequence currentSequence;
+
+    private int currentPanel;
 
     private void Start()
     {
-        if (sequence == null)
+        if (isIntroSequence)
         {
-            Debug.LogError("No se asignó ninguna secuencia de viñetas.");
-            return;
+            currentSequence = introSequence;
+        }
+        else
+        {
+            currentSequence =
+                DecisionState.SelectedOption.comicSequence;
         }
 
-        if (sequence.panels.Count == 0)
-        {
-            Debug.LogError("La secuencia no contiene viñetas.");
-            return;
-        }
+        currentPanel = 0;
 
         ShowCurrentPanel();
     }
@@ -44,15 +50,18 @@ public class ComicPlayer : MonoBehaviour
 
     private void ShowCurrentPanel()
     {
-        panelImage.sprite = sequence.panels[currentPanel].image;
-        panelText.text = sequence.panels[currentPanel].text;
+        panelImage.sprite =
+            currentSequence.panels[currentPanel].image;
+
+        panelText.text =
+            currentSequence.panels[currentPanel].text;
     }
 
     private void NextPanel()
     {
         currentPanel++;
 
-        if (currentPanel >= sequence.panels.Count)
+        if (currentPanel >= currentSequence.panels.Count)
         {
             EndSequence();
             return;
@@ -63,13 +72,32 @@ public class ComicPlayer : MonoBehaviour
 
     private void EndSequence()
     {
-        if (!string.IsNullOrEmpty(nextScene))
+        if (isIntroSequence)
         {
-            SceneManager.LoadScene(nextScene);
+            SceneManager.LoadScene(
+                introNextScene
+            );
+
+            return;
         }
-        else
+
+        DecisionOption option =
+            DecisionState.SelectedOption;
+
+        if (
+            option.outcomeType ==
+            DecisionOutcomeType.Death
+        )
         {
-            Debug.LogWarning("No se configuró una escena de destino.");
+            SceneManager.LoadScene(
+                "DeathScene"
+            );
+
+            return;
         }
+
+        SceneManager.LoadScene(
+            option.nextScene
+        );
     }
 }
