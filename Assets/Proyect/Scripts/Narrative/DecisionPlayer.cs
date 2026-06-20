@@ -1,12 +1,11 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class DecisionPlayer : MonoBehaviour
 {
     [SerializeField] private DecisionUI decisionUI;
-
-    [SerializeField] private DeathPlayer deathPlayer;
 
     private DecisionSequence currentDecision;
 
@@ -85,21 +84,8 @@ public class DecisionPlayer : MonoBehaviour
 
         decisionUI.DecisionPanel.SetActive(false);
 
-        if (
-            option.outcomeType ==
-            DecisionOutcomeType.Death
-        )
-        {
-            deathPlayer.ShowDeath(
-                option.deathFeedback
-            );
-
-            return;
-        }
-
-        Debug.Log(
-            "Cargar comic: " +
-            option.comicSequence.name
+        SceneManager.LoadScene(
+            "DecisionComic"
         );
     }
 }
