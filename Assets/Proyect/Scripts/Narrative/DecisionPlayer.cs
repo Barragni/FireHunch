@@ -78,6 +78,9 @@ public class DecisionPlayer : MonoBehaviour
     {
         DecisionState.SelectedOption = option;
 
+        NarrativeState.PendingDecision =
+            currentDecision;
+
         GameState.Instance.AddScore(
             option.score
         );

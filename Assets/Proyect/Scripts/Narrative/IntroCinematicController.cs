@@ -22,10 +22,30 @@ public class IntroCinematicController : MonoBehaviour
 
     private IEnumerator Start()
     {
+        if (NarrativeState.ReturningFromDeath)
+        {
+            NarrativeState.ReturningFromDeath = false;
+
+            Camera skipCamera = player.GetPlayerCamera();
+
+            skipCamera.transform.position =
+                introCameraEnd.position;
+
+            skipCamera.transform.rotation =
+                introCameraEnd.rotation;
+
+            player.SetMovementEnabled(true);
+
+            yield break;
+        }
+
         Camera playerCamera = player.GetPlayerCamera();
 
-        playerCamera.transform.position = introCameraStart.position;
-        playerCamera.transform.rotation = introCameraStart.rotation;
+        playerCamera.transform.position =
+            introCameraStart.position;
+
+        playerCamera.transform.rotation =
+            introCameraStart.rotation;
 
         yield return StartCoroutine(
             PlayApproachPhase(playerCamera)
@@ -62,7 +82,9 @@ public class IntroCinematicController : MonoBehaviour
                 playerCamera.transform.position;
 
             playerCamera.transform.rotation =
-                Quaternion.LookRotation(direction);
+                Quaternion.LookRotation(
+                    direction
+                );
 
             yield return null;
         }
@@ -112,7 +134,10 @@ public class IntroCinematicController : MonoBehaviour
             yield return null;
         }
 
-        playerCamera.transform.position = endPosition;
-        playerCamera.transform.rotation = endRotation;
+        playerCamera.transform.position =
+            endPosition;
+
+        playerCamera.transform.rotation =
+            endRotation;
     }
 }
