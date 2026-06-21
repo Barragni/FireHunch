@@ -28,6 +28,21 @@ public class DecisionResumeManager : MonoBehaviour
 
     private void RestoreDecisionState()
     {
+        player.transform.position =
+            NarrativeState.SavedPlayerPosition;
+
+        player.transform.rotation =
+            NarrativeState.SavedPlayerRotation;
+
+        Camera cam =
+            player.GetPlayerCamera();
+
+        cam.transform.position =
+            NarrativeState.SavedCameraPosition;
+
+        cam.transform.rotation =
+            NarrativeState.SavedCameraRotation;
+
         player.SetMovementEnabled(false);
 
         decisionPlayer.ShowDecision(

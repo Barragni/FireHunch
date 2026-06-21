@@ -122,6 +122,7 @@ public class ComicPlayer : MonoBehaviour
     private void RetryDecision()
     {
         NarrativeState.ReturningFromDeath = true;
+        NarrativeState.SkipDialogue = true;
 
         SceneManager.LoadScene(
             "OfficeFloor"

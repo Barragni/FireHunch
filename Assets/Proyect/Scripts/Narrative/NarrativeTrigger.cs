@@ -22,6 +22,16 @@ public class NarrativeTrigger : MonoBehaviour
 
     private PlayerController currentPlayer;
 
+    private void Start()
+    {
+        if (NarrativeState.SkipDialogue)
+        {
+            NarrativeState.SkipDialogue = false;
+
+            triggered = true;
+        }
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (triggered)
@@ -67,6 +77,21 @@ public class NarrativeTrigger : MonoBehaviour
     {
         dialoguePlayer.OnDialogueFinished -=
             HandleDialogueFinished;
+
+        Camera cam =
+            currentPlayer.GetPlayerCamera();
+
+        NarrativeState.SavedPlayerPosition =
+            currentPlayer.transform.position;
+
+        NarrativeState.SavedPlayerRotation =
+            currentPlayer.transform.rotation;
+
+        NarrativeState.SavedCameraPosition =
+            cam.transform.position;
+
+        NarrativeState.SavedCameraRotation =
+            cam.transform.rotation;
 
         decisionPlayer.ShowDecision(
             decisionSequence
