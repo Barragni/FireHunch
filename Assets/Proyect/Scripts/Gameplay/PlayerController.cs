@@ -10,6 +10,9 @@ public class PlayerController : MonoBehaviour
     [Header("Mouse")]
     [SerializeField] private float mouseSensitivity = 150f;
 
+    [Header("Estado inicial")]
+    [SerializeField] private bool startWithMovementEnabled = false;
+
     private CharacterController characterController;
     private Camera playerCamera;
 
@@ -22,7 +25,9 @@ public class PlayerController : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         playerCamera = GetComponentInChildren<Camera>();
 
-        SetMovementEnabled(false);
+        SetMovementEnabled(
+            startWithMovementEnabled
+        );
     }
 
     private void Update()
@@ -103,19 +108,27 @@ public class PlayerController : MonoBehaviour
         return playerCamera;
     }
 
-    public IEnumerator LookAtTarget(Transform target, float duration)
+    public IEnumerator LookAtTarget(
+        Transform target,
+        float duration
+    )
     {
         canMove = false;
 
         Vector3 direction =
-            target.position - playerCamera.transform.position;
+            target.position -
+            playerCamera.transform.position;
 
         Quaternion startRotation =
             transform.rotation;
 
         Quaternion targetRotation =
             Quaternion.LookRotation(
-                new Vector3(direction.x, 0f, direction.z)
+                new Vector3(
+                    direction.x,
+                    0f,
+                    direction.z
+                )
             );
 
         float elapsed = 0f;
@@ -134,6 +147,7 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
 
-        transform.rotation = targetRotation;
+        transform.rotation =
+            targetRotation;
     }
 }

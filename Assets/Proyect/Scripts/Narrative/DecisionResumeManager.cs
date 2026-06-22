@@ -10,6 +10,11 @@ public class DecisionResumeManager : MonoBehaviour
 
     private void Start()
     {
+        if (!NarrativeState.ReturningFromDeath)
+        {
+            return;
+        }
+
         if (NarrativeState.PendingDecision == null)
         {
             return;
@@ -19,6 +24,8 @@ public class DecisionResumeManager : MonoBehaviour
             NarrativeState.PendingDecision;
 
         NarrativeState.PendingDecision = null;
+
+        NarrativeState.ReturningFromDeath = false;
 
         Invoke(
             nameof(RestoreDecisionState),
