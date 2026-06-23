@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -8,6 +9,8 @@ public class DecisionPlayer : MonoBehaviour
     [SerializeField] private DecisionUI decisionUI;
 
     private DecisionSequence currentDecision;
+
+    private Coroutine timerRoutine;
 
     private void Start()
     {
@@ -44,6 +47,52 @@ public class DecisionPlayer : MonoBehaviour
             decisionUI.OptionText3,
             2
         );
+
+        if (timerRoutine != null)
+        {
+            StopCoroutine(timerRoutine);
+        }
+
+        timerRoutine =
+            StartCoroutine(DecisionTimer());
+    }
+
+    private IEnumerator DecisionTimer()
+    {
+        float timeRemaining =
+            currentDecision.timeLimit;
+
+        while (timeRemaining > 0f)
+        {
+            timeRemaining -= Time.deltaTime;
+
+            decisionUI.TimerFillImage.fillAmount =
+                timeRemaining /
+                currentDecision.timeLimit;
+
+            yield return null;
+        }
+
+        SelectDeathOption();
+    }
+
+    private void SelectDeathOption()
+    {
+        foreach (DecisionOption option in currentDecision.options)
+        {
+            if (
+                option.outcomeType ==
+                DecisionOutcomeType.Death
+            )
+            {
+                SelectOption(option);
+                return;
+            }
+        }
+
+        Debug.LogWarning(
+            "No existe opción Death en esta decisión."
+        );
     }
 
     private void SetupButton(
@@ -76,6 +125,11 @@ public class DecisionPlayer : MonoBehaviour
         DecisionOption option
     )
     {
+        if (timerRoutine != null)
+        {
+            StopCoroutine(timerRoutine);
+        }
+
         DecisionState.SelectedOption = option;
 
         NarrativeState.PendingDecision =

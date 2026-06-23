@@ -16,6 +16,8 @@ public class DecisionUI : MonoBehaviour
     [SerializeField] private TMP_Text optionText2;
     [SerializeField] private TMP_Text optionText3;
 
+    [SerializeField] private Image timerFillImage;
+
     public GameObject DecisionPanel => decisionPanel;
 
     public TMP_Text QuestionText => questionText;
@@ -27,4 +29,6 @@ public class DecisionUI : MonoBehaviour
     public TMP_Text OptionText1 => optionText1;
     public TMP_Text OptionText2 => optionText2;
     public TMP_Text OptionText3 => optionText3;
+
+    public Image TimerFillImage => timerFillImage;
 }

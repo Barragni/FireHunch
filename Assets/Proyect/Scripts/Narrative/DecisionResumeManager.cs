@@ -25,8 +25,6 @@ public class DecisionResumeManager : MonoBehaviour
 
         NarrativeState.PendingDecision = null;
 
-        NarrativeState.ReturningFromDeath = false;
-
         Invoke(
             nameof(RestoreDecisionState),
             0.2f
@@ -55,5 +53,7 @@ public class DecisionResumeManager : MonoBehaviour
         decisionPlayer.ShowDecision(
             savedDecision
         );
+
+        NarrativeState.ReturningFromDeath = false;
     }
 }

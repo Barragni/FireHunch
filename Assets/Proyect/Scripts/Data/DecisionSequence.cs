@@ -11,6 +11,9 @@ public class DecisionSequence : ScriptableObject
     [TextArea(2, 4)]
     public string question;
 
+    [Header("Tiempo límite (segundos)")]
+    public float timeLimit = 10f;
+
     [Header("Opciones disponibles")]
     public List<DecisionOption> options = new();
 }
