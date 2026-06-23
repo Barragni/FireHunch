@@ -30,6 +30,8 @@ public class DialoguePlayer : MonoBehaviour
 
     public void Play(DialogueSequence sequence)
     {
+        dialogueUI.ShowContinueText();
+
         currentSequence = sequence;
 
         currentLineIndex = 0;

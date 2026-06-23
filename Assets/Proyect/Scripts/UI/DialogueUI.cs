@@ -14,6 +14,9 @@ public class DialogueUI : MonoBehaviour
     [SerializeField] private TMP_Text characterNameText;
     [SerializeField] private TMP_Text dialogueText;
 
+    [Header("Click para continuar")]
+    [SerializeField] private GameObject continueText;
+
     public void ShowDialogue(DialogueLine line)
     {
         dialoguePanel.SetActive(true);
@@ -28,5 +31,21 @@ public class DialogueUI : MonoBehaviour
     public void HideDialogue()
     {
         dialoguePanel.SetActive(false);
+    }
+
+    public void ShowContinueText()
+    {
+        if (continueText != null)
+        {
+            continueText.SetActive(true);
+        }
+    }
+
+    public void HideContinueText()
+    {
+        if (continueText != null)
+        {
+            continueText.SetActive(false);
+        }
     }
 }
