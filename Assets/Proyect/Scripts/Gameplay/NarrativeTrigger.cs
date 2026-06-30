@@ -27,7 +27,6 @@ public class NarrativeTrigger : MonoBehaviour
         if (NarrativeState.SkipDialogue)
         {
             NarrativeState.SkipDialogue = false;
-
             triggered = true;
         }
     }
@@ -77,6 +76,17 @@ public class NarrativeTrigger : MonoBehaviour
     {
         dialoguePlayer.OnDialogueFinished -=
             HandleDialogueFinished;
+
+        StartCoroutine(
+            PlayDecisionSequence()
+        );
+    }
+
+    private IEnumerator PlayDecisionSequence()
+    {
+        yield return currentPlayer.StartCoroutine(
+            currentPlayer.PlayDecisionCamera()
+        );
 
         Camera cam =
             currentPlayer.GetPlayerCamera();

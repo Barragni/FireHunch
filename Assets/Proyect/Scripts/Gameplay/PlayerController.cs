@@ -13,6 +13,13 @@ public class PlayerController : MonoBehaviour
     [Header("Estado inicial")]
     [SerializeField] private bool startWithMovementEnabled = false;
 
+    [Header("Cámara de decisión")]
+    [SerializeField] private Transform decisionCameraStart;
+
+    [SerializeField] private Transform decisionCameraEnd;
+
+    [SerializeField] private float decisionCameraDuration = 0.8f;
+
     private CharacterController characterController;
     private Camera playerCamera;
 
@@ -25,9 +32,7 @@ public class PlayerController : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         playerCamera = GetComponentInChildren<Camera>();
 
-        SetMovementEnabled(
-            startWithMovementEnabled
-        );
+        SetMovementEnabled(startWithMovementEnabled);
     }
 
     private void Update()
@@ -149,5 +154,47 @@ public class PlayerController : MonoBehaviour
 
         transform.rotation =
             targetRotation;
+    }
+
+    public IEnumerator PlayDecisionCamera()
+    {
+        playerCamera.transform.position =
+            decisionCameraStart.position;
+
+        playerCamera.transform.rotation =
+            decisionCameraStart.rotation;
+
+        float elapsed = 0f;
+
+        while (elapsed < decisionCameraDuration)
+        {
+            elapsed += Time.deltaTime;
+
+            float t = Mathf.Clamp01(
+                elapsed / decisionCameraDuration
+            );
+
+            playerCamera.transform.position =
+                Vector3.Lerp(
+                    decisionCameraStart.position,
+                    decisionCameraEnd.position,
+                    t
+                );
+
+            playerCamera.transform.rotation =
+                Quaternion.Slerp(
+                    decisionCameraStart.rotation,
+                    decisionCameraEnd.rotation,
+                    t
+                );
+
+            yield return null;
+        }
+
+        playerCamera.transform.position =
+            decisionCameraEnd.position;
+
+        playerCamera.transform.rotation =
+            decisionCameraEnd.rotation;
     }
 }
