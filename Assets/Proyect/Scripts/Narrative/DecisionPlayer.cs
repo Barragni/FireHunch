@@ -141,7 +141,7 @@ public class DecisionPlayer : MonoBehaviour
 
         decisionUI.DecisionPanel.SetActive(false);
 
-        SceneManager.LoadScene(
+        SceneTransitionManager.Instance.LoadScene(
             "DecisionComic"
         );
     }

@@ -19,7 +19,7 @@ public class MainMenuController : MonoBehaviour
 
     private void PlayGame()
     {
-        SceneManager.LoadScene("ComicIntro");
+        SceneTransitionManager.Instance.LoadScene("ComicIntro");
     }
 
     private void ToggleOptions()

@@ -91,7 +91,7 @@ public class ComicPlayer : MonoBehaviour
     {
         if (isIntroSequence)
         {
-            SceneManager.LoadScene(
+            SceneTransitionManager.Instance.LoadScene(
                 introNextScene
             );
 
@@ -114,7 +114,7 @@ public class ComicPlayer : MonoBehaviour
             return;
         }
 
-        SceneManager.LoadScene(
+        SceneTransitionManager.Instance.LoadScene(
             option.nextScene
         );
     }
@@ -124,7 +124,7 @@ public class ComicPlayer : MonoBehaviour
         NarrativeState.ReturningFromDeath = true;
         NarrativeState.SkipDialogue = true;
 
-        SceneManager.LoadScene(
+        SceneTransitionManager.Instance.LoadScene(
             "OfficeFloor"
         );
     }
@@ -136,7 +136,7 @@ public class ComicPlayer : MonoBehaviour
             GameState.Instance.ResetData();
         }
 
-        SceneManager.LoadScene(
+        SceneTransitionManager.Instance.LoadScene(
             "Menu"
         );
     }

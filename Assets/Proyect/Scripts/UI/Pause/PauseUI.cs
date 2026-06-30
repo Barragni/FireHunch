@@ -148,7 +148,7 @@ public class PauseUI : MonoBehaviour
             GameState.Instance.ResetData();
         }
 
-        SceneManager.LoadScene(
+        SceneTransitionManager.Instance.LoadScene(
             "Menu"
         );
     }
