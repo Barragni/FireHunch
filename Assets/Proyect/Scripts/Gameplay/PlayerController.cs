@@ -164,11 +164,16 @@ public class PlayerController : MonoBehaviour
         playerCamera.transform.rotation =
             decisionCameraStart.rotation;
 
+        Coroutine effectRoutine =
+            StartCoroutine(
+                DecisionEffectsManager.Instance.EnterDecisionMode()
+            );
+
         float elapsed = 0f;
 
         while (elapsed < decisionCameraDuration)
         {
-            elapsed += Time.deltaTime;
+            elapsed += Time.unscaledDeltaTime;
 
             float t = Mathf.Clamp01(
                 elapsed / decisionCameraDuration
@@ -196,5 +201,7 @@ public class PlayerController : MonoBehaviour
 
         playerCamera.transform.rotation =
             decisionCameraEnd.rotation;
+
+        yield return effectRoutine;
     }
 }

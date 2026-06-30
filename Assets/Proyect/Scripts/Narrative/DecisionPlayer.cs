@@ -1,7 +1,6 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class DecisionPlayer : MonoBehaviour
@@ -54,7 +53,9 @@ public class DecisionPlayer : MonoBehaviour
         }
 
         timerRoutine =
-            StartCoroutine(DecisionTimer());
+            StartCoroutine(
+                DecisionTimer()
+            );
     }
 
     private IEnumerator DecisionTimer()
@@ -64,7 +65,8 @@ public class DecisionPlayer : MonoBehaviour
 
         while (timeRemaining > 0f)
         {
-            timeRemaining -= Time.deltaTime;
+            timeRemaining -=
+                Time.unscaledDeltaTime;
 
             decisionUI.TimerFillImage.fillAmount =
                 timeRemaining /
@@ -78,14 +80,20 @@ public class DecisionPlayer : MonoBehaviour
 
     private void SelectDeathOption()
     {
-        foreach (DecisionOption option in currentDecision.options)
+        foreach (
+            DecisionOption option
+            in currentDecision.options
+        )
         {
             if (
                 option.outcomeType ==
                 DecisionOutcomeType.Death
             )
             {
-                SelectOption(option);
+                StartCoroutine(
+                    SelectOption(option)
+                );
+
                 return;
             }
         }
@@ -101,7 +109,10 @@ public class DecisionPlayer : MonoBehaviour
         int index
     )
     {
-        if (index >= currentDecision.options.Count)
+        if (
+            index >=
+            currentDecision.options.Count
+        )
         {
             button.gameObject.SetActive(false);
             return;
@@ -112,16 +123,22 @@ public class DecisionPlayer : MonoBehaviour
         DecisionOption option =
             currentDecision.options[index];
 
-        text.text = option.optionText;
+        text.text =
+            option.optionText;
 
         button.onClick.RemoveAllListeners();
 
         button.onClick.AddListener(
-            () => SelectOption(option)
+            () =>
+            {
+                StartCoroutine(
+                    SelectOption(option)
+                );
+            }
         );
     }
 
-    private void SelectOption(
+    private IEnumerator SelectOption(
         DecisionOption option
     )
     {
@@ -130,7 +147,14 @@ public class DecisionPlayer : MonoBehaviour
             StopCoroutine(timerRoutine);
         }
 
-        DecisionState.SelectedOption = option;
+        decisionUI.DecisionPanel.SetActive(false);
+
+        yield return StartCoroutine(
+            DecisionEffectsManager.Instance.ExitDecisionMode()
+        );
+
+        DecisionState.SelectedOption =
+            option;
 
         NarrativeState.PendingDecision =
             currentDecision;
@@ -138,8 +162,6 @@ public class DecisionPlayer : MonoBehaviour
         GameState.Instance.AddScore(
             option.score
         );
-
-        decisionUI.DecisionPanel.SetActive(false);
 
         SceneTransitionManager.Instance.LoadScene(
             "DecisionComic"
