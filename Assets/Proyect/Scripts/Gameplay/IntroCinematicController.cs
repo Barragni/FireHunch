@@ -60,6 +60,15 @@ public class IntroCinematicController : MonoBehaviour
 
     private IEnumerator PlayApproachPhase(Camera playerCamera)
     {
+        Vector3 startPosition =
+            introCameraStart.position;
+
+        Vector3 endPosition =
+            introCameraMiddle.position;
+
+        Quaternion fixedRotation =
+            introCameraStart.rotation;
+
         float elapsed = 0f;
 
         while (elapsed < firstPhaseDuration)
@@ -70,27 +79,27 @@ public class IntroCinematicController : MonoBehaviour
                 elapsed / firstPhaseDuration
             );
 
+            // Movimiento suave con poca desaceleración al final
+            t = 1f - Mathf.Pow(1f - t, 1.5f);
+
             playerCamera.transform.position =
                 Vector3.Lerp(
-                    introCameraStart.position,
-                    introCameraMiddle.position,
+                    startPosition,
+                    endPosition,
                     t
                 );
 
-            Vector3 direction =
-                lookTarget.position -
-                playerCamera.transform.position;
-
             playerCamera.transform.rotation =
-                Quaternion.LookRotation(
-                    direction
-                );
+                fixedRotation;
 
             yield return null;
         }
 
         playerCamera.transform.position =
-            introCameraMiddle.position;
+            endPosition;
+
+        playerCamera.transform.rotation =
+            fixedRotation;
     }
 
     private IEnumerator PlayPOVTransition(Camera playerCamera)
