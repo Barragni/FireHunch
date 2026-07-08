@@ -2,6 +2,7 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class DecisionPlayer : MonoBehaviour
 {
@@ -158,6 +159,9 @@ public class DecisionPlayer : MonoBehaviour
 
         NarrativeState.PendingDecision =
             currentDecision;
+
+        NarrativeState.ReturnScene =
+            SceneManager.GetActiveScene().name;
 
         GameState.Instance.AddScore(
             option.score

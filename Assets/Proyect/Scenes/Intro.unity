@@ -2664,6 +2664,52 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DamageOverlayUI
   overlayImage: {fileID: 1797513239}
   currentIntensity: 0
+--- !u!1 &724220921
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 724220923}
+  - component: {fileID: 724220922}
+  m_Layer: 0
+  m_Name: SceneAudio
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &724220922
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 724220921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39e143d9b4916974d99b434c9b71d161, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SceneAudio
+  musicClip: {fileID: 8300000, guid: a77297faa6aa6b947a037322c3d513b4, type: 3}
+  ambienceClip: {fileID: 0}
+--- !u!4 &724220923
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 724220921}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -63.11897, y: -0, z: 44.04507}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &743051044
 GameObject:
   m_ObjectHideFlags: 0
@@ -2697,7 +2743,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AmbientDialogueTrigger
   player: {fileID: 1270982483}
-  sequence: {fileID: 11400000, guid: 9a78b617ce7db95488bc6c5c05395c31, type: 2}
+  sequence: {fileID: 11400000, guid: d27f29c97e7cb5f43862c9ffa5418d6c, type: 2}
 --- !u!65 &743051046
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4574,9 +4620,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NarrativeTrigger
   dialoguePlayer: {fileID: 263852643}
-  dialogueSequence: {fileID: 11400000, guid: c10440474430d8f4392d0d6dd752ab80, type: 2}
+  dialogueSequence: {fileID: 11400000, guid: 7c92552e53c35d04f93c3e59663d6d63, type: 2}
   decisionPlayer: {fileID: 1656529307}
-  decisionSequence: {fileID: 11400000, guid: 6281095a90c8dfa488f4e0beeb543cf7, type: 2}
+  decisionSequence: {fileID: 11400000, guid: 11ff5ebf6ffd67b44b738d692fbcf78a, type: 2}
   focusTarget: {fileID: 1524705039}
   focusDuration: 2
 --- !u!1 &1456097988
@@ -6002,3 +6048,4 @@ SceneRoots:
   - {fileID: 852091213}
   - {fileID: 1682695811}
   - {fileID: 417537872}
+  - {fileID: 724220923}

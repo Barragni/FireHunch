@@ -125,7 +125,7 @@ public class ComicPlayer : MonoBehaviour
         NarrativeState.SkipDialogue = true;
 
         SceneTransitionManager.Instance.LoadScene(
-            "OfficeFloor"
+            NarrativeState.ReturnScene
         );
     }
 

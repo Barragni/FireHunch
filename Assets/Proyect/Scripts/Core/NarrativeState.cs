@@ -8,6 +8,8 @@ public static class NarrativeState
 
     public static bool SkipDialogue;
 
+    public static string ReturnScene;
+
     public static Vector3 SavedPlayerPosition;
 
     public static Quaternion SavedPlayerRotation;
