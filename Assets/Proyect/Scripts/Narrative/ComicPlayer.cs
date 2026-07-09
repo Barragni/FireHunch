@@ -1,6 +1,6 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class ComicPlayer : MonoBehaviour
@@ -11,8 +11,10 @@ public class ComicPlayer : MonoBehaviour
     [Header("Secuencia Intro")]
     [SerializeField] private ComicSequence introSequence;
 
-    [Header("UI Comic")]
-    [SerializeField] private Image panelImage;
+    [Header("Transición de páginas")]
+    [SerializeField] private ComicPageTransition pageTransition;
+
+    [Header("UI")]
     [SerializeField] private TMP_Text panelText;
 
     [Header("Panel de muerte")]
@@ -22,7 +24,10 @@ public class ComicPlayer : MonoBehaviour
     [SerializeField] private string introNextScene;
 
     private ComicSequence currentSequence;
+
     private int currentPanel;
+
+    private bool changingPage;
 
     private void Start()
     {
@@ -54,38 +59,51 @@ public class ComicPlayer : MonoBehaviour
 
         currentPanel = 0;
 
-        ShowCurrentPanel();
-    }
-
-    private void Update()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            NextPanel();
-        }
-    }
-
-    private void ShowCurrentPanel()
-    {
-        panelImage.sprite =
-            currentSequence.panels[currentPanel].image;
+        pageTransition.SetFirstPage(
+            currentSequence.panels[currentPanel].image
+        );
 
         panelText.text =
             currentSequence.panels[currentPanel].text;
     }
 
-    private void NextPanel()
+    private void Update()
     {
-        AudioManager.Instance.PlayPageFlip();
+        if (
+            Input.GetMouseButtonDown(0) &&
+            !changingPage
+        )
+        {
+            StartCoroutine(
+                NextPanel()
+            );
+        }
+    }
+
+    private IEnumerator NextPanel()
+    {
         currentPanel++;
 
         if (currentPanel >= currentSequence.panels.Count)
         {
             HandleEnd();
-            return;
+            yield break;
         }
 
-        ShowCurrentPanel();
+        changingPage = true;
+
+        AudioManager.Instance.PlayPageFlip();
+
+        yield return StartCoroutine(
+            pageTransition.Play(
+                currentSequence.panels[currentPanel].image
+            )
+        );
+
+        panelText.text =
+            currentSequence.panels[currentPanel].text;
+
+        changingPage = false;
     }
 
     private void HandleEnd()
@@ -123,6 +141,7 @@ public class ComicPlayer : MonoBehaviour
     private void RetryDecision()
     {
         NarrativeState.ReturningFromDeath = true;
+
         NarrativeState.SkipDialogue = true;
 
         SceneTransitionManager.Instance.LoadScene(
