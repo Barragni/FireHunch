@@ -4,12 +4,22 @@ public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance;
 
-    [Header("Sources")]
+    [Header("Audio Sources")]
     [SerializeField] private AudioSource musicSource;
 
     [SerializeField] private AudioSource ambienceSource;
 
     [SerializeField] private AudioSource sfxSource;
+
+    [Header("UI SFX")]
+    [SerializeField] private AudioClip buttonClick;
+
+    [SerializeField] private AudioClip decisionOpen;
+
+    [SerializeField] private AudioClip timerEnd;
+
+    [Header("Comic SFX")]
+    [SerializeField] private AudioClip pageFlip;
 
     private void Awake()
     {
@@ -24,6 +34,8 @@ public class AudioManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    #region Music
 
     public void PlayMusic(AudioClip clip)
     {
@@ -45,6 +57,15 @@ public class AudioManager : MonoBehaviour
         musicSource.Play();
     }
 
+    public void StopMusic()
+    {
+        musicSource.Stop();
+    }
+
+    #endregion
+
+    #region Ambience
+
     public void PlayAmbience(AudioClip clip)
     {
         if (clip == null)
@@ -65,6 +86,15 @@ public class AudioManager : MonoBehaviour
         ambienceSource.Play();
     }
 
+    public void StopAmbience()
+    {
+        ambienceSource.Stop();
+    }
+
+    #endregion
+
+    #region Generic SFX
+
     public void PlaySFX(AudioClip clip)
     {
         if (clip == null)
@@ -75,13 +105,33 @@ public class AudioManager : MonoBehaviour
         sfxSource.PlayOneShot(clip);
     }
 
-    public void StopMusic()
+    #endregion
+
+    #region UI
+
+    public void PlayButtonClick()
     {
-        musicSource.Stop();
+        PlaySFX(buttonClick);
     }
 
-    public void StopAmbience()
+    public void PlayDecisionOpen()
     {
-        ambienceSource.Stop();
+        PlaySFX(decisionOpen);
     }
+
+    public void PlayTimerEnd()
+    {
+        PlaySFX(timerEnd);
+    }
+
+    #endregion
+
+    #region Comic
+
+    public void PlayPageFlip()
+    {
+        PlaySFX(pageFlip);
+    }
+
+    #endregion
 }

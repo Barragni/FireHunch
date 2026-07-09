@@ -103,6 +103,8 @@ public class NarrativeTrigger : MonoBehaviour
         NarrativeState.SavedCameraRotation =
             cam.transform.rotation;
 
+        AudioManager.Instance.PlayDecisionOpen();
+
         decisionPlayer.ShowDecision(
             decisionSequence
         );

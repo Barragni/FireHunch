@@ -81,6 +81,7 @@ public class DecisionPlayer : MonoBehaviour
 
     private void SelectDeathOption()
     {
+        AudioManager.Instance.PlayTimerEnd();
         foreach (
             DecisionOption option
             in currentDecision.options
@@ -143,6 +144,7 @@ public class DecisionPlayer : MonoBehaviour
         DecisionOption option
     )
     {
+        AudioManager.Instance.PlayButtonClick();
         if (timerRoutine != null)
         {
             StopCoroutine(timerRoutine);

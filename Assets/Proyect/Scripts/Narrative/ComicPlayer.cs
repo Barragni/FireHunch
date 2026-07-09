@@ -76,6 +76,7 @@ public class ComicPlayer : MonoBehaviour
 
     private void NextPanel()
     {
+        AudioManager.Instance.PlayPageFlip();
         currentPanel++;
 
         if (currentPanel >= currentSequence.panels.Count)

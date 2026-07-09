@@ -3183,6 +3183,7 @@ GameObject:
   - component: {fileID: 893810482}
   - component: {fileID: 893810481}
   - component: {fileID: 893810484}
+  - component: {fileID: 893810485}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -3308,6 +3309,24 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &893810485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 893810480}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19fc4ba964d455643a2f7df967a6a821, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HeadBobController
+  characterController: {fileID: 852091209}
+  bobSpeed: 8
+  verticalAmount: 0.03
+  horizontalAmount: 0.015
+  smoothSpeed: 8
+  minimumSpeed: 0.1
 --- !u!1 &1046908233
 GameObject:
   m_ObjectHideFlags: 0
