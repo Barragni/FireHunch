@@ -8,7 +8,9 @@ public class IntroCinematicController : MonoBehaviour
 
     [Header("Puntos de cámara")]
     [SerializeField] private Transform introCameraStart;
+
     [SerializeField] private Transform introCameraMiddle;
+
     [SerializeField] private Transform introCameraEnd;
 
     [Header("Objetivo a observar")]
@@ -22,11 +24,15 @@ public class IntroCinematicController : MonoBehaviour
 
     private IEnumerator Start()
     {
+        // Desactivar Head Bob durante la cinemática
+        player.SetHeadBobEnabled(false);
+
         if (NarrativeState.ReturningFromDeath)
         {
             NarrativeState.ReturningFromDeath = false;
 
-            Camera skipCamera = player.GetPlayerCamera();
+            Camera skipCamera =
+                player.GetPlayerCamera();
 
             skipCamera.transform.position =
                 introCameraEnd.position;
@@ -35,11 +41,13 @@ public class IntroCinematicController : MonoBehaviour
                 introCameraEnd.rotation;
 
             player.SetMovementEnabled(true);
+            player.SetHeadBobEnabled(true);
 
             yield break;
         }
 
-        Camera playerCamera = player.GetPlayerCamera();
+        Camera playerCamera =
+            player.GetPlayerCamera();
 
         playerCamera.transform.position =
             introCameraStart.position;
@@ -56,6 +64,7 @@ public class IntroCinematicController : MonoBehaviour
         );
 
         player.SetMovementEnabled(true);
+        player.SetHeadBobEnabled(true);
     }
 
     private IEnumerator PlayApproachPhase(Camera playerCamera)
@@ -79,7 +88,6 @@ public class IntroCinematicController : MonoBehaviour
                 elapsed / firstPhaseDuration
             );
 
-            // Movimiento suave con poca desaceleración al final
             t = 1f - Mathf.Pow(1f - t, 1.5f);
 
             playerCamera.transform.position =

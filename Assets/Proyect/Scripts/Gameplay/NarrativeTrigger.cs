@@ -57,6 +57,9 @@ public class NarrativeTrigger : MonoBehaviour
     {
         currentPlayer.SetMovementEnabled(false);
 
+        // Desactivar Head Bob durante la secuencia narrativa
+        currentPlayer.SetHeadBobEnabled(false);
+
         yield return currentPlayer.StartCoroutine(
             currentPlayer.LookAtTarget(
                 focusTarget,

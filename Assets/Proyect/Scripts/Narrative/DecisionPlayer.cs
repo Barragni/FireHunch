@@ -82,6 +82,7 @@ public class DecisionPlayer : MonoBehaviour
     private void SelectDeathOption()
     {
         AudioManager.Instance.PlayTimerEnd();
+
         foreach (
             DecisionOption option
             in currentDecision.options
@@ -145,16 +146,13 @@ public class DecisionPlayer : MonoBehaviour
     )
     {
         AudioManager.Instance.PlayButtonClick();
+
         if (timerRoutine != null)
         {
             StopCoroutine(timerRoutine);
         }
 
         decisionUI.DecisionPanel.SetActive(false);
-
-        yield return StartCoroutine(
-            DecisionEffectsManager.Instance.ExitDecisionMode()
-        );
 
         DecisionState.SelectedOption =
             option;
@@ -169,8 +167,11 @@ public class DecisionPlayer : MonoBehaviour
             option.score
         );
 
+
         SceneTransitionManager.Instance.LoadScene(
             "DecisionComic"
         );
+
+        yield break;
     }
 }

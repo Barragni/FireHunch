@@ -33,9 +33,7 @@ public class SceneTransitionManager : MonoBehaviour
     private void OnDestroy()
     {
         if (Instance == this)
-        {
             SceneManager.sceneLoaded -= OnSceneLoaded;
-        }
     }
 
     private void Start()
@@ -45,7 +43,25 @@ public class SceneTransitionManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        StartCoroutine(Fade(1f, 0f));
+        StartCoroutine(FadeInRoutine());
+    }
+
+    private IEnumerator FadeInRoutine()
+    {
+        // Mantener la pantalla completamente negra
+        Color c = fadeImage.color;
+        c.a = 1f;
+        fadeImage.color = c;
+
+        // Esperar dos frames para que la escena termine de dibujarse
+        yield return null;
+        yield return null;
+
+        Time.timeScale = 1f;
+
+        yield return Fade(1f, 0f);
+
+        isTransitioning = false;
     }
 
     public void LoadScene(string sceneName)
@@ -62,33 +78,25 @@ public class SceneTransitionManager : MonoBehaviour
 
         yield return Fade(0f, 1f);
 
-        AsyncOperation operation =
-            SceneManager.LoadSceneAsync(sceneName);
+        AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
 
         while (!operation.isDone)
-        {
             yield return null;
-        }
-
-        isTransitioning = false;
     }
 
     private IEnumerator Fade(float from, float to)
     {
-        float time = 0f;
+        float elapsed = 0f;
 
         Color c = fadeImage.color;
+        c.a = from;
+        fadeImage.color = c;
 
-        while (time < fadeDuration)
+        while (elapsed < fadeDuration)
         {
-            time += Time.deltaTime;
+            elapsed += Time.unscaledDeltaTime;
 
-            c.a = Mathf.Lerp(
-                from,
-                to,
-                time / fadeDuration
-            );
-
+            c.a = Mathf.Lerp(from, to, elapsed / fadeDuration);
             fadeImage.color = c;
 
             yield return null;

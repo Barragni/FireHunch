@@ -22,6 +22,8 @@ public class HeadBobController : MonoBehaviour
 
     private float timer;
 
+    private bool headBobEnabled = true;
+
     private void Start()
     {
         initialLocalPosition =
@@ -35,6 +37,20 @@ public class HeadBobController : MonoBehaviour
             !characterController.enabled
         )
         {
+            return;
+        }
+
+        if (!headBobEnabled)
+        {
+            timer = 0f;
+
+            transform.localPosition =
+                Vector3.Lerp(
+                    transform.localPosition,
+                    initialLocalPosition,
+                    Time.deltaTime * smoothSpeed
+                );
+
             return;
         }
 
@@ -77,5 +93,15 @@ public class HeadBobController : MonoBehaviour
                 targetPosition,
                 Time.deltaTime * smoothSpeed
             );
+    }
+
+    public void SetEnabled(bool enabled)
+    {
+        headBobEnabled = enabled;
+
+        if (!enabled)
+        {
+            timer = 0f;
+        }
     }
 }

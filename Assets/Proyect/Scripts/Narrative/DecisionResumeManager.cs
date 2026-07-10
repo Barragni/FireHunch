@@ -50,6 +50,8 @@ public class DecisionResumeManager : MonoBehaviour
 
         player.SetMovementEnabled(false);
 
+        player.SetHeadBobEnabled(false);
+
         decisionPlayer.ShowDecision(
             savedDecision
         );

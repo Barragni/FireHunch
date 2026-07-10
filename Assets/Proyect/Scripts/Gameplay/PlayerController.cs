@@ -22,6 +22,7 @@ public class PlayerController : MonoBehaviour
 
     private CharacterController characterController;
     private Camera playerCamera;
+    private HeadBobController headBobController;
 
     private float verticalRotation;
 
@@ -30,7 +31,11 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         characterController = GetComponent<CharacterController>();
+
         playerCamera = GetComponentInChildren<Camera>();
+
+        headBobController =
+            playerCamera.GetComponent<HeadBobController>();
 
         SetMovementEnabled(startWithMovementEnabled);
     }
@@ -48,15 +53,20 @@ public class PlayerController : MonoBehaviour
 
     private void HandleMovement()
     {
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
+        float horizontal =
+            Input.GetAxis("Horizontal");
+
+        float vertical =
+            Input.GetAxis("Vertical");
 
         Vector3 movement =
             transform.right * horizontal +
             transform.forward * vertical;
 
         characterController.Move(
-            movement * moveSpeed * Time.deltaTime
+            movement *
+            moveSpeed *
+            Time.deltaTime
         );
     }
 
@@ -74,11 +84,12 @@ public class PlayerController : MonoBehaviour
 
         verticalRotation -= mouseY;
 
-        verticalRotation = Mathf.Clamp(
-            verticalRotation,
-            -80f,
-            80f
-        );
+        verticalRotation =
+            Mathf.Clamp(
+                verticalRotation,
+                -80f,
+                80f
+            );
 
         playerCamera.transform.localRotation =
             Quaternion.Euler(
@@ -98,13 +109,25 @@ public class PlayerController : MonoBehaviour
 
         if (enabled)
         {
-            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.lockState =
+                CursorLockMode.Locked;
+
             Cursor.visible = false;
         }
         else
         {
-            Cursor.lockState = CursorLockMode.None;
+            Cursor.lockState =
+                CursorLockMode.None;
+
             Cursor.visible = true;
+        }
+    }
+
+    public void SetHeadBobEnabled(bool enabled)
+    {
+        if (headBobController != null)
+        {
+            headBobController.SetEnabled(enabled);
         }
     }
 
@@ -158,6 +181,12 @@ public class PlayerController : MonoBehaviour
 
     public IEnumerator PlayDecisionCamera()
     {
+        Vector3 originalLocalPosition =
+            playerCamera.transform.localPosition;
+
+        Quaternion originalLocalRotation =
+            playerCamera.transform.localRotation;
+
         playerCamera.transform.position =
             decisionCameraStart.position;
 
@@ -166,7 +195,8 @@ public class PlayerController : MonoBehaviour
 
         Coroutine effectRoutine =
             StartCoroutine(
-                DecisionEffectsManager.Instance.EnterDecisionMode()
+                DecisionEffectsManager.Instance
+                    .EnterDecisionMode()
             );
 
         float elapsed = 0f;
@@ -175,9 +205,11 @@ public class PlayerController : MonoBehaviour
         {
             elapsed += Time.unscaledDeltaTime;
 
-            float t = Mathf.Clamp01(
-                elapsed / decisionCameraDuration
-            );
+            float t =
+                Mathf.Clamp01(
+                    elapsed /
+                    decisionCameraDuration
+                );
 
             playerCamera.transform.position =
                 Vector3.Lerp(
@@ -203,5 +235,6 @@ public class PlayerController : MonoBehaviour
             decisionCameraEnd.rotation;
 
         yield return effectRoutine;
+
     }
 }
