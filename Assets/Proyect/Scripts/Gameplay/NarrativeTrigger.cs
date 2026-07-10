@@ -9,8 +9,7 @@ public class NarrativeTrigger : MonoBehaviour
     [Header("Diálogo")]
     [SerializeField] private DialoguePlayer dialoguePlayer;
 
-    [SerializeField] private AmbientDialoguePlayer ambientDialoguePlayer;
-
+    [Header("Decisión")]
     [SerializeField] private DecisionPlayer decisionPlayer;
 
     [Header("Cámara")]
@@ -36,19 +35,15 @@ public class NarrativeTrigger : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (triggered)
-        {
             return;
-        }
 
         if (!other.CompareTag("Player"))
-        {
             return;
-        }
 
         if (narrativeNode == null)
         {
             Debug.LogError(
-                $"NarrativeTrigger en {gameObject.name} no tiene NarrativeNode asignado."
+                $"NarrativeTrigger en {gameObject.name} no tiene un NarrativeNode asignado."
             );
 
             return;
@@ -118,18 +113,6 @@ public class NarrativeTrigger : MonoBehaviour
 
     private IEnumerator ContinueSequence()
     {
-        if (currentRule.ambientDialogue != null)
-        {
-            ambientDialoguePlayer.Play(
-                currentRule.ambientDialogue
-            );
-
-            while (ambientDialoguePlayer.IsPlaying)
-            {
-                yield return null;
-            }
-        }
-
         if (currentRule.decision != null)
         {
             yield return currentPlayer.StartCoroutine(

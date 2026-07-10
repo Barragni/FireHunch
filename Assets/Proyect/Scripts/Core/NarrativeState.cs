@@ -17,4 +17,5 @@ public static class NarrativeState
     public static Vector3 SavedCameraPosition;
 
     public static Quaternion SavedCameraRotation;
+    public static AmbientDialogueSequence CurrentAmbientDialogue;
 }

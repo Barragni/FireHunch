@@ -702,7 +702,7 @@ MonoBehaviour:
   pageTransition: {fileID: 469004282}
   panelText: {fileID: 1611932205}
   deathPanelUI: {fileID: 0}
-  introNextScene: Intro
+  introNextScene: OfficeFloor
 --- !u!4 &1179782890
 Transform:
   m_ObjectHideFlags: 0
