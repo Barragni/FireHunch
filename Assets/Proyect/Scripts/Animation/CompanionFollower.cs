@@ -11,6 +11,8 @@ public class CompanionFollower : MonoBehaviour
     [Header("Animación")]
     [SerializeField] private string speedParameter = "Speed";
 
+    [SerializeField] private string movingParameter = "Moving";
+
     private Transform target;
     private NavMeshAgent agent;
     private Animator animator;
@@ -42,9 +44,7 @@ public class CompanionFollower : MonoBehaviour
     private void Update()
     {
         if (target == null)
-        {
             return;
-        }
 
         float distance =
             Vector3.Distance(
@@ -65,9 +65,17 @@ public class CompanionFollower : MonoBehaviour
             agent.isStopped = true;
         }
 
+        float speed =
+            agent.velocity.magnitude;
+
         animator.SetFloat(
             speedParameter,
-            agent.velocity.magnitude
+            speed
+        );
+
+        animator.SetBool(
+            movingParameter,
+            speed > 0.1f
         );
     }
 
