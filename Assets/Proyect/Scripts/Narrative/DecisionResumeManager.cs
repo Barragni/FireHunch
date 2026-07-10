@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class DecisionResumeManager : MonoBehaviour
@@ -25,32 +26,28 @@ public class DecisionResumeManager : MonoBehaviour
 
         NarrativeState.PendingDecision = null;
 
-        Invoke(
-            nameof(RestoreDecisionState),
-            0.2f
+        StartCoroutine(
+            RestoreDecisionState()
         );
     }
 
-    private void RestoreDecisionState()
+    private IEnumerator RestoreDecisionState()
     {
+        yield return null;
+
         player.transform.position =
             NarrativeState.SavedPlayerPosition;
 
         player.transform.rotation =
             NarrativeState.SavedPlayerRotation;
 
-        Camera cam =
-            player.GetPlayerCamera();
-
-        cam.transform.position =
-            NarrativeState.SavedCameraPosition;
-
-        cam.transform.rotation =
-            NarrativeState.SavedCameraRotation;
-
         player.SetMovementEnabled(false);
 
         player.SetHeadBobEnabled(false);
+
+        yield return player.StartCoroutine(
+            player.PlayDecisionCamera()
+        );
 
         decisionPlayer.ShowDecision(
             savedDecision
