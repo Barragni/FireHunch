@@ -141,55 +141,51 @@ public class DecisionPlayer : MonoBehaviour
         );
     }
 
-private IEnumerator SelectOption(
-    DecisionOption option
-)
-{
-    AudioManager.Instance.PlayButtonClick();
-
-    if (timerRoutine != null)
+    private IEnumerator SelectOption(
+        DecisionOption option
+    )
     {
-        StopCoroutine(timerRoutine);
+        AudioManager.Instance.PlayButtonClick();
+
+        if (timerRoutine != null)
+        {
+            StopCoroutine(timerRoutine);
+        }
+
+        decisionUI.DecisionPanel.SetActive(false);
+
+        DecisionState.SelectedOption =
+            option;
+
+        NarrativeState.PendingDecision =
+            currentDecision;
+
+        NarrativeState.ReturnScene =
+            SceneManager.GetActiveScene().name;
+
+        GameState.Instance.AddScore(
+            option.score
+        );
+
+        switch (option.outcomeType)
+        {
+            case DecisionOutcomeType.Correct:
+                GameState.Instance.RegisterDecision("C");
+                break;
+
+            case DecisionOutcomeType.Incorrect:
+                GameState.Instance.RegisterDecision("L");
+                break;
+
+            case DecisionOutcomeType.Death:
+                // La muerte no modifica la ruta narrativa.
+                break;
+        }
+
+        SceneTransitionManager.Instance.LoadScene(
+            "DecisionComic"
+        );
+
+        yield break;
     }
-
-    decisionUI.DecisionPanel.SetActive(false);
-
-    DecisionState.SelectedOption =
-        option;
-
-    NarrativeState.PendingDecision =
-        currentDecision;
-
-    NarrativeState.ReturnScene =
-        SceneManager.GetActiveScene().name;
-
-    GameState.Instance.AddScore(
-        option.score
-    );
-
-    // NUEVO ------------------------------
-
-    switch (option.outcomeType)
-    {
-        case DecisionOutcomeType.Correct:
-            GameState.Instance.RegisterDecision("C");
-            break;
-
-        case DecisionOutcomeType.Incorrect:
-            GameState.Instance.RegisterDecision("L");
-            break;
-
-        case DecisionOutcomeType.Death:
-            GameState.Instance.RegisterDecision("M");
-            break;
-    }
-
-    // ------------------------------------
-
-    SceneTransitionManager.Instance.LoadScene(
-        "DecisionComic"
-    );
-
-    yield break;
-}
 }
