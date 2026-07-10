@@ -141,37 +141,55 @@ public class DecisionPlayer : MonoBehaviour
         );
     }
 
-    private IEnumerator SelectOption(
-        DecisionOption option
-    )
+private IEnumerator SelectOption(
+    DecisionOption option
+)
+{
+    AudioManager.Instance.PlayButtonClick();
+
+    if (timerRoutine != null)
     {
-        AudioManager.Instance.PlayButtonClick();
-
-        if (timerRoutine != null)
-        {
-            StopCoroutine(timerRoutine);
-        }
-
-        decisionUI.DecisionPanel.SetActive(false);
-
-        DecisionState.SelectedOption =
-            option;
-
-        NarrativeState.PendingDecision =
-            currentDecision;
-
-        NarrativeState.ReturnScene =
-            SceneManager.GetActiveScene().name;
-
-        GameState.Instance.AddScore(
-            option.score
-        );
-
-
-        SceneTransitionManager.Instance.LoadScene(
-            "DecisionComic"
-        );
-
-        yield break;
+        StopCoroutine(timerRoutine);
     }
+
+    decisionUI.DecisionPanel.SetActive(false);
+
+    DecisionState.SelectedOption =
+        option;
+
+    NarrativeState.PendingDecision =
+        currentDecision;
+
+    NarrativeState.ReturnScene =
+        SceneManager.GetActiveScene().name;
+
+    GameState.Instance.AddScore(
+        option.score
+    );
+
+    // NUEVO ------------------------------
+
+    switch (option.outcomeType)
+    {
+        case DecisionOutcomeType.Correct:
+            GameState.Instance.RegisterDecision("C");
+            break;
+
+        case DecisionOutcomeType.Incorrect:
+            GameState.Instance.RegisterDecision("L");
+            break;
+
+        case DecisionOutcomeType.Death:
+            GameState.Instance.RegisterDecision("M");
+            break;
+    }
+
+    // ------------------------------------
+
+    SceneTransitionManager.Instance.LoadScene(
+        "DecisionComic"
+    );
+
+    yield break;
+}
 }

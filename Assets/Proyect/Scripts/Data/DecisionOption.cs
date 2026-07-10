@@ -15,8 +15,8 @@ public class DecisionOption
     [Header("Comic a reproducir")]
     public ComicSequence comicSequence;
 
-    [Header("Escena destino")]
-    public string nextScene;
+    [Header("Nodo narrativo siguiente")]
+    public string nextNode;
 
     [Header("Retroalimentación de muerte")]
     [TextArea(3, 8)]

@@ -3,15 +3,15 @@ using System.Collections;
 
 public class NarrativeTrigger : MonoBehaviour
 {
+    [Header("Nodo Narrativo")]
+    [SerializeField] private NarrativeNode narrativeNode;
+
     [Header("Diálogo")]
     [SerializeField] private DialoguePlayer dialoguePlayer;
 
-    [SerializeField] private DialogueSequence dialogueSequence;
+    [SerializeField] private AmbientDialoguePlayer ambientDialoguePlayer;
 
-    [Header("Decisión")]
     [SerializeField] private DecisionPlayer decisionPlayer;
-
-    [SerializeField] private DecisionSequence decisionSequence;
 
     [Header("Cámara")]
     [SerializeField] private Transform focusTarget;
@@ -21,6 +21,8 @@ public class NarrativeTrigger : MonoBehaviour
     private bool triggered;
 
     private PlayerController currentPlayer;
+
+    private NarrativeRule currentRule;
 
     private void Start()
     {
@@ -43,6 +45,29 @@ public class NarrativeTrigger : MonoBehaviour
             return;
         }
 
+        if (narrativeNode == null)
+        {
+            Debug.LogError(
+                $"NarrativeTrigger en {gameObject.name} no tiene NarrativeNode asignado."
+            );
+
+            return;
+        }
+
+        currentRule =
+            NarrativeManager.Instance.GetCurrentRule(
+                narrativeNode.nodeID
+            );
+
+        if (currentRule == null)
+        {
+            Debug.LogError(
+                $"No existe una Rule para el nodo '{narrativeNode.nodeID}' y la ruta '{GameState.Instance.decisionPath}'."
+            );
+
+            return;
+        }
+
         triggered = true;
 
         currentPlayer =
@@ -57,7 +82,6 @@ public class NarrativeTrigger : MonoBehaviour
     {
         currentPlayer.SetMovementEnabled(false);
 
-        // Desactivar Head Bob durante la secuencia narrativa
         currentPlayer.SetHeadBobEnabled(false);
 
         yield return currentPlayer.StartCoroutine(
@@ -67,12 +91,19 @@ public class NarrativeTrigger : MonoBehaviour
             )
         );
 
-        dialoguePlayer.OnDialogueFinished +=
-            HandleDialogueFinished;
+        if (currentRule.dialogue != null)
+        {
+            dialoguePlayer.OnDialogueFinished +=
+                HandleDialogueFinished;
 
-        dialoguePlayer.Play(
-            dialogueSequence
-        );
+            dialoguePlayer.Play(
+                currentRule.dialogue
+            );
+        }
+        else
+        {
+            HandleDialogueFinished();
+        }
     }
 
     private void HandleDialogueFinished()
@@ -81,35 +112,56 @@ public class NarrativeTrigger : MonoBehaviour
             HandleDialogueFinished;
 
         StartCoroutine(
-            PlayDecisionSequence()
+            ContinueSequence()
         );
     }
 
-    private IEnumerator PlayDecisionSequence()
+    private IEnumerator ContinueSequence()
     {
-        yield return currentPlayer.StartCoroutine(
-            currentPlayer.PlayDecisionCamera()
-        );
+        if (currentRule.ambientDialogue != null)
+        {
+            ambientDialoguePlayer.Play(
+                currentRule.ambientDialogue
+            );
 
-        Camera cam =
-            currentPlayer.GetPlayerCamera();
+            while (ambientDialoguePlayer.IsPlaying)
+            {
+                yield return null;
+            }
+        }
 
-        NarrativeState.SavedPlayerPosition =
-            currentPlayer.transform.position;
+        if (currentRule.decision != null)
+        {
+            yield return currentPlayer.StartCoroutine(
+                currentPlayer.PlayDecisionCamera()
+            );
 
-        NarrativeState.SavedPlayerRotation =
-            currentPlayer.transform.rotation;
+            Camera cam =
+                currentPlayer.GetPlayerCamera();
 
-        NarrativeState.SavedCameraPosition =
-            cam.transform.position;
+            NarrativeState.SavedPlayerPosition =
+                currentPlayer.transform.position;
 
-        NarrativeState.SavedCameraRotation =
-            cam.transform.rotation;
+            NarrativeState.SavedPlayerRotation =
+                currentPlayer.transform.rotation;
 
-        AudioManager.Instance.PlayDecisionOpen();
+            NarrativeState.SavedCameraPosition =
+                cam.transform.position;
 
-        decisionPlayer.ShowDecision(
-            decisionSequence
-        );
+            NarrativeState.SavedCameraRotation =
+                cam.transform.rotation;
+
+            AudioManager.Instance.PlayDecisionOpen();
+
+            decisionPlayer.ShowDecision(
+                currentRule.decision
+            );
+
+            yield break;
+        }
+
+        currentPlayer.SetMovementEnabled(true);
+
+        currentPlayer.SetHeadBobEnabled(true);
     }
 }

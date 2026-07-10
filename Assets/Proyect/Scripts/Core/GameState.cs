@@ -15,8 +15,14 @@ public class GameState : MonoBehaviour
     [Header("Nodo narrativo actual")]
     public string currentNode;
 
-    [Header("Historial de decisiones")]
+    [Header("Historial de decisiones (C, L, M)")]
+    public string decisionPath = "";
+
+    [Header("Historial completo (compatibilidad)")]
     public List<string> decisionHistory = new();
+
+    [Header("Banderas narrativas")]
+    public List<string> narrativeFlags = new();
 
     private void Awake()
     {
@@ -36,9 +42,10 @@ public class GameState : MonoBehaviour
         score += points;
     }
 
-    public void RegisterDecision(string decisionId)
+    public void RegisterDecision(string decision)
     {
-        decisionHistory.Add(decisionId);
+        decisionHistory.Add(decision);
+        decisionPath += decision;
     }
 
     public void SetCompanion(string companionId, bool value)
@@ -55,6 +62,24 @@ public class GameState : MonoBehaviour
         }
     }
 
+    public void AddFlag(string flag)
+    {
+        if (!narrativeFlags.Contains(flag))
+        {
+            narrativeFlags.Add(flag);
+        }
+    }
+
+    public void RemoveFlag(string flag)
+    {
+        narrativeFlags.Remove(flag);
+    }
+
+    public bool HasFlag(string flag)
+    {
+        return narrativeFlags.Contains(flag);
+    }
+
     public void ResetData()
     {
         score = 0;
@@ -64,6 +89,10 @@ public class GameState : MonoBehaviour
 
         currentNode = string.Empty;
 
+        decisionPath = "";
+
         decisionHistory.Clear();
+
+        narrativeFlags.Clear();
     }
 }

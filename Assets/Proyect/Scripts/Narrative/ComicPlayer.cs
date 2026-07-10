@@ -24,9 +24,7 @@ public class ComicPlayer : MonoBehaviour
     [SerializeField] private string introNextScene;
 
     private ComicSequence currentSequence;
-
     private int currentPanel;
-
     private bool changingPage;
 
     private void Start()
@@ -133,8 +131,28 @@ public class ComicPlayer : MonoBehaviour
             return;
         }
 
+        // Guardar el nodo al que se dirigirá la narrativa.
+        NarrativeManager.Instance.SetCurrentNode(
+            option.nextNode
+        );
+
+        // Obtener la escena correspondiente a la ruta actual.
+        string nextScene =
+            NarrativeManager.Instance.GetSceneForNode(
+                option.nextNode
+            );
+
+        if (string.IsNullOrEmpty(nextScene))
+        {
+            Debug.LogError(
+                $"No se encontró una escena para el nodo '{option.nextNode}'."
+            );
+
+            return;
+        }
+
         SceneTransitionManager.Instance.LoadScene(
-            option.nextScene
+            nextScene
         );
     }
 

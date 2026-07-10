@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -6,6 +7,10 @@ public class AmbientDialoguePlayer : MonoBehaviour
     [SerializeField] private DialogueUI dialogueUI;
 
     private Coroutine currentRoutine;
+
+    public bool IsPlaying => currentRoutine != null;
+
+    public event Action OnDialogueFinished;
 
     public void Play(
         AmbientDialogueSequence sequence
@@ -50,5 +55,9 @@ public class AmbientDialoguePlayer : MonoBehaviour
         dialogueUI.ShowContinueText();
 
         dialogueUI.HideDialogue();
+
+        currentRoutine = null;
+
+        OnDialogueFinished?.Invoke();
     }
 }
