@@ -567,7 +567,7 @@ MonoBehaviour:
   ambienceSource: {fileID: 449225031}
   sfxSource: {fileID: 660329448}
   buttonClick: {fileID: 8300000, guid: efbf029978b8dea4f830fcc03c104a8d, type: 3}
-  decisionOpen: {fileID: 8300000, guid: 32ac402d841c2f347b9e9071e9eac84b, type: 3}
+  decisionOpen: {fileID: 8300000, guid: f9f916b0101db6f4b8fecc5698610180, type: 3}
   timerEnd: {fileID: 8300000, guid: efbf029978b8dea4f830fcc03c104a8d, type: 3}
   pageFlip: {fileID: 8300000, guid: 6bc2a0214a2777c4daab261c7a620c3d, type: 3}
 --- !u!1 &660329447

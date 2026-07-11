@@ -7,22 +7,27 @@ public class HeadBobController : MonoBehaviour
     [SerializeField] private CharacterController characterController;
 
     [Header("Movimiento")]
-    [SerializeField] private float bobSpeed = 8f;
+    [SerializeField] private float bobSpeed = 6.5f;
 
-    [SerializeField] private float verticalAmount = 0.03f;
+    [SerializeField] private float verticalAmount = 0.018f;
 
-    [SerializeField] private float horizontalAmount = 0.015f;
+    [SerializeField] private float horizontalAmount = 0.005f;
 
-    [SerializeField] private float smoothSpeed = 8f;
+    [SerializeField] private float smoothSpeed = 12f;
 
     [Header("Velocidad mínima")]
     [SerializeField] private float minimumSpeed = 0.1f;
+
+    [Header("Transición")]
+    [SerializeField] private float blendSpeed = 6f;
 
     private Vector3 initialLocalPosition;
 
     private float timer;
 
     private bool headBobEnabled = true;
+
+    private float bobWeight;
 
     private void Start()
     {
@@ -42,14 +47,13 @@ public class HeadBobController : MonoBehaviour
 
         if (!headBobEnabled)
         {
-            timer = 0f;
+            bobWeight = Mathf.Lerp(
+                bobWeight,
+                0f,
+                Time.deltaTime * blendSpeed
+            );
 
-            transform.localPosition =
-                Vector3.Lerp(
-                    transform.localPosition,
-                    initialLocalPosition,
-                    Time.deltaTime * smoothSpeed
-                );
+            ApplyBob();
 
             return;
         }
@@ -59,33 +63,38 @@ public class HeadBobController : MonoBehaviour
 
         velocity.y = 0f;
 
-        if (velocity.magnitude < minimumSpeed)
+        bool isMoving =
+            velocity.magnitude >= minimumSpeed;
+
+        bobWeight = Mathf.Lerp(
+            bobWeight,
+            isMoving ? 1f : 0f,
+            Time.deltaTime * blendSpeed
+        );
+
+        if (isMoving)
         {
-            timer = 0f;
-
-            transform.localPosition =
-                Vector3.Lerp(
-                    transform.localPosition,
-                    initialLocalPosition,
-                    Time.deltaTime * smoothSpeed
-                );
-
-            return;
+            timer +=
+                Time.deltaTime * bobSpeed;
         }
 
-        timer +=
-            Time.deltaTime * bobSpeed;
+        ApplyBob();
+    }
 
+    private void ApplyBob()
+    {
         Vector3 targetPosition =
             initialLocalPosition;
 
         targetPosition.y +=
             Mathf.Sin(timer) *
-            verticalAmount;
+            verticalAmount *
+            bobWeight;
 
         targetPosition.x +=
-            Mathf.Cos(timer * 0.5f) *
-            horizontalAmount;
+            Mathf.Cos(timer) *
+            horizontalAmount *
+            bobWeight;
 
         transform.localPosition =
             Vector3.Lerp(
@@ -98,10 +107,5 @@ public class HeadBobController : MonoBehaviour
     public void SetEnabled(bool enabled)
     {
         headBobEnabled = enabled;
-
-        if (!enabled)
-        {
-            timer = 0f;
-        }
     }
 }

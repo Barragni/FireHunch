@@ -20,6 +20,9 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private float decisionCameraDuration = 0.8f;
 
+    [Header("Enfoque narrativo")]
+    [SerializeField] private float focusRotationDuration = 0.6f;
+
     private CharacterController characterController;
     private Camera playerCamera;
     private HeadBobController headBobController;
@@ -137,8 +140,7 @@ public class PlayerController : MonoBehaviour
     }
 
     public IEnumerator LookAtTarget(
-        Transform target,
-        float duration
+        Transform target
     )
     {
         canMove = false;
@@ -161,15 +163,27 @@ public class PlayerController : MonoBehaviour
 
         float elapsed = 0f;
 
-        while (elapsed < duration)
+        while (elapsed < focusRotationDuration)
         {
             elapsed += Time.deltaTime;
+
+            float t =
+                Mathf.Clamp01(
+                    elapsed /
+                    focusRotationDuration
+                );
+
+            t = Mathf.SmoothStep(
+                0f,
+                1f,
+                t
+            );
 
             transform.rotation =
                 Quaternion.Slerp(
                     startRotation,
                     targetRotation,
-                    elapsed / duration
+                    t
                 );
 
             yield return null;
@@ -181,12 +195,6 @@ public class PlayerController : MonoBehaviour
 
     public IEnumerator PlayDecisionCamera()
     {
-        Vector3 originalLocalPosition =
-            playerCamera.transform.localPosition;
-
-        Quaternion originalLocalRotation =
-            playerCamera.transform.localRotation;
-
         playerCamera.transform.position =
             decisionCameraStart.position;
 
@@ -203,7 +211,8 @@ public class PlayerController : MonoBehaviour
 
         while (elapsed < decisionCameraDuration)
         {
-            elapsed += Time.unscaledDeltaTime;
+            elapsed +=
+                Time.unscaledDeltaTime;
 
             float t =
                 Mathf.Clamp01(
@@ -235,6 +244,5 @@ public class PlayerController : MonoBehaviour
             decisionCameraEnd.rotation;
 
         yield return effectRoutine;
-
     }
 }

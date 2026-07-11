@@ -1,5 +1,6 @@
-using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class NarrativeTrigger : MonoBehaviour
 {
@@ -12,10 +13,8 @@ public class NarrativeTrigger : MonoBehaviour
     [Header("Decisión")]
     [SerializeField] private DecisionPlayer decisionPlayer;
 
-    [Header("Cámara")]
-    [SerializeField] private Transform focusTarget;
-
-    [SerializeField] private float focusDuration = 1.5f;
+    [Header("Secuencia de cámara")]
+    [SerializeField] private List<FocusPoint> focusPoints = new();
 
     private bool triggered;
 
@@ -79,12 +78,23 @@ public class NarrativeTrigger : MonoBehaviour
 
         currentPlayer.SetHeadBobEnabled(false);
 
-        yield return currentPlayer.StartCoroutine(
-            currentPlayer.LookAtTarget(
-                focusTarget,
-                focusDuration
-            )
-        );
+        foreach (FocusPoint point in focusPoints)
+        {
+            if (point == null || point.target == null)
+            {
+                continue;
+            }
+
+            yield return currentPlayer.StartCoroutine(
+                currentPlayer.LookAtTarget(
+                    point.target
+                )
+            );
+
+            yield return new WaitForSeconds(
+                point.focusDuration
+            );
+        }
 
         if (currentRule.dialogue != null)
         {
