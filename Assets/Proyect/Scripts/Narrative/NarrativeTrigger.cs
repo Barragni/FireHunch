@@ -96,6 +96,11 @@ public class NarrativeTrigger : MonoBehaviour
             );
         }
 
+        // Zoom antes de mostrar el primer diálogo
+        yield return currentPlayer.StartCoroutine(
+            currentPlayer.PlayDialogueZoom()
+        );
+
         if (currentRule.dialogue != null)
         {
             dialoguePlayer.OnDialogueFinished +=

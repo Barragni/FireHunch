@@ -23,6 +23,13 @@ public class PlayerController : MonoBehaviour
     [Header("Enfoque narrativo")]
     [SerializeField] private float focusRotationDuration = 0.6f;
 
+    [Header("Zoom de diálogo")]
+    [SerializeField] private bool enableDialogueZoom = true;
+
+    [SerializeField] private float dialogueZoomFOV = 50f;
+
+    [SerializeField] private float dialogueZoomDuration = 0.5f;
+
     private CharacterController characterController;
     private Camera playerCamera;
     private HeadBobController headBobController;
@@ -31,14 +38,21 @@ public class PlayerController : MonoBehaviour
 
     private bool canMove;
 
+    private float defaultFOV;
+
     private void Start()
     {
-        characterController = GetComponent<CharacterController>();
+        characterController =
+            GetComponent<CharacterController>();
 
-        playerCamera = GetComponentInChildren<Camera>();
+        playerCamera =
+            GetComponentInChildren<Camera>();
 
         headBobController =
             playerCamera.GetComponent<HeadBobController>();
+
+        defaultFOV =
+            playerCamera.fieldOfView;
 
         SetMovementEnabled(startWithMovementEnabled);
     }
@@ -193,8 +207,53 @@ public class PlayerController : MonoBehaviour
             targetRotation;
     }
 
+    public IEnumerator PlayDialogueZoom()
+    {
+        if (!enableDialogueZoom)
+        {
+            yield break;
+        }
+
+        float startFOV =
+            playerCamera.fieldOfView;
+
+        float elapsed = 0f;
+
+        while (elapsed < dialogueZoomDuration)
+        {
+            elapsed += Time.deltaTime;
+
+            float t =
+                Mathf.Clamp01(
+                    elapsed /
+                    dialogueZoomDuration
+                );
+
+            t = Mathf.SmoothStep(
+                0f,
+                1f,
+                t
+            );
+
+            playerCamera.fieldOfView =
+                Mathf.Lerp(
+                    startFOV,
+                    dialogueZoomFOV,
+                    t
+                );
+
+            yield return null;
+        }
+
+        playerCamera.fieldOfView =
+            dialogueZoomFOV;
+    }
+
     public IEnumerator PlayDecisionCamera()
     {
+        playerCamera.fieldOfView =
+            defaultFOV;
+
         playerCamera.transform.position =
             decisionCameraStart.position;
 
