@@ -2827,6 +2827,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 852091213}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!1 &680573104
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 680573105}
+  m_Layer: 0
+  m_Name: FocusTarget (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &680573105
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 680573104}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 21.22, y: -0.23, z: -56.62}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1682695811}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &684073310
 GameObject:
   m_ObjectHideFlags: 0
@@ -3426,6 +3457,9 @@ MonoBehaviour:
   decisionCameraEnd: {fileID: 1180046108}
   decisionCameraDuration: 0.8
   focusRotationDuration: 0.6
+  enableDialogueZoom: 1
+  dialogueZoomFOV: 50
+  dialogueZoomDuration: 0.5
 --- !u!143 &852091209
 CharacterController:
   m_ObjectHideFlags: 0
@@ -3823,6 +3857,37 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 906770761}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &936514629
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 936514630}
+  m_Layer: 0
+  m_Name: FocusTarget (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &936514630
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 936514629}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 18.36, y: 0.78, z: -56.62}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1682695811}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1046908233
 GameObject:
   m_ObjectHideFlags: 0
@@ -5405,6 +5470,10 @@ MonoBehaviour:
   focusPoints:
   - target: {fileID: 1524705039}
     focusDuration: 2
+  - target: {fileID: 936514630}
+    focusDuration: 2
+  - target: {fileID: 680573105}
+    focusDuration: 2
 --- !u!1 &1456097988
 GameObject:
   m_ObjectHideFlags: 0
@@ -5909,6 +5978,8 @@ Transform:
   m_Children:
   - {fileID: 1422531884}
   - {fileID: 1524705039}
+  - {fileID: 680573105}
+  - {fileID: 936514630}
   - {fileID: 1437471315}
   - {fileID: 657635185}
   - {fileID: 743051049}
