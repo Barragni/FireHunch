@@ -87,23 +87,14 @@ public class DecisionPlayer : MonoBehaviour
         SelectTimeoutOption();
     }
 
-    /// <summary>
-    /// Selecciona automáticamente la opción definida
-    /// por DecisionSequence.timeoutResult.
-    /// </summary>
     private void SelectTimeoutOption()
     {
         AudioManager.Instance.PlayTimerEnd();
 
-        foreach (
-            DecisionOption option
-            in currentDecision.options
-        )
+        foreach (DecisionOption option in currentDecision.options)
         {
-            if (
-                option.outcomeType ==
-                currentDecision.timeoutResult
-            )
+            if (option.outcomeType ==
+                currentDecision.timeoutResult)
             {
                 StartCoroutine(
                     SelectOption(option)
@@ -114,7 +105,7 @@ public class DecisionPlayer : MonoBehaviour
         }
 
         Debug.LogWarning(
-            $"No existe una opción de tipo {currentDecision.timeoutResult} en esta DecisionSequence."
+            $"No existe una opción de tipo {currentDecision.timeoutResult}."
         );
     }
 
@@ -124,10 +115,7 @@ public class DecisionPlayer : MonoBehaviour
         int index
     )
     {
-        if (
-            index >=
-            currentDecision.options.Count
-        )
+        if (index >= currentDecision.options.Count)
         {
             button.gameObject.SetActive(false);
             return;
@@ -176,22 +164,41 @@ public class DecisionPlayer : MonoBehaviour
         NarrativeState.ReturnScene =
             SceneManager.GetActiveScene().name;
 
-        GameState.Instance.AddScore(
-            option.score
-        );
+        int selectedOptionIndex =
+            currentDecision.options.IndexOf(option);
 
         switch (option.outcomeType)
         {
             case DecisionOutcomeType.Correct:
+
+                GameState.Instance.RegisterFinalDecision(
+                    currentDecision.decisionID,
+                    DecisionOutcomeType.Correct,
+                    selectedOptionIndex
+                );
+
                 GameState.Instance.RegisterDecision("C");
+
                 break;
 
             case DecisionOutcomeType.Incorrect:
+
+                GameState.Instance.RegisterFinalDecision(
+                    currentDecision.decisionID,
+                    DecisionOutcomeType.Incorrect,
+                    selectedOptionIndex
+                );
+
                 GameState.Instance.RegisterDecision("L");
+
                 break;
 
             case DecisionOutcomeType.Death:
-                // La muerte no modifica la ruta narrativa.
+
+                GameState.Instance.RegisterDeath(
+                    currentDecision.decisionID
+                );
+
                 break;
         }
 

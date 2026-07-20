@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -48,12 +49,12 @@ public class SceneTransitionManager : MonoBehaviour
 
     private IEnumerator FadeInRoutine()
     {
-        // Mantener la pantalla completamente negra
+        // Mantener la pantalla completamente negra.
         Color c = fadeImage.color;
         c.a = 1f;
         fadeImage.color = c;
 
-        // Esperar dos frames para que la escena termine de dibujarse
+        // Esperar dos frames para que la escena termine de dibujarse.
         yield return null;
         yield return null;
 
@@ -70,6 +71,33 @@ public class SceneTransitionManager : MonoBehaviour
             return;
 
         StartCoroutine(Transition(sceneName));
+    }
+
+    /// <summary>
+    /// Reproduce un fade a negro y luego un fade desde negro
+    /// sin cambiar de escena. Si se proporciona una acción,
+    /// ésta se ejecuta mientras la pantalla está completamente negra.
+    /// </summary>
+    public IEnumerator PlayFadeOnly(Action onBlack = null)
+    {
+        if (isTransitioning)
+            yield break;
+
+        isTransitioning = true;
+
+        // Fade a negro.
+        yield return Fade(0f, 1f);
+
+        // Ejecutar acción durante la pantalla negra.
+        onBlack?.Invoke();
+
+        // Esperar un frame para que los cambios se reflejen.
+        yield return null;
+
+        // Fade desde negro.
+        yield return Fade(1f, 0f);
+
+        isTransitioning = false;
     }
 
     private IEnumerator Transition(string sceneName)

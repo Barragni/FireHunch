@@ -7,6 +7,10 @@ using UnityEngine;
 )]
 public class DecisionSequence : ScriptableObject
 {
+    [Header("Identificación")]
+    [Tooltip("Debe ser único. Ejemplo: Decision_01, Decision_02, Decision_Final...")]
+    public string decisionID;
+
     [Header("Pregunta mostrada")]
     [TextArea(2, 4)]
     public string question;

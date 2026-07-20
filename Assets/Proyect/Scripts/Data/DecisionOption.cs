@@ -6,9 +6,6 @@ public class DecisionOption
     [Header("Texto mostrado")]
     public string optionText;
 
-    [Header("Puntaje")]
-    public int score;
-
     [Header("Tipo de resultado")]
     public DecisionOutcomeType outcomeType;
 
