@@ -14,6 +14,10 @@ public class DecisionSequence : ScriptableObject
     [Header("Tiempo límite (segundos)")]
     public float timeLimit = 10f;
 
+    [Header("Resultado al agotarse el tiempo")]
+    [Tooltip("Normalmente será Death. Para decisiones especiales posteriores a un cómic puede configurarse como Incorrect.")]
+    public DecisionOutcomeType timeoutResult = DecisionOutcomeType.Death;
+
     [Header("Opciones disponibles")]
     public List<DecisionOption> options = new();
 }

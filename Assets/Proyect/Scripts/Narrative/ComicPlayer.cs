@@ -1,7 +1,6 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class ComicPlayer : MonoBehaviour
 {
@@ -19,6 +18,9 @@ public class ComicPlayer : MonoBehaviour
 
     [Header("Panel de muerte")]
     [SerializeField] private DeathPanelUI deathPanelUI;
+
+    [Header("Panel de decisión")]
+    [SerializeField] private DecisionPlayer decisionPlayer;
 
     [Header("Escena después de la intro")]
     [SerializeField] private string introNextScene;
@@ -45,6 +47,11 @@ public class ComicPlayer : MonoBehaviour
             );
         }
 
+        if (decisionPlayer != null)
+        {
+            decisionPlayer.gameObject.SetActive(true);
+        }
+
         if (isIntroSequence)
         {
             currentSequence = introSequence;
@@ -67,10 +74,25 @@ public class ComicPlayer : MonoBehaviour
 
     private void Update()
     {
+        // Mientras se está reproduciendo la transición
+        // de página no se aceptan clics.
+        if (changingPage)
+        {
+            return;
+        }
+
+        // Si el panel de decisión está abierto,
+        // el cómic deja de procesar clics y éstos
+        // quedan exclusivamente para los botones.
         if (
-            Input.GetMouseButtonDown(0) &&
-            !changingPage
+            decisionPlayer != null &&
+            decisionPlayer.IsDecisionOpen
         )
+        {
+            return;
+        }
+
+        if (Input.GetMouseButtonDown(0))
         {
             StartCoroutine(
                 NextPanel()
@@ -115,6 +137,20 @@ public class ComicPlayer : MonoBehaviour
             return;
         }
 
+        // Si el ComicSequence tiene una decisión asociada,
+        // se muestra inmediatamente al terminar la última viñeta.
+        if (
+            currentSequence.decisionAfterComic != null &&
+            decisionPlayer != null
+        )
+        {
+            decisionPlayer.ShowDecision(
+                currentSequence.decisionAfterComic
+            );
+
+            return;
+        }
+
         DecisionOption option =
             DecisionState.SelectedOption;
 
@@ -131,12 +167,10 @@ public class ComicPlayer : MonoBehaviour
             return;
         }
 
-        // Guardar el nodo al que se dirigirá la narrativa.
         NarrativeManager.Instance.SetCurrentNode(
             option.nextNode
         );
 
-        // Obtener la escena correspondiente a la ruta actual.
         string nextScene =
             NarrativeManager.Instance.GetSceneForNode(
                 option.nextNode

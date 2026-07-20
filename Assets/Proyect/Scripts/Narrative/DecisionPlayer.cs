@@ -12,6 +12,10 @@ public class DecisionPlayer : MonoBehaviour
 
     private Coroutine timerRoutine;
 
+    public bool IsDecisionOpen =>
+        decisionUI != null &&
+        decisionUI.DecisionPanel.activeSelf;
+
     private void Start()
     {
         decisionUI.DecisionPanel.SetActive(false);
@@ -48,6 +52,8 @@ public class DecisionPlayer : MonoBehaviour
             2
         );
 
+        decisionUI.TimerFillImage.fillAmount = 1f;
+
         if (timerRoutine != null)
         {
             StopCoroutine(timerRoutine);
@@ -70,16 +76,22 @@ public class DecisionPlayer : MonoBehaviour
                 Time.unscaledDeltaTime;
 
             decisionUI.TimerFillImage.fillAmount =
-                timeRemaining /
-                currentDecision.timeLimit;
+                Mathf.Clamp01(
+                    timeRemaining /
+                    currentDecision.timeLimit
+                );
 
             yield return null;
         }
 
-        SelectDeathOption();
+        SelectTimeoutOption();
     }
 
-    private void SelectDeathOption()
+    /// <summary>
+    /// Selecciona automáticamente la opción definida
+    /// por DecisionSequence.timeoutResult.
+    /// </summary>
+    private void SelectTimeoutOption()
     {
         AudioManager.Instance.PlayTimerEnd();
 
@@ -90,7 +102,7 @@ public class DecisionPlayer : MonoBehaviour
         {
             if (
                 option.outcomeType ==
-                DecisionOutcomeType.Death
+                currentDecision.timeoutResult
             )
             {
                 StartCoroutine(
@@ -102,7 +114,7 @@ public class DecisionPlayer : MonoBehaviour
         }
 
         Debug.LogWarning(
-            "No existe opción Death en esta decisión."
+            $"No existe una opción de tipo {currentDecision.timeoutResult} en esta DecisionSequence."
         );
     }
 
@@ -150,6 +162,7 @@ public class DecisionPlayer : MonoBehaviour
         if (timerRoutine != null)
         {
             StopCoroutine(timerRoutine);
+            timerRoutine = null;
         }
 
         decisionUI.DecisionPanel.SetActive(false);
