@@ -75,10 +75,9 @@ public class ComicPlayer : MonoBehaviour
         currentPanel = 0;
 
         pageTransition.SetFirstPage(
-            currentSequence.panels[currentPanel].image);
-
-        panelText.text =
-            currentSequence.panels[currentPanel].text;
+            currentSequence.panels[currentPanel].image,
+            currentSequence.panels[currentPanel].text
+        );
     }
 
     private IEnumerator NextPanel()
@@ -97,10 +96,10 @@ public class ComicPlayer : MonoBehaviour
 
         yield return StartCoroutine(
             pageTransition.Play(
-                currentSequence.panels[currentPanel].image));
-
-        panelText.text =
-            currentSequence.panels[currentPanel].text;
+                currentSequence.panels[currentPanel].image,
+                currentSequence.panels[currentPanel].text
+            )
+        );
 
         changingPage = false;
     }
@@ -110,7 +109,8 @@ public class ComicPlayer : MonoBehaviour
         if (isIntroSequence)
         {
             SceneTransitionManager.Instance.LoadScene(
-                introNextScene);
+                introNextScene
+            );
             yield break;
         }
 
@@ -118,7 +118,8 @@ public class ComicPlayer : MonoBehaviour
             decisionPlayer != null)
         {
             decisionPlayer.ShowDecision(
-                currentSequence.decisionAfterComic);
+                currentSequence.decisionAfterComic
+            );
             yield break;
         }
 
@@ -162,21 +163,25 @@ public class ComicPlayer : MonoBehaviour
         }
 
         NarrativeManager.Instance.SetCurrentNode(
-            option.nextNode);
+            option.nextNode
+        );
 
         string nextScene =
             NarrativeManager.Instance.GetSceneForNode(
-                option.nextNode);
+                option.nextNode
+            );
 
         if (string.IsNullOrEmpty(nextScene))
         {
             Debug.LogError(
-                $"No se encontró una escena para el nodo '{option.nextNode}'.");
+                $"No se encontró una escena para el nodo '{option.nextNode}'."
+            );
             yield break;
         }
 
         SceneTransitionManager.Instance.LoadScene(
-            nextScene);
+            nextScene
+        );
     }
 
     private void RetryDecision()
@@ -185,7 +190,8 @@ public class ComicPlayer : MonoBehaviour
         NarrativeState.SkipDialogue = true;
 
         SceneTransitionManager.Instance.LoadScene(
-            NarrativeState.ReturnScene);
+            NarrativeState.ReturnScene
+        );
     }
 
     private void ReturnToMenu()
