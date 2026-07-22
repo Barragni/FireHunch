@@ -1,29 +1,16 @@
 using System.Collections;
-using TMPro;
 using UnityEngine;
 
 public class ComicPlayer : MonoBehaviour
 {
-    [Header("Modo Intro")]
-    [SerializeField] private bool isIntroSequence;
-
-    [Header("Secuencia Intro")]
-    [SerializeField] private ComicSequence introSequence;
-
     [Header("Transición de páginas")]
     [SerializeField] private ComicPageTransition pageTransition;
-
-    [Header("UI")]
-    [SerializeField] private TMP_Text panelText;
 
     [Header("Panel de muerte")]
     [SerializeField] private DeathPanelUI deathPanelUI;
 
     [Header("Panel de decisión")]
     [SerializeField] private DecisionPlayer decisionPlayer;
-
-    [Header("Escena después de la intro")]
-    [SerializeField] private string introNextScene;
 
     private ComicSequence currentSequence;
     private int currentPanel;
@@ -47,9 +34,13 @@ public class ComicPlayer : MonoBehaviour
             decisionPlayer.gameObject.SetActive(true);
         }
 
-        currentSequence = isIntroSequence
-            ? introSequence
-            : DecisionState.SelectedOption.comicSequence;
+        currentSequence = ComicState.CurrentSequence;
+
+        if (currentSequence == null)
+        {
+            Debug.LogError("ComicPlayer: ComicState.CurrentSequence es NULL.");
+            return;
+        }
 
         StartSequence(currentSequence);
     }
@@ -59,8 +50,7 @@ public class ComicPlayer : MonoBehaviour
         if (changingPage)
             return;
 
-        if (decisionPlayer != null &&
-            decisionPlayer.IsDecisionOpen)
+        if (decisionPlayer != null && decisionPlayer.IsDecisionOpen)
             return;
 
         if (Input.GetMouseButtonDown(0))
@@ -106,24 +96,27 @@ public class ComicPlayer : MonoBehaviour
 
     private IEnumerator HandleEnd()
     {
-        if (isIntroSequence)
+        // INTRO
+        if (ComicState.IsIntro)
         {
+            ComicState.IsIntro = false;
+            ComicState.CurrentSequence = null;
+
             SceneTransitionManager.Instance.LoadScene(
-                introNextScene
+                ComicState.IntroNextScene
             );
+
             yield break;
         }
 
-        if (currentSequence.decisionAfterComic != null &&
-            decisionPlayer != null)
+        // DECISIÓN DESPUÉS DEL CÓMIC
+        if (currentSequence.decisionAfterComic != null)
         {
-            decisionPlayer.ShowDecision(
-                currentSequence.decisionAfterComic
-            );
+            decisionPlayer.ShowDecision(currentSequence.decisionAfterComic);
             yield break;
         }
 
-        // Reproducir comic final con fundido.
+        // CÓMIC FINAL
         if (currentSequence.endingComic != null)
         {
             changingPage = true;
@@ -133,6 +126,7 @@ public class ComicPlayer : MonoBehaviour
             yield return StartCoroutine(
                 SceneTransitionManager.Instance.PlayFadeOnly(() =>
                 {
+                    ComicState.CurrentSequence = nextComic;
                     StartSequence(nextComic);
                 })
             );
@@ -141,53 +135,52 @@ public class ComicPlayer : MonoBehaviour
             yield break;
         }
 
-        // Terminar el juego.
+        // RESULTADOS
         if (currentSequence.endsWithResults)
         {
             SceneTransitionManager.Instance.LoadScene("Results");
             yield break;
         }
 
-        DecisionOption option =
-            DecisionState.SelectedOption;
-
-        if (option.outcomeType ==
-            DecisionOutcomeType.Death)
+        // A partir de aquí ya debe existir una decisión.
+        if (DecisionState.SelectedOption == null)
         {
-            deathPanelUI.Panel.SetActive(true);
-
-            deathPanelUI.FeedbackText.text =
-                option.deathFeedback;
-
+            Debug.LogError("ComicPlayer: No existe DecisionState.SelectedOption.");
             yield break;
         }
 
-        NarrativeManager.Instance.SetCurrentNode(
-            option.nextNode
-        );
+        DecisionOption option = DecisionState.SelectedOption;
+
+        if (option.outcomeType == DecisionOutcomeType.Death)
+        {
+            deathPanelUI.Panel.SetActive(true);
+            deathPanelUI.FeedbackText.text = option.deathFeedback;
+            yield break;
+        }
+
+        NarrativeManager.Instance.SetCurrentNode(option.nextNode);
 
         string nextScene =
-            NarrativeManager.Instance.GetSceneForNode(
-                option.nextNode
-            );
+            NarrativeManager.Instance.GetSceneForNode(option.nextNode);
 
         if (string.IsNullOrEmpty(nextScene))
         {
-            Debug.LogError(
-                $"No se encontró una escena para el nodo '{option.nextNode}'."
-            );
+            Debug.LogError($"No se encontró una escena para el nodo '{option.nextNode}'.");
             yield break;
         }
 
-        SceneTransitionManager.Instance.LoadScene(
-            nextScene
-        );
+        ComicState.CurrentSequence = null;
+
+        SceneTransitionManager.Instance.LoadScene(nextScene);
     }
 
     private void RetryDecision()
     {
         NarrativeState.ReturningFromDeath = true;
         NarrativeState.SkipDialogue = true;
+
+        ComicState.CurrentSequence = DecisionState.SelectedOption.comicSequence;
+        ComicState.IsIntro = false;
 
         SceneTransitionManager.Instance.LoadScene(
             NarrativeState.ReturnScene
@@ -200,6 +193,10 @@ public class ComicPlayer : MonoBehaviour
         {
             GameState.Instance.ResetData();
         }
+
+        ComicState.CurrentSequence = null;
+        ComicState.IsIntro = false;
+        ComicState.IntroNextScene = string.Empty;
 
         SceneTransitionManager.Instance.LoadScene("Menu");
     }

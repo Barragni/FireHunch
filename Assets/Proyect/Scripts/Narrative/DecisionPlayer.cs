@@ -21,9 +21,7 @@ public class DecisionPlayer : MonoBehaviour
         decisionUI.DecisionPanel.SetActive(false);
     }
 
-    public void ShowDecision(
-        DecisionSequence decision
-    )
+    public void ShowDecision(DecisionSequence decision)
     {
         currentDecision = decision;
 
@@ -59,10 +57,7 @@ public class DecisionPlayer : MonoBehaviour
             StopCoroutine(timerRoutine);
         }
 
-        timerRoutine =
-            StartCoroutine(
-                DecisionTimer()
-            );
+        timerRoutine = StartCoroutine(DecisionTimer());
     }
 
     private IEnumerator DecisionTimer()
@@ -131,14 +126,12 @@ public class DecisionPlayer : MonoBehaviour
 
         button.onClick.RemoveAllListeners();
 
-        button.onClick.AddListener(
-            () =>
-            {
-                StartCoroutine(
-                    SelectOption(option)
-                );
-            }
-        );
+        button.onClick.AddListener(() =>
+        {
+            StartCoroutine(
+                SelectOption(option)
+            );
+        });
     }
 
     private IEnumerator SelectOption(
@@ -155,8 +148,7 @@ public class DecisionPlayer : MonoBehaviour
 
         decisionUI.DecisionPanel.SetActive(false);
 
-        DecisionState.SelectedOption =
-            option;
+        DecisionState.SelectedOption = option;
 
         NarrativeState.PendingDecision =
             currentDecision;
@@ -178,7 +170,6 @@ public class DecisionPlayer : MonoBehaviour
                 );
 
                 GameState.Instance.RegisterDecision("C");
-
                 break;
 
             case DecisionOutcomeType.Incorrect:
@@ -190,7 +181,6 @@ public class DecisionPlayer : MonoBehaviour
                 );
 
                 GameState.Instance.RegisterDecision("L");
-
                 break;
 
             case DecisionOutcomeType.Death:
@@ -198,9 +188,18 @@ public class DecisionPlayer : MonoBehaviour
                 GameState.Instance.RegisterDeath(
                     currentDecision.decisionID
                 );
-
                 break;
         }
+
+        //==================================================
+        // NUEVO FLUJO DEL CÓMIC
+        //==================================================
+
+        ComicState.CurrentSequence =
+            option.comicSequence;
+
+        ComicState.IsIntro = false;
+        ComicState.IntroNextScene = string.Empty;
 
         SceneTransitionManager.Instance.LoadScene(
             "DecisionComic"

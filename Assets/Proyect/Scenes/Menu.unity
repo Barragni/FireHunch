@@ -1614,8 +1614,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2054584597}
   - component: {fileID: 2054584596}
-  - component: {fileID: 2054584595}
-  - component: {fileID: 2054584594}
   m_Layer: 0
   m_Name: ManuManagerMVC
   m_TagString: Untagged
@@ -1623,36 +1621,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2054584594
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2054584593}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b45206512df25524ead676b3e669b295, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MainMenuView
-  playButton: {fileID: 948692990}
-  optionsButton: {fileID: 318906736}
-  quitButton: {fileID: 1740692268}
-  mainMenuPanel: {fileID: 1719365304}
-  optionsPanel: {fileID: 2103547696}
---- !u!114 &2054584595
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2054584593}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 862d18a20e9d9a643a7e2c2c16ed95aa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MainMenuModel
-  isOptionsOpen: 0
 --- !u!114 &2054584596
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1665,8 +1633,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4726e0b0985610d49bea2d0411762eaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuController
-  model: {fileID: 2054584595}
-  view: {fileID: 2054584594}
+  playButton: {fileID: 948692990}
+  optionsButton: {fileID: 318906736}
+  quitButton: {fileID: 1740692268}
+  mainMenuPanel: {fileID: 1719365304}
+  optionsPanel: {fileID: 2103547696}
+  introSequence: {fileID: 11400000, guid: 86c14f254e497a942b260cde17304ee5, type: 2}
+  firstGameplayScene: OfficeFloor
 --- !u!4 &2054584597
 Transform:
   m_ObjectHideFlags: 0
