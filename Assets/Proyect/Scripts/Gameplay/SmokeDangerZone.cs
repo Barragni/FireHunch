@@ -15,6 +15,23 @@ public class SmokeDangerZone : MonoBehaviour
     private bool activated;
     private float maxProgress;
 
+    private void Start()
+    {
+        // Si el jugador vuelve desde la muerte,
+        // reaparece justo en la decisión,
+        // por lo que el humo debe estar al máximo.
+        if (NarrativeState.ReturningFromDeath)
+        {
+            activated = true;
+            maxProgress = 1f;
+
+            if (overlay != null)
+            {
+                overlay.SetIntensity(1f);
+            }
+        }
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("Player"))
@@ -44,7 +61,11 @@ public class SmokeDangerZone : MonoBehaviour
         if (progress > maxProgress)
         {
             maxProgress = progress;
-            overlay.SetIntensity(maxProgress);
+
+            if (overlay != null)
+            {
+                overlay.SetIntensity(maxProgress);
+            }
         }
     }
 }

@@ -154,26 +154,43 @@ public class PlayerController : MonoBehaviour
     }
 
     public IEnumerator LookAtTarget(
-        Transform target
+    Transform target
     )
     {
         canMove = false;
 
         Vector3 direction =
-            target.position -
-            playerCamera.transform.position;
+            (target.position - playerCamera.transform.position).normalized;
 
-        Quaternion startRotation =
+        // Rotación horizontal (cuerpo del jugador)
+        float targetYaw =
+            Mathf.Atan2(
+                direction.x,
+                direction.z
+            ) * Mathf.Rad2Deg;
+
+        // Rotación vertical (cámara)
+        float targetPitch =
+            -Mathf.Asin(direction.y) * Mathf.Rad2Deg;
+
+        targetPitch = Mathf.Clamp(
+            targetPitch,
+            -80f,
+            80f
+        );
+
+        Quaternion startBodyRotation =
             transform.rotation;
 
-        Quaternion targetRotation =
-            Quaternion.LookRotation(
-                new Vector3(
-                    direction.x,
-                    0f,
-                    direction.z
-                )
+        Quaternion endBodyRotation =
+            Quaternion.Euler(
+                0f,
+                targetYaw,
+                0f
             );
+
+        float startPitch =
+            verticalRotation;
 
         float elapsed = 0f;
 
@@ -193,18 +210,44 @@ public class PlayerController : MonoBehaviour
                 t
             );
 
+            // Rotación horizontal
             transform.rotation =
                 Quaternion.Slerp(
-                    startRotation,
-                    targetRotation,
+                    startBodyRotation,
+                    endBodyRotation,
                     t
+                );
+
+            // Rotación vertical
+            verticalRotation =
+                Mathf.Lerp(
+                    startPitch,
+                    targetPitch,
+                    t
+                );
+
+            playerCamera.transform.localRotation =
+                Quaternion.Euler(
+                    verticalRotation,
+                    0f,
+                    0f
                 );
 
             yield return null;
         }
 
         transform.rotation =
-            targetRotation;
+            endBodyRotation;
+
+        verticalRotation =
+            targetPitch;
+
+        playerCamera.transform.localRotation =
+            Quaternion.Euler(
+                verticalRotation,
+                0f,
+                0f
+            );
     }
 
     public IEnumerator PlayDialogueZoom()
