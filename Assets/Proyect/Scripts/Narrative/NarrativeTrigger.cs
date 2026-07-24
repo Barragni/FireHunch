@@ -81,6 +81,9 @@ public class NarrativeTrigger : MonoBehaviour
         currentPlayer.SetMovementEnabled(false);
         currentPlayer.SetHeadBobEnabled(false);
 
+        // Mostrar el modelo para las escenas enfocadas.
+        currentPlayer.ShowVisual();
+
         currentFocusIndex = 0;
 
         if (focusPoints.Count > 0)
@@ -115,16 +118,12 @@ public class NarrativeTrigger : MonoBehaviour
         if (sequenceFinished)
             return;
 
-        // Si todavía quedan FocusPoints,
-        // primero se mueve la cámara.
         if (HasNextFocusPoint())
         {
             StartCoroutine(MoveNextFocus());
             return;
         }
 
-        // Ya no quedan FocusPoints.
-        // Sólo avanza el diálogo.
         bool advancedDialogue =
             dialoguePlayer.AdvanceDialogue();
 
@@ -148,20 +147,9 @@ public class NarrativeTrigger : MonoBehaviour
 
         yield return MoveToFocus(currentFocusIndex);
 
-        // Recién cuando terminó el movimiento
-        // se intenta avanzar el diálogo.
-        bool advancedDialogue =
-            dialoguePlayer.AdvanceDialogue();
+        dialoguePlayer.AdvanceDialogue();
 
-        // Si el diálogo ya había terminado,
-        // simplemente seguimos permitiendo mover
-        // la cámara hasta el último FocusPoint.
         waitingCamera = false;
-
-        // Caso especial:
-        // si éste era el último FocusPoint
-        // y tampoco había más diálogo,
-        // el siguiente click terminará la secuencia.
     }
 
     private IEnumerator MoveToFocus(int index)
@@ -220,6 +208,9 @@ public class NarrativeTrigger : MonoBehaviour
 
             yield break;
         }
+
+        // Volvemos a primera persona.
+        currentPlayer.HideVisual();
 
         currentPlayer.SetMovementEnabled(true);
         currentPlayer.SetHeadBobEnabled(true);

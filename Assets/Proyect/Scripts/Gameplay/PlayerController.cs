@@ -13,6 +13,9 @@ public class PlayerController : MonoBehaviour
     [Header("Estado inicial")]
     [SerializeField] private bool startWithMovementEnabled = false;
 
+    [Header("Visual del jugador")]
+    [SerializeField] private GameObject visual;
+
     [Header("Cámara de decisión")]
     [SerializeField] private Transform decisionCameraStart;
 
@@ -55,6 +58,8 @@ public class PlayerController : MonoBehaviour
             playerCamera.fieldOfView;
 
         SetMovementEnabled(startWithMovementEnabled);
+
+        HideVisual();
     }
 
     private void Update()
@@ -148,13 +153,29 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void ShowVisual()
+    {
+        if (visual != null)
+        {
+            visual.SetActive(true);
+        }
+    }
+
+    public void HideVisual()
+    {
+        if (visual != null)
+        {
+            visual.SetActive(false);
+        }
+    }
+
     public Camera GetPlayerCamera()
     {
         return playerCamera;
     }
 
     public IEnumerator LookAtTarget(
-    Transform target
+        Transform target
     )
     {
         canMove = false;
@@ -162,14 +183,12 @@ public class PlayerController : MonoBehaviour
         Vector3 direction =
             (target.position - playerCamera.transform.position).normalized;
 
-        // Rotación horizontal (cuerpo del jugador)
         float targetYaw =
             Mathf.Atan2(
                 direction.x,
                 direction.z
             ) * Mathf.Rad2Deg;
 
-        // Rotación vertical (cámara)
         float targetPitch =
             -Mathf.Asin(direction.y) * Mathf.Rad2Deg;
 
@@ -210,7 +229,6 @@ public class PlayerController : MonoBehaviour
                 t
             );
 
-            // Rotación horizontal
             transform.rotation =
                 Quaternion.Slerp(
                     startBodyRotation,
@@ -218,7 +236,6 @@ public class PlayerController : MonoBehaviour
                     t
                 );
 
-            // Rotación vertical
             verticalRotation =
                 Mathf.Lerp(
                     startPitch,
@@ -294,6 +311,8 @@ public class PlayerController : MonoBehaviour
 
     public IEnumerator PlayDecisionCamera()
     {
+        ShowVisual();
+
         playerCamera.fieldOfView =
             defaultFOV;
 

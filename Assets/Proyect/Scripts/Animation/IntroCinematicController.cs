@@ -24,7 +24,10 @@ public class IntroCinematicController : MonoBehaviour
 
     private IEnumerator Start()
     {
-        // Desactivar Head Bob durante la cinemática
+        // Mostrar el modelo durante la cinemática inicial.
+        player.ShowVisual();
+
+        // Desactivar Head Bob durante la cinemática.
         player.SetHeadBobEnabled(false);
 
         if (NarrativeState.ReturningFromDeath)
@@ -39,6 +42,9 @@ public class IntroCinematicController : MonoBehaviour
 
             skipCamera.transform.rotation =
                 introCameraEnd.rotation;
+
+            // Volver a ocultar el modelo al regresar al gameplay.
+            player.HideVisual();
 
             player.SetMovementEnabled(true);
             player.SetHeadBobEnabled(true);
@@ -62,6 +68,9 @@ public class IntroCinematicController : MonoBehaviour
         yield return StartCoroutine(
             PlayPOVTransition(playerCamera)
         );
+
+        // La cámara vuelve a primera persona.
+        player.HideVisual();
 
         player.SetMovementEnabled(true);
         player.SetHeadBobEnabled(true);
