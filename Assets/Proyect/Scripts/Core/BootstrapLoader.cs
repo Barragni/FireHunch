@@ -5,6 +5,6 @@ public class BootstrapLoader : MonoBehaviour
 {
     private void Start()
     {
-        SceneManager.LoadScene("Menu");
+        SceneManager.LoadScene("ParticipantInfo");
     }
 }

@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.am1goo.firebase.webgl": "https://github.com/am1goo/FirebaseWebGL-Unity.git",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.ai.navigation": "2.0.10",
     "com.unity.collab-proxy": "2.11.3",

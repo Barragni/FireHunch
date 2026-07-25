@@ -27,6 +27,27 @@ public class ResultsManager : MonoBehaviour
 
         endingText.text = evaluation.title;
         feedbackText.text = evaluation.feedback;
+
+        UploadResults(score, evaluation.title);
+    }
+
+    private void UploadResults(float score, string ending)
+    {
+        if (ResultsUploader.Instance == null)
+        {
+            Debug.LogError("ResultsUploader no existe en la escena.");
+            return;
+        }
+
+        AttemptData attempt = AttemptMapper.CreateAttempt(score, ending);
+
+        if (attempt == null)
+        {
+            Debug.LogError("No fue posible crear AttemptData.");
+            return;
+        }
+
+        ResultsUploader.Instance.Upload(attempt);
     }
 
     private float CalculateScore()
