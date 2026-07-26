@@ -20,6 +20,10 @@ public static class AttemptMapper
 
         AttemptSession.Instance.FinishSession();
 
+        int correctChoices = 0;
+        int incorrectChoices = 0;
+        int retryChoices = 0;
+
         AttemptData attempt = new AttemptData
         {
             // ==========================
@@ -51,12 +55,6 @@ public static class AttemptMapper
             platform =
                 Application.platform.ToString(),
 
-            unityVersion =
-                Application.unityVersion,
-
-            gameVersion =
-                Application.version,
-
             // ==========================
             // Resultado final
             // ==========================
@@ -66,20 +64,27 @@ public static class AttemptMapper
             ending = ending,
 
             decisionPath =
-                GameState.Instance.decisionPath,
-
-            correctChoices =
-                GameState.Instance.CorrectChoices,
-
-            incorrectChoices =
-                GameState.Instance.IncorrectChoices,
-
-            deathChoices =
-                GameState.Instance.DeathChoices
+                GameState.Instance.decisionPath
         };
 
         foreach (DecisionRecord record in GameState.Instance.decisionRecords)
         {
+            switch (record.finalOutcome)
+            {
+                case DecisionOutcomeType.Correct:
+                    correctChoices++;
+                    break;
+
+                case DecisionOutcomeType.Incorrect:
+                    incorrectChoices++;
+                    break;
+            }
+
+            if (record.diedAtLeastOnce)
+            {
+                retryChoices++;
+            }
+
             AttemptDecisionData decision =
                 new AttemptDecisionData
                 {
@@ -96,13 +101,17 @@ public static class AttemptMapper
                     diedAtLeastOnce =
                         record.diedAtLeastOnce,
 
-                    // TODO: Este valor se llenará cuando
-                    // implementemos el tiempo por decisión.
+                    // TODO: Se llenará cuando implementemos
+                    // el tiempo por decisión.
                     timeSeconds = 0f
                 };
 
             attempt.decisions.Add(decision);
         }
+
+        attempt.correctChoices = correctChoices;
+        attempt.incorrectChoices = incorrectChoices;
+        attempt.deathChoices = retryChoices;
 
         return attempt;
     }

@@ -28,10 +28,6 @@ public class AttemptData
 
     public string platform;
 
-    public string unityVersion;
-
-    public string gameVersion;
-
     // ==========================
     // Resultado final
     // ==========================
@@ -46,6 +42,8 @@ public class AttemptData
 
     public int incorrectChoices;
 
+    // Cantidad de decisiones en las que
+    // el jugador necesitó al menos un reintento.
     public int deathChoices;
 
     // ==========================
@@ -68,5 +66,7 @@ public class AttemptDecisionData
 
     public bool diedAtLeastOnce;
 
+    // TODO: Se llenará cuando implementemos
+    // el tiempo por decisión.
     public float timeSeconds;
 }
