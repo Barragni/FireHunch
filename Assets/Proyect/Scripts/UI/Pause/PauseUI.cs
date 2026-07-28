@@ -7,6 +7,9 @@ public class PauseUI : MonoBehaviour
     [Header("Panel de pausa")]
     [SerializeField] private GameObject pausePanel;
 
+    [Header("Panel de volumen")]
+    [SerializeField] private GameObject volumePanel;
+
     [Header("Botones")]
     [SerializeField] private Button resumeButton;
     [SerializeField] private Button tutorialButton;
@@ -25,25 +28,16 @@ public class PauseUI : MonoBehaviour
     {
         pausePanel.SetActive(false);
 
-        resumeButton.onClick.AddListener(
-            ResumeGame
-        );
+        if (volumePanel != null)
+        {
+            volumePanel.SetActive(false);
+        }
 
-        tutorialButton.onClick.AddListener(
-            OpenTutorial
-        );
-
-        settingsButton.onClick.AddListener(
-            OpenSettings
-        );
-
-        mainMenuButton.onClick.AddListener(
-            ReturnToMenu
-        );
-
-        quitButton.onClick.AddListener(
-            QuitGame
-        );
+        resumeButton.onClick.AddListener(ResumeGame);
+        tutorialButton.onClick.AddListener(OpenTutorial);
+        settingsButton.onClick.AddListener(OpenSettings);
+        mainMenuButton.onClick.AddListener(ReturnToMenu);
+        quitButton.onClick.AddListener(QuitGame);
     }
 
     private void Update()
@@ -67,9 +61,7 @@ public class PauseUI : MonoBehaviour
 
         Time.timeScale = 0f;
 
-        Cursor.lockState =
-            CursorLockMode.None;
-
+        Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
         SetPanelInteraction(false);
@@ -83,64 +75,61 @@ public class PauseUI : MonoBehaviour
 
         Time.timeScale = 1f;
 
-        Cursor.lockState =
-            CursorLockMode.Locked;
-
+        Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
         SetPanelInteraction(true);
 
         pausePanel.SetActive(false);
+
+        if (volumePanel != null)
+        {
+            volumePanel.SetActive(false);
+        }
     }
 
-    private void SetPanelInteraction(
-        bool enabled
-    )
+    private void SetPanelInteraction(bool enabled)
     {
         if (decisionPanel != null)
         {
-            decisionPanel.interactable =
-                enabled;
-
-            decisionPanel.blocksRaycasts =
-                enabled;
+            decisionPanel.interactable = enabled;
+            decisionPanel.blocksRaycasts = enabled;
         }
 
         if (dialoguePanel != null)
         {
-            dialoguePanel.interactable =
-                enabled;
-
-            dialoguePanel.blocksRaycasts =
-                enabled;
+            dialoguePanel.interactable = enabled;
+            dialoguePanel.blocksRaycasts = enabled;
         }
 
         if (deathPanel != null)
         {
-            deathPanel.interactable =
-                enabled;
-
-            deathPanel.blocksRaycasts =
-                enabled;
+            deathPanel.interactable = enabled;
+            deathPanel.blocksRaycasts = enabled;
         }
     }
 
     private void OpenTutorial()
     {
-        Debug.Log(
-            "Abrir tutorial"
-        );
+        AudioManager.Instance.PlayButtonClick();
+
+        Debug.Log("Abrir tutorial");
     }
 
     private void OpenSettings()
     {
-        Debug.Log(
-            "Abrir ajustes"
-        );
+        AudioManager.Instance.PlayButtonClick();
+
+        if (volumePanel != null)
+        {
+            volumePanel.SetActive(true);
+        }
     }
 
     private void ReturnToMenu()
     {
+        AudioManager.Instance.PlayButtonClick();
+
         Time.timeScale = 1f;
 
         if (GameState.Instance != null)
@@ -148,13 +137,13 @@ public class PauseUI : MonoBehaviour
             GameState.Instance.ResetData();
         }
 
-        SceneTransitionManager.Instance.LoadScene(
-            "Menu"
-        );
+        SceneTransitionManager.Instance.LoadScene("Menu");
     }
 
     private void QuitGame()
     {
+        AudioManager.Instance.PlayButtonClick();
+
         Application.Quit();
     }
 }

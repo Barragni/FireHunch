@@ -10,26 +10,34 @@ public class MainMenuController : MonoBehaviour
 
     [Header("Paneles")]
     [SerializeField] private GameObject mainMenuPanel;
-    [SerializeField] private GameObject optionsPanel;
+    [SerializeField] private GameObject volumePanel;
 
     [Header("Intro")]
     [SerializeField] private ComicSequence introSequence;
 
     [SerializeField] private string firstGameplayScene = "OfficeFloor";
 
-    private bool optionsOpen;
-
     private void Start()
     {
         playButton.onClick.AddListener(PlayGame);
-        optionsButton.onClick.AddListener(ToggleOptions);
+        optionsButton.onClick.AddListener(OpenVolumePanel);
         quitButton.onClick.AddListener(QuitGame);
 
-        RefreshPanels();
+        if (mainMenuPanel != null)
+        {
+            mainMenuPanel.SetActive(true);
+        }
+
+        if (volumePanel != null)
+        {
+            volumePanel.SetActive(false);
+        }
     }
 
     private void PlayGame()
     {
+        AudioManager.Instance.PlayButtonClick();
+
         if (GameState.Instance != null)
         {
             GameState.Instance.ResetData();
@@ -42,27 +50,20 @@ public class MainMenuController : MonoBehaviour
         SceneTransitionManager.Instance.LoadScene("DecisionComic");
     }
 
-    private void ToggleOptions()
+    private void OpenVolumePanel()
     {
-        optionsOpen = !optionsOpen;
-        RefreshPanels();
-    }
+        AudioManager.Instance.PlayButtonClick();
 
-    private void RefreshPanels()
-    {
-        if (mainMenuPanel != null)
+        if (volumePanel != null)
         {
-            mainMenuPanel.SetActive(!optionsOpen);
-        }
-
-        if (optionsPanel != null)
-        {
-            optionsPanel.SetActive(optionsOpen);
+            volumePanel.SetActive(true);
         }
     }
 
     private void QuitGame()
     {
+        AudioManager.Instance.PlayButtonClick();
+
         Debug.Log("Saliendo del juego...");
         Application.Quit();
     }
