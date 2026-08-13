@@ -18,4 +18,11 @@ public class DecisionOption
     [Header("Retroalimentación de muerte")]
     [TextArea(3, 8)]
     public string deathFeedback;
+
+    [Header("Imagen para revisión")]
+    public Sprite reviewImage;
+
+    [Header("Retroalimentación para revisión")]
+    [TextArea(3, 8)]
+    public string reviewFeedback;
 }

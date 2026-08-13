@@ -22,15 +22,29 @@ public class NarrativeManager : MonoBehaviour
 
     public NarrativeNode GetNode(string nodeID)
     {
+        if (database == null)
+        {
+            Debug.LogError(
+                "NarrativeManager: No existe un NarrativeDatabase asignado."
+            );
+
+            return null;
+        }
+
         foreach (NarrativeNode node in database.nodes)
         {
+            if (node == null)
+                continue;
+
             if (node.nodeID == nodeID)
             {
                 return node;
             }
         }
 
-        Debug.LogError($"No existe el nodo '{nodeID}'.");
+        Debug.LogError(
+            $"No existe el nodo '{nodeID}'."
+        );
 
         return null;
     }
@@ -41,6 +55,15 @@ public class NarrativeManager : MonoBehaviour
 
         if (node == null)
         {
+            return null;
+        }
+
+        if (GameState.Instance == null)
+        {
+            Debug.LogError(
+                "NarrativeManager: GameState.Instance es null."
+            );
+
             return null;
         }
 
@@ -74,6 +97,78 @@ public class NarrativeManager : MonoBehaviour
 
     public void SetCurrentNode(string nodeID)
     {
+        if (GameState.Instance == null)
+        {
+            Debug.LogError(
+                "NarrativeManager: GameState.Instance es null."
+            );
+
+            return;
+        }
+
         GameState.Instance.currentNode = nodeID;
+    }
+
+    // ============================================================
+    // REVISIÓN DE DECISIONES
+    // ============================================================
+
+    /// <summary>
+    /// Busca una DecisionSequence dentro de todas las reglas
+    /// del NarrativeDatabase utilizando su decisionID.
+    /// </summary>
+    public DecisionSequence GetDecisionSequenceByID(
+        string decisionID
+    )
+    {
+        if (string.IsNullOrWhiteSpace(decisionID))
+        {
+            Debug.LogWarning(
+                "GetDecisionSequenceByID recibió un decisionID vacío."
+            );
+
+            return null;
+        }
+
+        if (database == null)
+        {
+            Debug.LogError(
+                "NarrativeManager: No existe un NarrativeDatabase asignado."
+            );
+
+            return null;
+        }
+
+        foreach (NarrativeNode node in database.nodes)
+        {
+            if (node == null)
+                continue;
+
+            if (node.rules == null)
+                continue;
+
+            foreach (NarrativeRule rule in node.rules)
+            {
+                if (rule == null)
+                    continue;
+
+                if (rule.decision == null)
+                    continue;
+
+                if (
+                    rule.decision.decisionID ==
+                    decisionID
+                )
+                {
+                    return rule.decision;
+                }
+            }
+        }
+
+        Debug.LogWarning(
+            $"No se encontró una DecisionSequence con ID '{decisionID}'."
+        );
+
+        return null;
     }
 }
