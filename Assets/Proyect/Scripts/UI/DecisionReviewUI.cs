@@ -30,8 +30,13 @@ public class DecisionReviewUI : MonoBehaviour
 
         if (closeButton != null)
         {
-            closeButton.onClick.RemoveListener(CloseReview);
-            closeButton.onClick.AddListener(CloseReview);
+            closeButton.onClick.RemoveListener(
+                CloseReview
+            );
+
+            closeButton.onClick.AddListener(
+                CloseReview
+            );
         }
     }
 
@@ -39,15 +44,25 @@ public class DecisionReviewUI : MonoBehaviour
     {
         if (closeButton != null)
         {
-            closeButton.onClick.RemoveListener(CloseReview);
+            closeButton.onClick.RemoveListener(
+                CloseReview
+            );
         }
     }
 
     public void OpenReview()
     {
-        Debug.Log("========================================");
-        Debug.Log("DecisionReviewUI: ABRIENDO REVISIÓN");
-        Debug.Log("========================================");
+        Debug.Log(
+            "========================================"
+        );
+
+        Debug.Log(
+            "DecisionReviewUI: ABRIENDO REVISIÓN"
+        );
+
+        Debug.Log(
+            "========================================"
+        );
 
         if (reviewPanel == null)
         {
@@ -73,7 +88,9 @@ public class DecisionReviewUI : MonoBehaviour
 
     private void BuildReview()
     {
-        Debug.Log("DecisionReviewUI: Construyendo tarjetas...");
+        Debug.Log(
+            "DecisionReviewUI: Construyendo tarjetas..."
+        );
 
         ClearCards();
 
@@ -173,13 +190,21 @@ public class DecisionReviewUI : MonoBehaviour
             }
 
             Debug.Log(
-                $"Procesando decisión: ID='{record.decisionID}' | Orden={record.decisionOrder} | Opción={record.selectedOptionIndex} | Resultado={record.finalOutcome}"
+                $"Procesando decisión: ID='{record.decisionID}' | " +
+                $"Orden={record.decisionOrder} | " +
+                $"Opción={record.selectedOptionIndex} | " +
+                $"Resultado={record.finalOutcome}"
             );
 
+            // ----------------------------------------------------
+            // Buscar DecisionSequence
+            // ----------------------------------------------------
+
             DecisionSequence decision =
-                NarrativeManager.Instance.GetDecisionSequenceByID(
-                    record.decisionID
-                );
+                NarrativeManager.Instance
+                    .GetDecisionSequenceByID(
+                        record.decisionID
+                    );
 
             if (decision == null)
             {
@@ -190,9 +215,36 @@ public class DecisionReviewUI : MonoBehaviour
                 continue;
             }
 
+            // ----------------------------------------------------
+            // Buscar NarrativeNode
+            // ----------------------------------------------------
+
+            NarrativeNode narrativeNode =
+                NarrativeManager.Instance
+                    .GetNodeByDecisionID(
+                        record.decisionID
+                    );
+
+            if (narrativeNode == null)
+            {
+                Debug.LogError(
+                    $"DecisionReviewUI: NO SE ENCONTRÓ NarrativeNode para la decisión '{record.decisionID}'."
+                );
+
+                continue;
+            }
+
             Debug.Log(
                 $"DecisionReviewUI: DecisionSequence encontrada: '{decision.name}'"
             );
+
+            Debug.Log(
+                $"DecisionReviewUI: NarrativeNode encontrado: '{narrativeNode.nodeID}'"
+            );
+
+            // ----------------------------------------------------
+            // Crear tarjeta
+            // ----------------------------------------------------
 
             DecisionReviewCard card =
                 Instantiate(
@@ -213,9 +265,14 @@ public class DecisionReviewUI : MonoBehaviour
                 $"DecisionReviewUI: Tarjeta creada correctamente para '{record.decisionID}'."
             );
 
+            // ----------------------------------------------------
+            // Configurar tarjeta
+            // ----------------------------------------------------
+
             card.Setup(
                 record,
-                decision
+                decision,
+                narrativeNode
             );
 
             cards.Add(card);
@@ -227,9 +284,15 @@ public class DecisionReviewUI : MonoBehaviour
 
         Canvas.ForceUpdateCanvases();
 
-        LayoutRebuilder.ForceRebuildLayoutImmediate(
-            content as RectTransform
-        );
+        RectTransform contentRect =
+            content as RectTransform;
+
+        if (contentRect != null)
+        {
+            LayoutRebuilder.ForceRebuildLayoutImmediate(
+                contentRect
+            );
+        }
 
         ScrollRect scrollRect =
             reviewPanel.GetComponentInChildren<ScrollRect>();
@@ -243,7 +306,9 @@ public class DecisionReviewUI : MonoBehaviour
             $"DecisionReviewUI: FIN. Tarjetas creadas: {cards.Count}"
         );
 
-        Debug.Log("========================================");
+        Debug.Log(
+            "========================================"
+        );
     }
 
     private void ClearCards()
@@ -252,7 +317,9 @@ public class DecisionReviewUI : MonoBehaviour
         {
             if (card != null)
             {
-                Destroy(card.gameObject);
+                Destroy(
+                    card.gameObject
+                );
             }
         }
 
@@ -261,7 +328,11 @@ public class DecisionReviewUI : MonoBehaviour
         if (content == null)
             return;
 
-        for (int i = content.childCount - 1; i >= 0; i--)
+        for (
+            int i = content.childCount - 1;
+            i >= 0;
+            i--
+        )
         {
             Destroy(
                 content.GetChild(i).gameObject

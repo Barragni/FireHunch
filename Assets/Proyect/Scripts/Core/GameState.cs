@@ -5,101 +5,33 @@ public class GameState : MonoBehaviour
 {
     public static GameState Instance;
 
-    // ==========================
-    // Estadísticas de la partida
-    // ==========================
+    [Header("Datos generales")]
+    public int score = 0;
+    public bool hasValentina = false;
+    public bool hasBeto = false;
 
-    [Header("Registro de decisiones")]
-    public List<DecisionRecord> decisionRecords = new();
+    [Header("Progreso narrativo")]
+    public string currentNode = "";
 
-    // Evita contar varias veces la muerte
-    // de una misma decisión.
-    private readonly HashSet<string> countedDeaths = new();
-
-    // Lleva el orden en que el jugador
-    // resolvió las decisiones.
-    private int nextDecisionOrder = 1;
-
-    // ==========================
-    // Narrativa
-    // ==========================
-
-    [Header("Compañeros actuales")]
-    public bool hasValentina;
-    public bool hasBeto;
-
-    [Header("Nodo narrativo actual")]
-    public string currentNode;
-
-    [Header("Ruta narrativa (C, L)")]
+    [Header("Ruta de decisiones")]
     public string decisionPath = "";
 
-    [Header("Historial completo (compatibilidad)")]
+    [Header("Historial de decisiones")]
     public List<string> decisionHistory = new();
 
-    [Header("Banderas narrativas")]
-    public List<string> narrativeFlags = new();
+    [Header("Registros de decisiones")]
+    public List<DecisionRecord> decisionRecords = new();
 
-    public int CorrectChoices
-    {
-        get
-        {
-            int count = 0;
-
-            foreach (DecisionRecord record in decisionRecords)
-            {
-                if (record.finalOutcome == DecisionOutcomeType.Correct)
-                {
-                    count++;
-                }
-            }
-
-            return count;
-        }
-    }
-
-    public int IncorrectChoices
-    {
-        get
-        {
-            int count = 0;
-
-            foreach (DecisionRecord record in decisionRecords)
-            {
-                if (record.finalOutcome == DecisionOutcomeType.Incorrect)
-                {
-                    count++;
-                }
-            }
-
-            return count;
-        }
-    }
-
-    public int DeathChoices
-    {
-        get
-        {
-            int count = 0;
-
-            foreach (DecisionRecord record in decisionRecords)
-            {
-                if (record.diedAtLeastOnce)
-                {
-                    count++;
-                }
-            }
-
-            return count;
-        }
-    }
+    [Header("Contadores")]
+    public int CorrectChoices { get; private set; }
+    public int IncorrectChoices { get; private set; }
+    public int DeathChoices { get; private set; }
 
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -108,131 +40,365 @@ public class GameState : MonoBehaviour
         }
     }
 
-    // ====================================================
-    // REGISTRO DE DECISIONES
-    // ====================================================
+    // ============================================================
+    // PUNTAJE
+    // ============================================================
 
-    public DecisionRecord GetDecisionRecord(string decisionID)
+    public void AddScore(int amount)
     {
-        foreach (DecisionRecord record in decisionRecords)
-        {
-            if (record.decisionID == decisionID)
-            {
-                return record;
-            }
-        }
-
-        return null;
+        score += amount;
     }
 
-    public DecisionRecord CreateDecisionRecord(string decisionID)
+    // ============================================================
+    // REGISTRO DE DECISIÓN
+    // ============================================================
+
+    public void RegisterDecision(
+        string decisionID,
+        int optionIndex
+    )
     {
-        DecisionRecord record = GetDecisionRecord(decisionID);
-
-        if (record != null)
-        {
-            return record;
-        }
-
-        record = new DecisionRecord
-        {
-            decisionID = decisionID,
-            decisionOrder = nextDecisionOrder++
-        };
-
-        decisionRecords.Add(record);
-
-        return record;
+        RegisterDecision(
+            decisionID,
+            "",
+            optionIndex,
+            DecisionOutcomeType.Incorrect,
+            false
+        );
     }
 
-    public void RegisterDeath(string decisionID)
+    // ============================================================
+    // REGISTRO DE RUTA
+    // ============================================================
+
+    /// <summary>
+    /// Registra únicamente la letra correspondiente
+    /// a la ruta narrativa:
+    ///
+    /// C = Correcta
+    /// L = Incorrecta
+    /// M = Muerte
+    /// </summary>
+    public void RegisterDecision(string result)
     {
-        if (string.IsNullOrWhiteSpace(decisionID))
+        if (string.IsNullOrEmpty(result))
         {
-            Debug.LogWarning("DecisionID vacío. No se registró la muerte.");
             return;
         }
 
-        if (countedDeaths.Add(decisionID))
+        switch (result)
         {
-            DecisionRecord record = CreateDecisionRecord(decisionID);
-            record.diedAtLeastOnce = true;
+            case "C":
+
+                decisionPath += "C";
+                CorrectChoices++;
+
+                break;
+
+            case "L":
+
+                decisionPath += "L";
+                IncorrectChoices++;
+
+                break;
+
+            case "M":
+
+                decisionPath += "M";
+                DeathChoices++;
+
+                break;
+
+            default:
+
+                Debug.LogWarning(
+                    $"GameState: Resultado de decisión desconocido '{result}'."
+                );
+
+                break;
         }
     }
+
+    // ============================================================
+    // REGISTRO DETALLADO
+    // ============================================================
+
+    public void RegisterDecision(
+        string decisionID,
+        string nodeID,
+        int optionIndex,
+        DecisionOutcomeType outcome,
+        bool diedAtLeastOnce
+    )
+    {
+        // ========================================================
+        // HISTORIAL SIMPLE
+        // ========================================================
+
+        decisionHistory.Add(decisionID);
+
+        // ========================================================
+        // RUTA Y CONTADORES
+        // ========================================================
+
+        switch (outcome)
+        {
+            case DecisionOutcomeType.Correct:
+
+                decisionPath += "C";
+                CorrectChoices++;
+
+                break;
+
+            case DecisionOutcomeType.Incorrect:
+
+                decisionPath += "L";
+                IncorrectChoices++;
+
+                break;
+
+            case DecisionOutcomeType.Death:
+
+                decisionPath += "M";
+                DeathChoices++;
+
+                break;
+        }
+
+        // ========================================================
+        // BUSCAR REGISTRO EXISTENTE
+        // ========================================================
+
+        DecisionRecord existingRecord = null;
+
+        foreach (DecisionRecord record in decisionRecords)
+        {
+            if (
+                record != null &&
+                record.decisionID == decisionID
+            )
+            {
+                existingRecord = record;
+                break;
+            }
+        }
+
+        // ========================================================
+        // ACTUALIZAR REGISTRO EXISTENTE
+        // ========================================================
+
+        if (existingRecord != null)
+        {
+            existingRecord.nodeID = nodeID;
+
+            existingRecord.selectedOptionIndex =
+                optionIndex;
+
+            existingRecord.finalOutcome =
+                outcome;
+
+            if (diedAtLeastOnce)
+            {
+                existingRecord.diedAtLeastOnce = true;
+            }
+
+            return;
+        }
+
+        // ========================================================
+        // CREAR NUEVO REGISTRO
+        // ========================================================
+
+        DecisionRecord newRecord =
+            new DecisionRecord
+            {
+                decisionID = decisionID,
+                nodeID = nodeID,
+                decisionOrder =
+                    decisionRecords.Count + 1,
+                selectedOptionIndex =
+                    optionIndex,
+                finalOutcome =
+                    outcome,
+                diedAtLeastOnce =
+                    diedAtLeastOnce
+            };
+
+        decisionRecords.Add(newRecord);
+    }
+
+    // ============================================================
+    // REGISTRO DE DECISIÓN FINAL
+    // ============================================================
 
     public void RegisterFinalDecision(
         string decisionID,
+        string nodeID,
+        int optionIndex,
         DecisionOutcomeType outcome,
-        int selectedOptionIndex)
+        bool diedAtLeastOnce
+    )
     {
-        DecisionRecord record = CreateDecisionRecord(decisionID);
+        // ========================================================
+        // BUSCAR REGISTRO EXISTENTE
+        // ========================================================
 
-        record.finalOutcome = outcome;
-        record.selectedOptionIndex = selectedOptionIndex;
+        DecisionRecord existingRecord = null;
+
+        foreach (DecisionRecord record in decisionRecords)
+        {
+            if (
+                record != null &&
+                record.decisionID == decisionID
+            )
+            {
+                existingRecord = record;
+                break;
+            }
+        }
+
+        // ========================================================
+        // ACTUALIZAR REGISTRO EXISTENTE
+        // ========================================================
+
+        if (existingRecord != null)
+        {
+            existingRecord.nodeID = nodeID;
+
+            existingRecord.selectedOptionIndex =
+                optionIndex;
+
+            existingRecord.finalOutcome =
+                outcome;
+
+            if (diedAtLeastOnce)
+            {
+                existingRecord.diedAtLeastOnce = true;
+            }
+
+            return;
+        }
+
+        // ========================================================
+        // CREAR NUEVO REGISTRO
+        // ========================================================
+
+        DecisionRecord newRecord =
+            new DecisionRecord
+            {
+                decisionID = decisionID,
+                nodeID = nodeID,
+                decisionOrder =
+                    decisionRecords.Count + 1,
+                selectedOptionIndex =
+                    optionIndex,
+                finalOutcome =
+                    outcome,
+                diedAtLeastOnce =
+                    diedAtLeastOnce
+            };
+
+        decisionRecords.Add(newRecord);
     }
 
-    // ====================================================
-    // Narrativa
-    // ====================================================
+    // ============================================================
+    // REGISTRO DE MUERTE
+    // ============================================================
 
-    public void RegisterDecision(string decision)
+    public void RegisterDeath(
+        string decisionID,
+        string nodeID
+    )
     {
-        decisionHistory.Add(decision);
+        // ========================================================
+        // RUTA
+        // ========================================================
 
-        decisionPath += decision;
+        decisionPath += "M";
+        DeathChoices++;
+
+        // ========================================================
+        // BUSCAR REGISTRO EXISTENTE
+        // ========================================================
+
+        DecisionRecord existingRecord = null;
+
+        foreach (DecisionRecord record in decisionRecords)
+        {
+            if (
+                record != null &&
+                record.decisionID == decisionID
+            )
+            {
+                existingRecord = record;
+                break;
+            }
+        }
+
+        // ========================================================
+        // SI YA EXISTE, MARCAR REINTENTO
+        // ========================================================
+
+        if (existingRecord != null)
+        {
+            existingRecord.nodeID = nodeID;
+            existingRecord.diedAtLeastOnce = true;
+
+            return;
+        }
+
+        // ========================================================
+        // CREAR REGISTRO
+        // ========================================================
+
+        DecisionRecord newRecord =
+            new DecisionRecord
+            {
+                decisionID = decisionID,
+                nodeID = nodeID,
+                decisionOrder =
+                    decisionRecords.Count + 1,
+                selectedOptionIndex = -1,
+                finalOutcome =
+                    DecisionOutcomeType.Death,
+                diedAtLeastOnce = true
+            };
+
+        decisionRecords.Add(newRecord);
     }
+
+    // ============================================================
+    // COMPAÑEROS
+    // ============================================================
 
     public void SetCompanion(
-        string companionId,
-        bool value)
+        bool valentina,
+        bool beto
+    )
     {
-        switch (companionId)
-        {
-            case "Valentina":
-                hasValentina = value;
-                break;
-
-            case "Beto":
-                hasBeto = value;
-                break;
-        }
+        hasValentina = valentina;
+        hasBeto = beto;
     }
 
-    public void AddFlag(string flag)
-    {
-        if (!narrativeFlags.Contains(flag))
-        {
-            narrativeFlags.Add(flag);
-        }
-    }
-
-    public void RemoveFlag(string flag)
-    {
-        narrativeFlags.Remove(flag);
-    }
-
-    public bool HasFlag(string flag)
-    {
-        return narrativeFlags.Contains(flag);
-    }
+    // ============================================================
+    // REINICIAR
+    // ============================================================
 
     public void ResetData()
     {
-        decisionRecords.Clear();
-
-        countedDeaths.Clear();
-
-        nextDecisionOrder = 1;
+        score = 0;
 
         hasValentina = false;
         hasBeto = false;
 
-        currentNode = string.Empty;
-
+        currentNode = "";
         decisionPath = "";
 
         decisionHistory.Clear();
+        decisionRecords.Clear();
 
-        narrativeFlags.Clear();
+        CorrectChoices = 0;
+        IncorrectChoices = 0;
+        DeathChoices = 0;
     }
 }

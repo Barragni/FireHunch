@@ -51,7 +51,8 @@ public class NarrativeManager : MonoBehaviour
 
     public NarrativeRule GetCurrentRule(string nodeID)
     {
-        NarrativeNode node = GetNode(nodeID);
+        NarrativeNode node =
+            GetNode(nodeID);
 
         if (node == null)
         {
@@ -167,6 +168,68 @@ public class NarrativeManager : MonoBehaviour
 
         Debug.LogWarning(
             $"No se encontró una DecisionSequence con ID '{decisionID}'."
+        );
+
+        return null;
+    }
+
+    /// <summary>
+    /// Busca el NarrativeNode que contiene la DecisionSequence
+    /// correspondiente al decisionID indicado.
+    ///
+    /// Esto permite que la revisión obtenga la imagen y la
+    /// retroalimentación propias del escenario.
+    /// </summary>
+    public NarrativeNode GetNodeByDecisionID(
+        string decisionID
+    )
+    {
+        if (string.IsNullOrWhiteSpace(decisionID))
+        {
+            Debug.LogWarning(
+                "GetNodeByDecisionID recibió un decisionID vacío."
+            );
+
+            return null;
+        }
+
+        if (database == null)
+        {
+            Debug.LogError(
+                "NarrativeManager: No existe un NarrativeDatabase asignado."
+            );
+
+            return null;
+        }
+
+        foreach (NarrativeNode node in database.nodes)
+        {
+            if (node == null)
+                continue;
+
+            if (node.rules == null)
+                continue;
+
+            foreach (NarrativeRule rule in node.rules)
+            {
+                if (rule == null)
+                    continue;
+
+                if (rule.decision == null)
+                    continue;
+
+                if (
+                    rule.decision.decisionID ==
+                    decisionID
+                )
+                {
+                    return node;
+                }
+            }
+        }
+
+        Debug.LogWarning(
+            $"No se encontró un NarrativeNode para la decisión '{decisionID}'."
         );
 
         return null;

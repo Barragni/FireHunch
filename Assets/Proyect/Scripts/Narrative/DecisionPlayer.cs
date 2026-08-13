@@ -10,6 +10,13 @@ public class DecisionPlayer : MonoBehaviour
 
     private DecisionSequence currentDecision;
 
+    // ============================================================
+    // NUEVO
+    // Escenario al que pertenece la decisión.
+    // ============================================================
+
+    private string currentNodeID = "";
+
     private Coroutine timerRoutine;
 
     public bool IsDecisionOpen =>
@@ -21,11 +28,50 @@ public class DecisionPlayer : MonoBehaviour
         decisionUI.DecisionPanel.SetActive(false);
     }
 
-    public void ShowDecision(DecisionSequence decision)
+    // ============================================================
+    // COMPATIBILIDAD
+    // ============================================================
+
+    /// <summary>
+    /// Mantiene la llamada original.
+    ///
+    /// Se utiliza desde ComicPlayer y DecisionResumeManager.
+    /// Si no se proporciona explícitamente un nodo,
+    /// utiliza el nodo narrativo actual de GameState.
+    /// </summary>
+    public void ShowDecision(
+        DecisionSequence decision
+    )
+    {
+        string nodeID = "";
+
+        if (GameState.Instance != null)
+        {
+            nodeID =
+                GameState.Instance.currentNode;
+        }
+
+        ShowDecision(
+            decision,
+            nodeID
+        );
+    }
+
+    // ============================================================
+    // MOSTRAR DECISIÓN
+    // ============================================================
+
+    public void ShowDecision(
+        DecisionSequence decision,
+        string nodeID
+    )
     {
         currentDecision = decision;
 
-        DecisionState.CurrentDecision = decision;
+        currentNodeID = nodeID;
+
+        DecisionState.CurrentDecision =
+            decision;
 
         decisionUI.DecisionPanel.SetActive(true);
 
@@ -50,15 +96,25 @@ public class DecisionPlayer : MonoBehaviour
             2
         );
 
-        decisionUI.TimerFillImage.fillAmount = 1f;
+        decisionUI.TimerFillImage.fillAmount =
+            1f;
 
         if (timerRoutine != null)
         {
-            StopCoroutine(timerRoutine);
+            StopCoroutine(
+                timerRoutine
+            );
         }
 
-        timerRoutine = StartCoroutine(DecisionTimer());
+        timerRoutine =
+            StartCoroutine(
+                DecisionTimer()
+            );
     }
+
+    // ============================================================
+    // TEMPORIZADOR
+    // ============================================================
 
     private IEnumerator DecisionTimer()
     {
@@ -86,10 +142,15 @@ public class DecisionPlayer : MonoBehaviour
     {
         AudioManager.Instance.PlayTimerEnd();
 
-        foreach (DecisionOption option in currentDecision.options)
+        foreach (
+            DecisionOption option
+            in currentDecision.options
+        )
         {
-            if (option.outcomeType ==
-                currentDecision.timeoutResult)
+            if (
+                option.outcomeType ==
+                currentDecision.timeoutResult
+            )
             {
                 StartCoroutine(
                     SelectOption(option)
@@ -100,9 +161,14 @@ public class DecisionPlayer : MonoBehaviour
         }
 
         Debug.LogWarning(
-            $"No existe una opción de tipo {currentDecision.timeoutResult}."
+            $"No existe una opción de tipo " +
+            $"{currentDecision.timeoutResult}."
         );
     }
+
+    // ============================================================
+    // BOTONES
+    // ============================================================
 
     private void SetupButton(
         Button button,
@@ -110,9 +176,13 @@ public class DecisionPlayer : MonoBehaviour
         int index
     )
     {
-        if (index >= currentDecision.options.Count)
+        if (
+            index >=
+            currentDecision.options.Count
+        )
         {
             button.gameObject.SetActive(false);
+
             return;
         }
 
@@ -126,13 +196,19 @@ public class DecisionPlayer : MonoBehaviour
 
         button.onClick.RemoveAllListeners();
 
-        button.onClick.AddListener(() =>
-        {
-            StartCoroutine(
-                SelectOption(option)
-            );
-        });
+        button.onClick.AddListener(
+            () =>
+            {
+                StartCoroutine(
+                    SelectOption(option)
+                );
+            }
+        );
     }
+
+    // ============================================================
+    // SELECCIONAR OPCIÓN
+    // ============================================================
 
     private IEnumerator SelectOption(
         DecisionOption option
@@ -142,13 +218,17 @@ public class DecisionPlayer : MonoBehaviour
 
         if (timerRoutine != null)
         {
-            StopCoroutine(timerRoutine);
+            StopCoroutine(
+                timerRoutine
+            );
+
             timerRoutine = null;
         }
 
         decisionUI.DecisionPanel.SetActive(false);
 
-        DecisionState.SelectedOption = option;
+        DecisionState.SelectedOption =
+            option;
 
         NarrativeState.PendingDecision =
             currentDecision;
@@ -157,7 +237,13 @@ public class DecisionPlayer : MonoBehaviour
             SceneManager.GetActiveScene().name;
 
         int selectedOptionIndex =
-            currentDecision.options.IndexOf(option);
+            currentDecision.options.IndexOf(
+                option
+            );
+
+        // ========================================================
+        // REGISTRAR DECISIÓN
+        // ========================================================
 
         switch (option.outcomeType)
         {
@@ -165,41 +251,56 @@ public class DecisionPlayer : MonoBehaviour
 
                 GameState.Instance.RegisterFinalDecision(
                     currentDecision.decisionID,
+                    currentNodeID,
+                    selectedOptionIndex,
                     DecisionOutcomeType.Correct,
-                    selectedOptionIndex
+                    false
                 );
 
-                GameState.Instance.RegisterDecision("C");
+                GameState.Instance.RegisterDecision(
+                    "C"
+                );
+
                 break;
 
             case DecisionOutcomeType.Incorrect:
 
                 GameState.Instance.RegisterFinalDecision(
                     currentDecision.decisionID,
+                    currentNodeID,
+                    selectedOptionIndex,
                     DecisionOutcomeType.Incorrect,
-                    selectedOptionIndex
+                    false
                 );
 
-                GameState.Instance.RegisterDecision("L");
+                GameState.Instance.RegisterDecision(
+                    "L"
+                );
+
                 break;
 
             case DecisionOutcomeType.Death:
 
                 GameState.Instance.RegisterDeath(
-                    currentDecision.decisionID
+                    currentDecision.decisionID,
+                    currentNodeID
                 );
+
                 break;
         }
 
-        //==================================================
+        // ========================================================
         // NUEVO FLUJO DEL CÓMIC
-        //==================================================
+        // ========================================================
 
         ComicState.CurrentSequence =
             option.comicSequence;
 
-        ComicState.IsIntro = false;
-        ComicState.IntroNextScene = string.Empty;
+        ComicState.IsIntro =
+            false;
+
+        ComicState.IntroNextScene =
+            string.Empty;
 
         SceneTransitionManager.Instance.LoadScene(
             "DecisionComic"

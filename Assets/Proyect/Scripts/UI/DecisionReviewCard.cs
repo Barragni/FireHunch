@@ -21,7 +21,8 @@ public class DecisionReviewCard : MonoBehaviour
 
     public void Setup(
         DecisionRecord record,
-        DecisionSequence decision
+        DecisionSequence decision,
+        NarrativeNode narrativeNode
     )
     {
         if (record == null)
@@ -37,6 +38,15 @@ public class DecisionReviewCard : MonoBehaviour
         {
             Debug.LogError(
                 $"DecisionReviewCard: DecisionSequence es null para '{record.decisionID}'."
+            );
+
+            return;
+        }
+
+        if (narrativeNode == null)
+        {
+            Debug.LogError(
+                $"DecisionReviewCard: NarrativeNode es null para '{record.decisionID}'."
             );
 
             return;
@@ -63,6 +73,19 @@ public class DecisionReviewCard : MonoBehaviour
         }
 
         // ========================================================
+        // IMAGEN DEL ESCENARIO
+        // ========================================================
+
+        if (decisionImage != null)
+        {
+            decisionImage.sprite =
+                narrativeNode.decisionReviewImage;
+
+            decisionImage.enabled =
+                narrativeNode.decisionReviewImage != null;
+        }
+
+        // ========================================================
         // OPCIÓN FINALMENTE SELECCIONADA
         // ========================================================
 
@@ -83,60 +106,29 @@ public class DecisionReviewCard : MonoBehaviour
 
         if (selectedOption != null)
         {
-            // ----------------------------------------------------
-            // Texto de la elección
-            // ----------------------------------------------------
-
             if (selectedOptionText != null)
             {
                 selectedOptionText.text =
                     selectedOption.optionText;
             }
-
-            // ----------------------------------------------------
-            // Imagen
-            // ----------------------------------------------------
-
-            if (decisionImage != null)
-            {
-                decisionImage.sprite =
-                    selectedOption.reviewImage;
-
-                decisionImage.enabled =
-                    selectedOption.reviewImage != null;
-            }
-
-            // ----------------------------------------------------
-            // Retroalimentación
-            // ----------------------------------------------------
-
-            if (feedbackText != null)
-            {
-                feedbackText.text =
-                    selectedOption.reviewFeedback;
-            }
         }
         else
         {
-            // No existe una elección válida registrada.
-
             if (selectedOptionText != null)
             {
                 selectedOptionText.text =
                     "No se registró una elección final.";
             }
+        }
 
-            if (decisionImage != null)
-            {
-                decisionImage.sprite = null;
-                decisionImage.enabled = false;
-            }
+        // ========================================================
+        // RETROALIMENTACIÓN DEL ESCENARIO
+        // ========================================================
 
-            if (feedbackText != null)
-            {
-                feedbackText.text =
-                    "Esta decisión terminó antes de registrarse una elección final.";
-            }
+        if (feedbackText != null)
+        {
+            feedbackText.text =
+                narrativeNode.decisionFeedback;
         }
 
         // ========================================================

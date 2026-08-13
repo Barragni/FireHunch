@@ -6,6 +6,9 @@ public class DecisionRecord
     // ID único de la DecisionSequence.
     public string decisionID;
 
+    // ID del NarrativeNode / escenario al que pertenece la decisión.
+    public string nodeID;
+
     // Orden en que el jugador resolvió esta decisión.
     public int decisionOrder;
 

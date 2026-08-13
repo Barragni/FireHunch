@@ -38,8 +38,11 @@ public class NarrativeTrigger : MonoBehaviour
     {
         if (dialoguePlayer != null)
         {
-            dialoguePlayer.OnAdvanceRequested -= HandleAdvanceRequested;
-            dialoguePlayer.OnDialogueFinished -= HandleDialogueFinished;
+            dialoguePlayer.OnAdvanceRequested -=
+                HandleAdvanceRequested;
+
+            dialoguePlayer.OnDialogueFinished -=
+                HandleDialogueFinished;
         }
     }
 
@@ -54,7 +57,8 @@ public class NarrativeTrigger : MonoBehaviour
         if (narrativeNode == null)
         {
             Debug.LogError(
-                $"NarrativeTrigger en {gameObject.name} no tiene un NarrativeNode asignado."
+                $"NarrativeTrigger en {gameObject.name} " +
+                $"no tiene un NarrativeNode asignado."
             );
 
             return;
@@ -73,18 +77,32 @@ public class NarrativeTrigger : MonoBehaviour
         currentPlayer =
             other.GetComponent<PlayerController>();
 
-        StartCoroutine(BeginSequence());
+        StartCoroutine(
+            BeginSequence()
+        );
     }
 
     private IEnumerator BeginSequence()
     {
+        // ========================================================
+        // BLOQUEAR AL JUGADOR
+        // ========================================================
+
         currentPlayer.SetMovementEnabled(false);
+
         currentPlayer.SetHeadBobEnabled(false);
 
-        // Mostrar el modelo para las escenas enfocadas.
+        // ========================================================
+        // MOSTRAR MODELO
+        // ========================================================
+
         currentPlayer.ShowVisual();
 
         currentFocusIndex = 0;
+
+        // ========================================================
+        // PRIMER FOCUS POINT + ZOOM
+        // ========================================================
 
         if (focusPoints.Count > 0)
         {
@@ -96,19 +114,35 @@ public class NarrativeTrigger : MonoBehaviour
             );
         }
 
+        // ========================================================
+        // DIÁLOGO
+        // ========================================================
+
         if (currentRule.dialogue != null)
         {
-            dialoguePlayer.OnAdvanceRequested += HandleAdvanceRequested;
-            dialoguePlayer.OnDialogueFinished += HandleDialogueFinished;
+            dialoguePlayer.OnAdvanceRequested +=
+                HandleAdvanceRequested;
 
-            dialoguePlayer.Play(currentRule.dialogue);
+            dialoguePlayer.OnDialogueFinished +=
+                HandleDialogueFinished;
+
+            dialoguePlayer.Play(
+                currentRule.dialogue
+            );
         }
         else
         {
             sequenceFinished = true;
-            StartCoroutine(ContinueSequence());
+
+            StartCoroutine(
+                ContinueSequence()
+            );
         }
     }
+
+    // ============================================================
+    // AVANCE DEL DIÁLOGO
+    // ============================================================
 
     private void HandleAdvanceRequested()
     {
@@ -118,25 +152,34 @@ public class NarrativeTrigger : MonoBehaviour
         if (sequenceFinished)
             return;
 
+        // Si todavía existen FocusPoints,
+        // primero mueve la cámara.
         if (HasNextFocusPoint())
         {
-            StartCoroutine(MoveNextFocus());
+            StartCoroutine(
+                MoveNextFocus()
+            );
+
             return;
         }
 
+        // Cuando ya no quedan FocusPoints,
+        // avanza el diálogo normalmente.
         bool advancedDialogue =
             dialoguePlayer.AdvanceDialogue();
 
         if (!advancedDialogue)
         {
             sequenceFinished = true;
+
             dialoguePlayer.FinishDialogue();
         }
     }
 
     private bool HasNextFocusPoint()
     {
-        return currentFocusIndex < focusPoints.Count - 1;
+        return currentFocusIndex <
+               focusPoints.Count - 1;
     }
 
     private IEnumerator MoveNextFocus()
@@ -145,22 +188,37 @@ public class NarrativeTrigger : MonoBehaviour
 
         currentFocusIndex++;
 
-        yield return MoveToFocus(currentFocusIndex);
+        yield return MoveToFocus(
+            currentFocusIndex
+        );
 
         dialoguePlayer.AdvanceDialogue();
 
         waitingCamera = false;
     }
 
-    private IEnumerator MoveToFocus(int index)
+    private IEnumerator MoveToFocus(
+        int index
+    )
     {
-        if (index < 0 || index >= focusPoints.Count)
+        if (
+            index < 0 ||
+            index >= focusPoints.Count
+        )
+        {
             yield break;
+        }
 
-        FocusPoint point = focusPoints[index];
+        FocusPoint point =
+            focusPoints[index];
 
-        if (point == null || point.target == null)
+        if (
+            point == null ||
+            point.target == null
+        )
+        {
             yield break;
+        }
 
         yield return currentPlayer.StartCoroutine(
             currentPlayer.LookAtTarget(
@@ -169,24 +227,45 @@ public class NarrativeTrigger : MonoBehaviour
         );
     }
 
+    // ============================================================
+    // FIN DEL DIÁLOGO
+    // ============================================================
+
     private void HandleDialogueFinished()
     {
-        dialoguePlayer.OnAdvanceRequested -= HandleAdvanceRequested;
-        dialoguePlayer.OnDialogueFinished -= HandleDialogueFinished;
+        dialoguePlayer.OnAdvanceRequested -=
+            HandleAdvanceRequested;
 
-        StartCoroutine(ContinueSequence());
+        dialoguePlayer.OnDialogueFinished -=
+            HandleDialogueFinished;
+
+        StartCoroutine(
+            ContinueSequence()
+        );
     }
+
+    // ============================================================
+    // CONTINUAR HACIA LA DECISIÓN
+    // ============================================================
 
     private IEnumerator ContinueSequence()
     {
         if (currentRule.decision != null)
         {
+            // ----------------------------------------------------
+            // CÁMARA DE DECISIÓN
+            // ----------------------------------------------------
+
             yield return currentPlayer.StartCoroutine(
                 currentPlayer.PlayDecisionCamera()
             );
 
             Camera cam =
                 currentPlayer.GetPlayerCamera();
+
+            // ----------------------------------------------------
+            // GUARDAR POSICIÓN
+            // ----------------------------------------------------
 
             NarrativeState.SavedPlayerPosition =
                 currentPlayer.transform.position;
@@ -200,19 +279,36 @@ public class NarrativeTrigger : MonoBehaviour
             NarrativeState.SavedCameraRotation =
                 cam.transform.rotation;
 
+            // ----------------------------------------------------
+            // SONIDO
+            // ----------------------------------------------------
+
             AudioManager.Instance.PlayDecisionOpen();
 
+            // ----------------------------------------------------
+            // MOSTRAR DECISIÓN
+            //
+            // NUEVO:
+            // También pasamos el nodeID para que la decisión
+            // pueda quedar asociada al NarrativeNode.
+            // ----------------------------------------------------
+
             decisionPlayer.ShowDecision(
-                currentRule.decision
+                currentRule.decision,
+                narrativeNode.nodeID
             );
 
             yield break;
         }
 
-        // Volvemos a primera persona.
+        // ========================================================
+        // SI NO HAY DECISIÓN, VOLVER A PRIMERA PERSONA
+        // ========================================================
+
         currentPlayer.HideVisual();
 
         currentPlayer.SetMovementEnabled(true);
+
         currentPlayer.SetHeadBobEnabled(true);
     }
 }
