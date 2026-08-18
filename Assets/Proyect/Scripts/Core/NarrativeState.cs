@@ -10,6 +10,8 @@ public static class NarrativeState
 
     public static string ReturnScene;
 
+    public static string ReturnNodeID;
+
     public static Vector3 SavedPlayerPosition;
 
     public static Quaternion SavedPlayerRotation;
@@ -17,5 +19,6 @@ public static class NarrativeState
     public static Vector3 SavedCameraPosition;
 
     public static Quaternion SavedCameraRotation;
+
     public static AmbientDialogueSequence CurrentAmbientDialogue;
 }

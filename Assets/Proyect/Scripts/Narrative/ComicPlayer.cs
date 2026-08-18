@@ -115,7 +115,10 @@ public class ComicPlayer : MonoBehaviour
 
         changingPage = true;
 
-        AudioManager.Instance.PlayPageFlip();
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayPageFlip();
+        }
 
         yield return StartCoroutine(
             pageTransition.Play(
@@ -287,17 +290,65 @@ public class ComicPlayer : MonoBehaviour
 
     private void RetryDecision()
     {
+        // ========================================================
+        // INDICAR QUE VOLVEMOS DE UNA MUERTE
+        // ========================================================
+
         NarrativeState.ReturningFromDeath =
             true;
 
         NarrativeState.SkipDialogue =
             true;
 
+        // ========================================================
+        // CONSERVAR LA DECISIÓN QUE SE ESTABA RESOLVIENDO
+        // ========================================================
+
+        // PendingDecision ya fue guardada por DecisionPlayer
+        // antes de salir hacia DecisionComic.
+        //
+        // NO debemos reemplazar ComicState.CurrentSequence
+        // con el comic de la opción mortal.
+        //
+        // Al volver a la escena, DecisionResumeManager utilizará
+        // NarrativeState.PendingDecision.
+        // ========================================================
+
         ComicState.CurrentSequence =
-            DecisionState.SelectedOption.comicSequence;
+            null;
 
         ComicState.IsIntro =
             false;
+
+        ComicState.IntroNextScene =
+            string.Empty;
+
+        // ========================================================
+        // LA OPCIÓN MORTAL YA NO DEBE QUEDAR COMO SELECCIONADA
+        // ========================================================
+
+        DecisionState.SelectedOption =
+            null;
+
+        // ========================================================
+        // VOLVER A LA ESCENA DONDE ESTABA LA DECISIÓN
+        // ========================================================
+
+        if (
+            string.IsNullOrEmpty(
+                NarrativeState.ReturnScene
+            )
+        )
+        {
+            Debug.LogError(
+                "ComicPlayer: No existe ReturnScene para el reintento."
+            );
+
+            NarrativeState.ReturningFromDeath =
+                false;
+
+            return;
+        }
 
         SceneTransitionManager.Instance.LoadScene(
             NarrativeState.ReturnScene
@@ -322,6 +373,27 @@ public class ComicPlayer : MonoBehaviour
             false;
 
         ComicState.IntroNextScene =
+            string.Empty;
+
+        DecisionState.CurrentDecision =
+            null;
+
+        DecisionState.SelectedOption =
+            null;
+
+        NarrativeState.PendingDecision =
+            null;
+
+        NarrativeState.ReturningFromDeath =
+            false;
+
+        NarrativeState.SkipDialogue =
+            false;
+
+        NarrativeState.ReturnScene =
+            string.Empty;
+
+        NarrativeState.ReturnNodeID =
             string.Empty;
 
         SceneTransitionManager.Instance.LoadScene(

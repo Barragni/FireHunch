@@ -11,8 +11,7 @@ public class DecisionPlayer : MonoBehaviour
     private DecisionSequence currentDecision;
 
     // ============================================================
-    // NUEVO
-    // Escenario al que pertenece la decisión.
+    // ESCENARIO AL QUE PERTENECE LA DECISIÓN
     // ============================================================
 
     private string currentNodeID = "";
@@ -32,13 +31,6 @@ public class DecisionPlayer : MonoBehaviour
     // COMPATIBILIDAD
     // ============================================================
 
-    /// <summary>
-    /// Mantiene la llamada original.
-    ///
-    /// Se utiliza desde ComicPlayer y DecisionResumeManager.
-    /// Si no se proporciona explícitamente un nodo,
-    /// utiliza el nodo narrativo actual de GameState.
-    /// </summary>
     public void ShowDecision(
         DecisionSequence decision
     )
@@ -66,6 +58,15 @@ public class DecisionPlayer : MonoBehaviour
         string nodeID
     )
     {
+        if (decision == null)
+        {
+            Debug.LogError(
+                "DecisionPlayer: Se intentó mostrar una DecisionSequence NULL."
+            );
+
+            return;
+        }
+
         currentDecision = decision;
 
         currentNodeID = nodeID;
@@ -135,12 +136,17 @@ public class DecisionPlayer : MonoBehaviour
             yield return null;
         }
 
+        timerRoutine = null;
+
         SelectTimeoutOption();
     }
 
     private void SelectTimeoutOption()
     {
-        AudioManager.Instance.PlayTimerEnd();
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayTimerEnd();
+        }
 
         foreach (
             DecisionOption option
@@ -214,7 +220,10 @@ public class DecisionPlayer : MonoBehaviour
         DecisionOption option
     )
     {
-        AudioManager.Instance.PlayButtonClick();
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayButtonClick();
+        }
 
         if (timerRoutine != null)
         {
@@ -225,7 +234,9 @@ public class DecisionPlayer : MonoBehaviour
             timerRoutine = null;
         }
 
-        decisionUI.DecisionPanel.SetActive(false);
+        // ========================================================
+        // GUARDAR ESTADO DE LA DECISIÓN
+        // ========================================================
 
         DecisionState.SelectedOption =
             option;
@@ -235,6 +246,15 @@ public class DecisionPlayer : MonoBehaviour
 
         NarrativeState.ReturnScene =
             SceneManager.GetActiveScene().name;
+
+        NarrativeState.ReturnNodeID =
+            currentNodeID;
+
+        // ========================================================
+        // OCULTAR PANEL
+        // ========================================================
+
+        decisionUI.DecisionPanel.SetActive(false);
 
         int selectedOptionIndex =
             currentDecision.options.IndexOf(
@@ -281,6 +301,13 @@ public class DecisionPlayer : MonoBehaviour
 
             case DecisionOutcomeType.Death:
 
+                // ------------------------------------------------
+                // IMPORTANTE:
+                // RegisterDeath NO agrega "M" a decisionPath.
+                // Solamente marca que esta decisión necesitó
+                // un reintento.
+                // ------------------------------------------------
+
                 GameState.Instance.RegisterDeath(
                     currentDecision.decisionID,
                     currentNodeID
@@ -290,7 +317,7 @@ public class DecisionPlayer : MonoBehaviour
         }
 
         // ========================================================
-        // NUEVO FLUJO DEL CÓMIC
+        // FLUJO DEL CÓMIC
         // ========================================================
 
         ComicState.CurrentSequence =

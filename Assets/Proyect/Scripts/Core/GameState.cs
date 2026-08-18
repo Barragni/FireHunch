@@ -72,12 +72,12 @@ public class GameState : MonoBehaviour
     // ============================================================
 
     /// <summary>
-    /// Registra únicamente la letra correspondiente
-    /// a la ruta narrativa:
+    /// Registra únicamente decisiones definitivas.
     ///
     /// C = Correcta
     /// L = Incorrecta
-    /// M = Muerte
+    ///
+    /// Muerte = no modifica decisionPath.
     /// </summary>
     public void RegisterDecision(string result)
     {
@@ -104,7 +104,8 @@ public class GameState : MonoBehaviour
 
             case "M":
 
-                decisionPath += "M";
+                // Una muerte no es una decisión definitiva.
+                // Solamente cuenta como reintento.
                 DeathChoices++;
 
                 break;
@@ -131,15 +132,9 @@ public class GameState : MonoBehaviour
         bool diedAtLeastOnce
     )
     {
-        // ========================================================
-        // HISTORIAL SIMPLE
-        // ========================================================
-
-        decisionHistory.Add(decisionID);
-
-        // ========================================================
-        // RUTA Y CONTADORES
-        // ========================================================
+        decisionHistory.Add(
+            decisionID
+        );
 
         switch (outcome)
         {
@@ -159,15 +154,11 @@ public class GameState : MonoBehaviour
 
             case DecisionOutcomeType.Death:
 
-                decisionPath += "M";
+                // No agregar M a la ruta.
                 DeathChoices++;
 
                 break;
         }
-
-        // ========================================================
-        // BUSCAR REGISTRO EXISTENTE
-        // ========================================================
 
         DecisionRecord existingRecord = null;
 
@@ -183,13 +174,10 @@ public class GameState : MonoBehaviour
             }
         }
 
-        // ========================================================
-        // ACTUALIZAR REGISTRO EXISTENTE
-        // ========================================================
-
         if (existingRecord != null)
         {
-            existingRecord.nodeID = nodeID;
+            existingRecord.nodeID =
+                nodeID;
 
             existingRecord.selectedOptionIndex =
                 optionIndex;
@@ -199,32 +187,38 @@ public class GameState : MonoBehaviour
 
             if (diedAtLeastOnce)
             {
-                existingRecord.diedAtLeastOnce = true;
+                existingRecord.diedAtLeastOnce =
+                    true;
             }
 
             return;
         }
 
-        // ========================================================
-        // CREAR NUEVO REGISTRO
-        // ========================================================
-
         DecisionRecord newRecord =
             new DecisionRecord
             {
-                decisionID = decisionID,
-                nodeID = nodeID,
+                decisionID =
+                    decisionID,
+
+                nodeID =
+                    nodeID,
+
                 decisionOrder =
                     decisionRecords.Count + 1,
+
                 selectedOptionIndex =
                     optionIndex,
+
                 finalOutcome =
                     outcome,
+
                 diedAtLeastOnce =
                     diedAtLeastOnce
             };
 
-        decisionRecords.Add(newRecord);
+        decisionRecords.Add(
+            newRecord
+        );
     }
 
     // ============================================================
@@ -239,10 +233,6 @@ public class GameState : MonoBehaviour
         bool diedAtLeastOnce
     )
     {
-        // ========================================================
-        // BUSCAR REGISTRO EXISTENTE
-        // ========================================================
-
         DecisionRecord existingRecord = null;
 
         foreach (DecisionRecord record in decisionRecords)
@@ -257,13 +247,10 @@ public class GameState : MonoBehaviour
             }
         }
 
-        // ========================================================
-        // ACTUALIZAR REGISTRO EXISTENTE
-        // ========================================================
-
         if (existingRecord != null)
         {
-            existingRecord.nodeID = nodeID;
+            existingRecord.nodeID =
+                nodeID;
 
             existingRecord.selectedOptionIndex =
                 optionIndex;
@@ -273,32 +260,38 @@ public class GameState : MonoBehaviour
 
             if (diedAtLeastOnce)
             {
-                existingRecord.diedAtLeastOnce = true;
+                existingRecord.diedAtLeastOnce =
+                    true;
             }
 
             return;
         }
 
-        // ========================================================
-        // CREAR NUEVO REGISTRO
-        // ========================================================
-
         DecisionRecord newRecord =
             new DecisionRecord
             {
-                decisionID = decisionID,
-                nodeID = nodeID,
+                decisionID =
+                    decisionID,
+
+                nodeID =
+                    nodeID,
+
                 decisionOrder =
                     decisionRecords.Count + 1,
+
                 selectedOptionIndex =
                     optionIndex,
+
                 finalOutcome =
                     outcome,
+
                 diedAtLeastOnce =
                     diedAtLeastOnce
             };
 
-        decisionRecords.Add(newRecord);
+        decisionRecords.Add(
+            newRecord
+        );
     }
 
     // ============================================================
@@ -311,15 +304,13 @@ public class GameState : MonoBehaviour
     )
     {
         // ========================================================
-        // RUTA
+        // IMPORTANTE:
+        // NO agregar "M" a decisionPath.
+        //
+        // El jugador todavía no ha tomado una decisión definitiva.
         // ========================================================
 
-        decisionPath += "M";
         DeathChoices++;
-
-        // ========================================================
-        // BUSCAR REGISTRO EXISTENTE
-        // ========================================================
 
         DecisionRecord existingRecord = null;
 
@@ -335,36 +326,42 @@ public class GameState : MonoBehaviour
             }
         }
 
-        // ========================================================
-        // SI YA EXISTE, MARCAR REINTENTO
-        // ========================================================
-
         if (existingRecord != null)
         {
-            existingRecord.nodeID = nodeID;
-            existingRecord.diedAtLeastOnce = true;
+            existingRecord.nodeID =
+                nodeID;
+
+            existingRecord.diedAtLeastOnce =
+                true;
 
             return;
         }
 
-        // ========================================================
-        // CREAR REGISTRO
-        // ========================================================
-
         DecisionRecord newRecord =
             new DecisionRecord
             {
-                decisionID = decisionID,
-                nodeID = nodeID,
+                decisionID =
+                    decisionID,
+
+                nodeID =
+                    nodeID,
+
                 decisionOrder =
                     decisionRecords.Count + 1,
-                selectedOptionIndex = -1,
+
+                selectedOptionIndex =
+                    -1,
+
                 finalOutcome =
                     DecisionOutcomeType.Death,
-                diedAtLeastOnce = true
+
+                diedAtLeastOnce =
+                    true
             };
 
-        decisionRecords.Add(newRecord);
+        decisionRecords.Add(
+            newRecord
+        );
     }
 
     // ============================================================
