@@ -6,21 +6,43 @@ using UnityEngine.AI;
 public class CompanionFollower : MonoBehaviour
 {
     [Header("Seguimiento")]
-    [SerializeField] private float followDistance = 2f;
+    [SerializeField] private float followDistance = 4f;
+
+    [Header("Velocidad")]
+    [SerializeField] private float followSpeed = 6f;
+    [SerializeField] private float catchUpSpeed = 8f;
+    [SerializeField] private float catchUpDistance = 7f;
+
+    [Header("Movimiento")]
+    [SerializeField] private float acceleration = 100f;
+    [SerializeField] private float angularSpeed = 720f;
+
+    [Header("Tolerancia de animación")]
+    [SerializeField] private float movingThreshold = 0.2f;
+    [SerializeField] private float idleThreshold = 0.05f;
 
     [Header("Animación")]
     [SerializeField] private string speedParameter = "Speed";
-
     [SerializeField] private string movingParameter = "Moving";
 
     private Transform target;
     private NavMeshAgent agent;
     private Animator animator;
 
+    private bool isMoving;
+
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+
+        // El movimiento físico lo controla el NavMeshAgent.
+        animator.applyRootMotion = false;
+
+        agent.acceleration = acceleration;
+        agent.angularSpeed = angularSpeed;
+        agent.stoppingDistance = followDistance;
+        agent.autoBraking = false;
     }
 
     private void Start()
@@ -39,6 +61,12 @@ public class CompanionFollower : MonoBehaviour
         }
 
         target = player.transform;
+
+        agent.speed = followSpeed;
+        agent.acceleration = acceleration;
+        agent.angularSpeed = angularSpeed;
+        agent.stoppingDistance = followDistance;
+        agent.autoBraking = false;
     }
 
     private void Update()
@@ -46,42 +74,79 @@ public class CompanionFollower : MonoBehaviour
         if (target == null)
             return;
 
-        float distance =
-            Vector3.Distance(
-                transform.position,
-                target.position
-            );
+        float distance = Vector3.Distance(
+            transform.position,
+            target.position
+        );
 
-        if (distance > followDistance)
+        // ==========================================
+        // SEGUIMIENTO
+        // ==========================================
+
+        if (distance <= followDistance)
         {
-            agent.isStopped = false;
-
-            agent.SetDestination(
-                target.position
-            );
+            agent.isStopped = true;
+            agent.ResetPath();
         }
         else
         {
-            agent.isStopped = true;
+            agent.isStopped = false;
+
+            if (distance >= catchUpDistance)
+            {
+                agent.speed = catchUpSpeed;
+            }
+            else
+            {
+                agent.speed = followSpeed;
+            }
+
+            agent.SetDestination(target.position);
         }
 
-        float speed =
-            agent.velocity.magnitude;
+        // ==========================================
+        // ANIMACIÓN
+        // ==========================================
+
+        float currentSpeed = agent.velocity.magnitude;
 
         animator.SetFloat(
             speedParameter,
-            speed
+            currentSpeed
         );
 
-        animator.SetBool(
-            movingParameter,
-            speed > 0.1f
-        );
+        // Histeresis:
+        //
+        // Para comenzar a caminar necesita superar
+        // movingThreshold.
+        //
+        // Una vez caminando, no vuelve a Idle hasta
+        // bajar de idleThreshold.
+        //
+        // Esto evita cambios constantes entre Walking
+        // e Idle cuando la velocidad fluctúa cerca de 0.
+
+        if (!isMoving && currentSpeed > movingThreshold)
+        {
+            isMoving = true;
+
+            animator.SetBool(
+                movingParameter,
+                true
+            );
+        }
+        else if (isMoving && currentSpeed < idleThreshold)
+        {
+            isMoving = false;
+
+            animator.SetBool(
+                movingParameter,
+                false
+            );
+        }
     }
 
-    public void SetTarget(
-        Transform newTarget
-    )
+    public void SetTarget(Transform newTarget)
     {
         target = newTarget;
     }

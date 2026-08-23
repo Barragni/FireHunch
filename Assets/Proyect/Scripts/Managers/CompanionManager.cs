@@ -76,12 +76,64 @@ public class CompanionManager : MonoBehaviour
                 continue;
             }
 
+            if (companion.prefab == null)
+            {
+                Debug.LogWarning(
+                    $"El CompanionData de {companion.companionType} no tiene un prefab asignado."
+                );
+
+                continue;
+            }
+
+            // ====================================================
+            // INSTANCIAR COMPAÑERO
+            // ====================================================
+
             GameObject instance =
                 Instantiate(
                     companion.prefab,
                     spawnPoint.transform.position,
                     spawnPoint.transform.rotation
                 );
+
+            // ====================================================
+            // CONFIGURAR ANIMATOR
+            // ====================================================
+
+            Animator animator =
+                instance.GetComponent<Animator>();
+
+            if (animator == null)
+            {
+                Debug.LogWarning(
+                    $"El prefab de {companion.companionType} " +
+                    $"no tiene un Animator."
+                );
+            }
+            else
+            {
+                RuntimeAnimatorController selectedController =
+                    spawnPoint.GetSelectedController();
+
+                if (selectedController != null)
+                {
+                    animator.runtimeAnimatorController =
+                        selectedController;
+                }
+                else
+                {
+                    Debug.LogWarning(
+                        $"CompanionSpawnPoint '{spawnPoint.name}' " +
+                        $"no tiene asignado un Animator Controller " +
+                        $"para el estado '{spawnPoint.animationState}'. " +
+                        $"Se conservará el Controller original del prefab."
+                    );
+                }
+            }
+
+            // ====================================================
+            // CONFIGURAR FOLLOWER
+            // ====================================================
 
             CompanionFollower follower =
                 instance.GetComponent<CompanionFollower>();
