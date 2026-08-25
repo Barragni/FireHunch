@@ -1,5 +1,5 @@
-using UnityEngine;
 using System.Collections;
+using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
@@ -34,12 +34,16 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float dialogueZoomDuration = 0.5f;
 
     private CharacterController characterController;
+
     private Camera playerCamera;
+
     private HeadBobController headBobController;
 
     private float verticalRotation;
 
     private bool canMove;
+
+    private bool wasWalking;
 
     private float defaultFOV;
 
@@ -57,40 +61,33 @@ public class PlayerController : MonoBehaviour
         defaultFOV =
             playerCamera.fieldOfView;
 
-        SetMovementEnabled(startWithMovementEnabled);
+        SetMovementEnabled(
+            startWithMovementEnabled
+        );
 
         HideVisual();
+
+        ResetFootsteps();
     }
 
     private void Update()
     {
         if (!canMove)
         {
+            ResetFootsteps();
             return;
         }
 
         HandleMouseLook();
+
         HandleMovement();
+
+        HandleFootsteps();
     }
 
-    private void HandleMovement()
-    {
-        float horizontal =
-            Input.GetAxis("Horizontal");
-
-        float vertical =
-            Input.GetAxis("Vertical");
-
-        Vector3 movement =
-            transform.right * horizontal +
-            transform.forward * vertical;
-
-        characterController.Move(
-            movement *
-            moveSpeed *
-            Time.deltaTime
-        );
-    }
+    // ============================================================
+    // MOUSE LOOK
+    // ============================================================
 
     private void HandleMouseLook()
     {
@@ -125,9 +122,101 @@ public class PlayerController : MonoBehaviour
         );
     }
 
+    // ============================================================
+    // MOVIMIENTO
+    // ============================================================
+
+    private void HandleMovement()
+    {
+        float horizontal =
+            Input.GetAxis("Horizontal");
+
+        float vertical =
+            Input.GetAxis("Vertical");
+
+        Vector3 movement =
+            transform.right * horizontal +
+            transform.forward * vertical;
+
+        characterController.Move(
+            movement *
+            moveSpeed *
+            Time.deltaTime
+        );
+    }
+
+    // ============================================================
+    // PASOS
+    // ============================================================
+
+    private void HandleFootsteps()
+    {
+        float horizontal =
+            Input.GetAxisRaw("Horizontal");
+
+        float vertical =
+            Input.GetAxisRaw("Vertical");
+
+        bool isWalking =
+            Mathf.Abs(horizontal) > 0.01f ||
+            Mathf.Abs(vertical) > 0.01f;
+
+        // --------------------------------------------------------
+        // COMENZÓ A MOVERSE
+        // --------------------------------------------------------
+
+        if (
+            isWalking &&
+            !wasWalking
+        )
+        {
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlayFootstep();
+            }
+        }
+
+        // --------------------------------------------------------
+        // DEJÓ DE MOVERSE
+        // --------------------------------------------------------
+
+        if (
+            !isWalking &&
+            wasWalking
+        )
+        {
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.StopFootstep();
+            }
+        }
+
+        wasWalking =
+            isWalking;
+    }
+
+    private void ResetFootsteps()
+    {
+        wasWalking = false;
+
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.StopFootstep();
+        }
+    }
+
+    // ============================================================
+    // MOVIMIENTO ENABLE / DISABLE
+    // ============================================================
+
     public void SetMovementEnabled(bool enabled)
     {
         canMove = enabled;
+
+        if (!enabled)
+        {
+            ResetFootsteps();
+        }
 
         if (enabled)
         {
@@ -145,6 +234,10 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // ============================================================
+    // HEAD BOB
+    // ============================================================
+
     public void SetHeadBobEnabled(bool enabled)
     {
         if (headBobController != null)
@@ -152,6 +245,10 @@ public class PlayerController : MonoBehaviour
             headBobController.SetEnabled(enabled);
         }
     }
+
+    // ============================================================
+    // VISUAL
+    // ============================================================
 
     public void ShowVisual()
     {
@@ -169,10 +266,18 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // ============================================================
+    // CÁMARA
+    // ============================================================
+
     public Camera GetPlayerCamera()
     {
         return playerCamera;
     }
+
+    // ============================================================
+    // MIRAR OBJETIVO
+    // ============================================================
 
     public IEnumerator LookAtTarget(
         Transform target
@@ -180,23 +285,31 @@ public class PlayerController : MonoBehaviour
     {
         canMove = false;
 
+        ResetFootsteps();
+
         Vector3 direction =
-            (target.position - playerCamera.transform.position).normalized;
+            (
+                target.position -
+                playerCamera.transform.position
+            ).normalized;
 
         float targetYaw =
             Mathf.Atan2(
                 direction.x,
                 direction.z
-            ) * Mathf.Rad2Deg;
+            ) *
+            Mathf.Rad2Deg;
 
         float targetPitch =
-            -Mathf.Asin(direction.y) * Mathf.Rad2Deg;
+            -Mathf.Asin(direction.y) *
+            Mathf.Rad2Deg;
 
-        targetPitch = Mathf.Clamp(
-            targetPitch,
-            -80f,
-            80f
-        );
+        targetPitch =
+            Mathf.Clamp(
+                targetPitch,
+                -80f,
+                80f
+            );
 
         Quaternion startBodyRotation =
             transform.rotation;
@@ -213,9 +326,13 @@ public class PlayerController : MonoBehaviour
 
         float elapsed = 0f;
 
-        while (elapsed < focusRotationDuration)
+        while (
+            elapsed <
+            focusRotationDuration
+        )
         {
-            elapsed += Time.deltaTime;
+            elapsed +=
+                Time.deltaTime;
 
             float t =
                 Mathf.Clamp01(
@@ -267,6 +384,10 @@ public class PlayerController : MonoBehaviour
             );
     }
 
+    // ============================================================
+    // ZOOM DE DIÁLOGO
+    // ============================================================
+
     public IEnumerator PlayDialogueZoom()
     {
         if (!enableDialogueZoom)
@@ -279,9 +400,13 @@ public class PlayerController : MonoBehaviour
 
         float elapsed = 0f;
 
-        while (elapsed < dialogueZoomDuration)
+        while (
+            elapsed <
+            dialogueZoomDuration
+        )
         {
-            elapsed += Time.deltaTime;
+            elapsed +=
+                Time.deltaTime;
 
             float t =
                 Mathf.Clamp01(
@@ -309,9 +434,15 @@ public class PlayerController : MonoBehaviour
             dialogueZoomFOV;
     }
 
+    // ============================================================
+    // CÁMARA DE DECISIÓN
+    // ============================================================
+
     public IEnumerator PlayDecisionCamera()
     {
         ShowVisual();
+
+        ResetFootsteps();
 
         playerCamera.fieldOfView =
             defaultFOV;
@@ -330,7 +461,10 @@ public class PlayerController : MonoBehaviour
 
         float elapsed = 0f;
 
-        while (elapsed < decisionCameraDuration)
+        while (
+            elapsed <
+            decisionCameraDuration
+        )
         {
             elapsed +=
                 Time.unscaledDeltaTime;

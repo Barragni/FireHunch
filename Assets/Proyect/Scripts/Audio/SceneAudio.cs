@@ -19,6 +19,8 @@ public class SceneAudio : MonoBehaviour
             return;
         }
 
+        // PlayMusic / PlayAmbience ya se encargan de
+        // detener y limpiar el canal si el clip es null.
         AudioManager.Instance.PlayMusic(
             musicClip
         );

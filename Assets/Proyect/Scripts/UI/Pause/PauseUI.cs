@@ -128,7 +128,7 @@ public class PauseUI : MonoBehaviour
 
     private void ReturnToMenu()
     {
-        AudioManager.Instance.PlayButtonClick();
+        AudioManager.Instance?.PlayButtonClick();
 
         Time.timeScale = 1f;
 
@@ -137,7 +137,17 @@ public class PauseUI : MonoBehaviour
             GameState.Instance.ResetData();
         }
 
-        SceneTransitionManager.Instance.LoadScene("Menu");
+        // Detener música y ambiente inmediatamente.
+        // El SFX del botón puede terminar normalmente.
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.StopMusic();
+            AudioManager.Instance.StopAmbience();
+        }
+
+        SceneTransitionManager.Instance.LoadScene(
+            "Menu"
+        );
     }
 
     private void QuitGame()

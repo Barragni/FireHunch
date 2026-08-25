@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class AudioManager : MonoBehaviour
 {
@@ -10,23 +11,30 @@ public class AudioManager : MonoBehaviour
 
     [Header("Audio Sources")]
     [SerializeField] private AudioSource musicSource;
-
     [SerializeField] private AudioSource ambienceSource;
-
     [SerializeField] private AudioSource sfxSource;
+
+    [Header("Audio Source - Pasos")]
+    [SerializeField] private AudioSource footstepSource;
 
     [Header("UI SFX")]
     [SerializeField] private AudioClip buttonClick;
-
     [SerializeField] private AudioClip decisionOpen;
-
     [SerializeField] private AudioClip timerEnd;
 
     [Header("Comic SFX")]
     [SerializeField] private AudioClip pageFlip;
 
+    [Header("Pasos del jugador")]
+    [SerializeField] private AudioClip footstepClip;
+
+    [Range(0f, 1f)]
+    [SerializeField] private float footstepVolume = 1f;
+
     public float MasterVolume { get; private set; } = 1f;
+
     public float MusicVolume { get; private set; } = 1f;
+
     public float SFXVolume { get; private set; } = 1f;
 
     private void Awake()
@@ -37,8 +45,14 @@ public class AudioManager : MonoBehaviour
 
             DontDestroyOnLoad(gameObject);
 
+            SetupFootstepSource();
+
             LoadVolumes();
             ApplyVolumes();
+
+            StopAllAudio();
+
+            SceneManager.sceneLoaded += OnSceneLoaded;
         }
         else
         {
@@ -46,35 +60,83 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    #region Volumen
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+        }
+    }
+
+    private void SetupFootstepSource()
+    {
+        // Si no se asignó manualmente en el Inspector,
+        // crear uno automáticamente.
+        if (footstepSource == null)
+        {
+            footstepSource =
+                gameObject.AddComponent<AudioSource>();
+        }
+
+        footstepSource.playOnAwake = false;
+        footstepSource.loop = false;
+        footstepSource.spatialBlend = 0f;
+    }
+
+    private void OnSceneLoaded(
+        Scene scene,
+        LoadSceneMode mode
+    )
+    {
+        StopAllAudio();
+    }
+
+    // ============================================================
+    // VOLUMEN
+    // ============================================================
 
     public void SetMasterVolume(float value)
     {
-        MasterVolume = Mathf.Clamp01(value);
+        MasterVolume =
+            Mathf.Clamp01(value);
 
         ApplyVolumes();
 
-        PlayerPrefs.SetFloat(MASTER_KEY, MasterVolume);
+        PlayerPrefs.SetFloat(
+            MASTER_KEY,
+            MasterVolume
+        );
+
         PlayerPrefs.Save();
     }
 
     public void SetMusicVolume(float value)
     {
-        MusicVolume = Mathf.Clamp01(value);
+        MusicVolume =
+            Mathf.Clamp01(value);
 
         ApplyVolumes();
 
-        PlayerPrefs.SetFloat(MUSIC_KEY, MusicVolume);
+        PlayerPrefs.SetFloat(
+            MUSIC_KEY,
+            MusicVolume
+        );
+
         PlayerPrefs.Save();
     }
 
     public void SetSFXVolume(float value)
     {
-        SFXVolume = Mathf.Clamp01(value);
+        SFXVolume =
+            Mathf.Clamp01(value);
 
         ApplyVolumes();
 
-        PlayerPrefs.SetFloat(SFX_KEY, SFXVolume);
+        PlayerPrefs.SetFloat(
+            SFX_KEY,
+            SFXVolume
+        );
+
         PlayerPrefs.Save();
     }
 
@@ -86,97 +148,243 @@ public class AudioManager : MonoBehaviour
 
         ApplyVolumes();
 
-        PlayerPrefs.SetFloat(MASTER_KEY, MasterVolume);
-        PlayerPrefs.SetFloat(MUSIC_KEY, MusicVolume);
-        PlayerPrefs.SetFloat(SFX_KEY, SFXVolume);
+        PlayerPrefs.SetFloat(
+            MASTER_KEY,
+            MasterVolume
+        );
+
+        PlayerPrefs.SetFloat(
+            MUSIC_KEY,
+            MusicVolume
+        );
+
+        PlayerPrefs.SetFloat(
+            SFX_KEY,
+            SFXVolume
+        );
 
         PlayerPrefs.Save();
     }
 
     private void LoadVolumes()
     {
-        MasterVolume = PlayerPrefs.GetFloat(MASTER_KEY, 1f);
-        MusicVolume = PlayerPrefs.GetFloat(MUSIC_KEY, 1f);
-        SFXVolume = PlayerPrefs.GetFloat(SFX_KEY, 1f);
+        MasterVolume =
+            PlayerPrefs.GetFloat(
+                MASTER_KEY,
+                1f
+            );
+
+        MusicVolume =
+            PlayerPrefs.GetFloat(
+                MUSIC_KEY,
+                1f
+            );
+
+        SFXVolume =
+            PlayerPrefs.GetFloat(
+                SFX_KEY,
+                1f
+            );
     }
 
     private void ApplyVolumes()
     {
         if (musicSource != null)
-            musicSource.volume = MasterVolume * MusicVolume;
+        {
+            musicSource.volume =
+                MasterVolume *
+                MusicVolume;
+        }
 
         if (ambienceSource != null)
-            ambienceSource.volume = MasterVolume * SFXVolume;
+        {
+            ambienceSource.volume =
+                MasterVolume *
+                SFXVolume;
+        }
 
         if (sfxSource != null)
-            sfxSource.volume = MasterVolume * SFXVolume;
+        {
+            sfxSource.volume =
+                MasterVolume *
+                SFXVolume;
+        }
+
+        if (footstepSource != null)
+        {
+            footstepSource.volume =
+                MasterVolume *
+                SFXVolume *
+                footstepVolume;
+        }
     }
 
-    #endregion
+    // ============================================================
+    // RESET GENERAL DE AUDIO
+    // ============================================================
 
-    #region Music
+    public void StopAllAudio()
+    {
+        StopMusic();
+        StopAmbience();
+        StopSFX();
+        StopFootstep();
+    }
+
+    public void StopMusic()
+    {
+        if (musicSource == null)
+            return;
+
+        musicSource.Stop();
+        musicSource.clip = null;
+    }
+
+    public void StopAmbience()
+    {
+        if (ambienceSource == null)
+            return;
+
+        ambienceSource.Stop();
+        ambienceSource.clip = null;
+    }
+
+    public void StopSFX()
+    {
+        if (sfxSource == null)
+            return;
+
+        sfxSource.Stop();
+        sfxSource.clip = null;
+    }
+
+    // ============================================================
+    // MUSIC
+    // ============================================================
 
     public void PlayMusic(AudioClip clip)
     {
-        if (clip == null)
+        if (musicSource == null)
             return;
 
-        if (musicSource.clip == clip &&
-            musicSource.isPlaying)
+        if (clip == null)
+        {
+            StopMusic();
             return;
+        }
+
+        if (
+            musicSource.clip == clip &&
+            musicSource.isPlaying
+        )
+        {
+            return;
+        }
 
         musicSource.Stop();
 
         musicSource.clip = clip;
         musicSource.loop = true;
+
         musicSource.Play();
     }
 
-    public void StopMusic()
-    {
-        musicSource.Stop();
-    }
-
-    #endregion
-
-    #region Ambience
+    // ============================================================
+    // AMBIENCE
+    // ============================================================
 
     public void PlayAmbience(AudioClip clip)
     {
-        if (clip == null)
+        if (ambienceSource == null)
             return;
 
-        if (ambienceSource.clip == clip &&
-            ambienceSource.isPlaying)
+        if (clip == null)
+        {
+            StopAmbience();
             return;
+        }
+
+        if (
+            ambienceSource.clip == clip &&
+            ambienceSource.isPlaying
+        )
+        {
+            return;
+        }
 
         ambienceSource.Stop();
 
         ambienceSource.clip = clip;
         ambienceSource.loop = true;
+
         ambienceSource.Play();
     }
 
-    public void StopAmbience()
-    {
-        ambienceSource.Stop();
-    }
-
-    #endregion
-
-    #region Generic SFX
+    // ============================================================
+    // SFX
+    // ============================================================
 
     public void PlaySFX(AudioClip clip)
     {
-        if (clip == null)
+        if (
+            clip == null ||
+            sfxSource == null
+        )
+        {
             return;
+        }
 
         sfxSource.PlayOneShot(clip);
     }
 
-    #endregion
+    // ============================================================
+    // PASOS
+    // ============================================================
 
-    #region UI
+    /// <summary>
+    /// Comienza el sonido de pasos.
+    ///
+    /// El clip NO se reinicia mientras ya esté sonando.
+    /// </summary>
+    public void PlayFootstep()
+    {
+        if (
+            footstepSource == null ||
+            footstepClip == null
+        )
+        {
+            return;
+        }
+
+        footstepSource.clip =
+            footstepClip;
+
+        footstepSource.loop = true;
+
+        footstepSource.volume =
+            MasterVolume *
+            SFXVolume *
+            footstepVolume;
+
+        if (!footstepSource.isPlaying)
+        {
+            footstepSource.Play();
+        }
+    }
+
+    public void StopFootstep()
+    {
+        if (footstepSource == null)
+            return;
+
+        footstepSource.Stop();
+
+        footstepSource.clip = null;
+    }
+
+    // ============================================================
+    // UI
+    // ============================================================
 
     public void PlayButtonClick()
     {
@@ -193,14 +401,12 @@ public class AudioManager : MonoBehaviour
         PlaySFX(timerEnd);
     }
 
-    #endregion
-
-    #region Comic
+    // ============================================================
+    // COMIC
+    // ============================================================
 
     public void PlayPageFlip()
     {
         PlaySFX(pageFlip);
     }
-
-    #endregion
 }

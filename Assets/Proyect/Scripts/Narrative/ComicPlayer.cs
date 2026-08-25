@@ -361,6 +361,17 @@ public class ComicPlayer : MonoBehaviour
 
     private void ReturnToMenu()
     {
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayButtonClick();
+
+            // El botón puede terminar de reproducirse,
+            // pero ningún sonido de la escena debe sobrevivir
+            // a la transición hacia el menú.
+            AudioManager.Instance.StopMusic();
+            AudioManager.Instance.StopAmbience();
+        }
+
         if (GameState.Instance != null)
         {
             GameState.Instance.ResetData();

@@ -164,13 +164,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 646172500a93d0d4c8aea6b1d83b2451, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameState
-  decisionRecords: []
+  score: 0
   hasValentina: 0
   hasBeto: 0
   currentNode: 
   decisionPath: 
   decisionHistory: []
-  narrativeFlags: []
+  decisionRecords: []
 --- !u!114 &72990918
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -610,10 +610,13 @@ MonoBehaviour:
   musicSource: {fileID: 280387110}
   ambienceSource: {fileID: 449225031}
   sfxSource: {fileID: 660329448}
+  footstepSource: {fileID: 0}
   buttonClick: {fileID: 8300000, guid: efbf029978b8dea4f830fcc03c104a8d, type: 3}
   decisionOpen: {fileID: 8300000, guid: f9f916b0101db6f4b8fecc5698610180, type: 3}
   timerEnd: {fileID: 8300000, guid: efbf029978b8dea4f830fcc03c104a8d, type: 3}
   pageFlip: {fileID: 8300000, guid: 6bc2a0214a2777c4daab261c7a620c3d, type: 3}
+  footstepClip: {fileID: 8300000, guid: 9abeab6045467b24d99c9bab75c1c401, type: 3}
+  footstepVolume: 1
 --- !u!1 &660329447
 GameObject:
   m_ObjectHideFlags: 0
