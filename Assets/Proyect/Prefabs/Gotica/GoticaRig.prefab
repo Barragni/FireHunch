@@ -149,6 +149,8 @@ MonoBehaviour:
   catchUpDistance: 7
   acceleration: 100
   angularSpeed: 720
+  separationDistance: 2
+  separationStrength: 2
   movingThreshold: 0.2
   idleThreshold: 0.05
   speedParameter: Speed

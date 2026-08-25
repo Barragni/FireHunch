@@ -17,6 +17,11 @@ public class CompanionFollower : MonoBehaviour
     [SerializeField] private float acceleration = 100f;
     [SerializeField] private float angularSpeed = 720f;
 
+    [Header("Separación entre companions")]
+    [SerializeField] private float separationDistance = 1.2f;
+
+    [SerializeField] private float separationStrength = 1.5f;
+
     [Header("Tolerancia de animación")]
     [SerializeField] private float movingThreshold = 0.2f;
     [SerializeField] private float idleThreshold = 0.05f;
@@ -31,18 +36,25 @@ public class CompanionFollower : MonoBehaviour
 
     private bool isMoving;
 
+    private CompanionFollower[] otherCompanions;
+
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
 
-        // El movimiento físico lo controla el NavMeshAgent.
         animator.applyRootMotion = false;
 
         agent.acceleration = acceleration;
         agent.angularSpeed = angularSpeed;
         agent.stoppingDistance = followDistance;
         agent.autoBraking = false;
+
+        // No usamos el avoidance automático de Unity,
+        // porque dos companions siguiendo exactamente
+        // el mismo destino pueden entrar en conflicto.
+        agent.obstacleAvoidanceType =
+            ObstacleAvoidanceType.NoObstacleAvoidance;
     }
 
     private void Start()
@@ -67,6 +79,15 @@ public class CompanionFollower : MonoBehaviour
         agent.angularSpeed = angularSpeed;
         agent.stoppingDistance = followDistance;
         agent.autoBraking = false;
+
+        agent.obstacleAvoidanceType =
+            ObstacleAvoidanceType.NoObstacleAvoidance;
+
+        // Buscar los demás companions de la escena.
+        otherCompanions =
+            FindObjectsByType<CompanionFollower>(
+                FindObjectsSortMode.None
+            );
     }
 
     private void Update()
@@ -74,10 +95,11 @@ public class CompanionFollower : MonoBehaviour
         if (target == null)
             return;
 
-        float distance = Vector3.Distance(
-            transform.position,
-            target.position
-        );
+        float distance =
+            Vector3.Distance(
+                transform.position,
+                target.position
+            );
 
         // ==========================================
         // SEGUIMIENTO
@@ -101,32 +123,39 @@ public class CompanionFollower : MonoBehaviour
                 agent.speed = followSpeed;
             }
 
-            agent.SetDestination(target.position);
+            Vector3 destination =
+                target.position;
+
+            // Aplicar separación solamente si
+            // otro companion está demasiado cerca.
+            destination +=
+                GetSeparationOffset();
+
+            agent.SetDestination(
+                destination
+            );
         }
 
         // ==========================================
         // ANIMACIÓN
         // ==========================================
 
-        float currentSpeed = agent.velocity.magnitude;
+        float currentSpeed =
+            agent.velocity.magnitude;
 
         animator.SetFloat(
             speedParameter,
             currentSpeed
         );
 
-        // Histeresis:
-        //
-        // Para comenzar a caminar necesita superar
-        // movingThreshold.
-        //
-        // Una vez caminando, no vuelve a Idle hasta
-        // bajar de idleThreshold.
-        //
-        // Esto evita cambios constantes entre Walking
-        // e Idle cuando la velocidad fluctúa cerca de 0.
+        // ==========================================
+        // HISTERESIS
+        // ==========================================
 
-        if (!isMoving && currentSpeed > movingThreshold)
+        if (
+            !isMoving &&
+            currentSpeed > movingThreshold
+        )
         {
             isMoving = true;
 
@@ -135,7 +164,10 @@ public class CompanionFollower : MonoBehaviour
                 true
             );
         }
-        else if (isMoving && currentSpeed < idleThreshold)
+        else if (
+            isMoving &&
+            currentSpeed < idleThreshold
+        )
         {
             isMoving = false;
 
@@ -146,7 +178,57 @@ public class CompanionFollower : MonoBehaviour
         }
     }
 
-    public void SetTarget(Transform newTarget)
+    private Vector3 GetSeparationOffset()
+    {
+        if (otherCompanions == null)
+            return Vector3.zero;
+
+        Vector3 separation =
+            Vector3.zero;
+
+        foreach (
+            CompanionFollower other
+            in otherCompanions
+        )
+        {
+            if (other == null || other == this)
+                continue;
+
+            Vector3 difference =
+                transform.position -
+                other.transform.position;
+
+            difference.y = 0f;
+
+            float distance =
+                difference.magnitude;
+
+            if (
+                distance <= 0.001f ||
+                distance >= separationDistance
+            )
+            {
+                continue;
+            }
+
+            float strength =
+                1f -
+                Mathf.Clamp01(
+                    distance /
+                    separationDistance
+                );
+
+            separation +=
+                difference.normalized *
+                strength;
+        }
+
+        return separation * separationStrength;
+    }
+
+    public void SetTarget(
+        Transform newTarget
+    )
     {
         target = newTarget;
     }

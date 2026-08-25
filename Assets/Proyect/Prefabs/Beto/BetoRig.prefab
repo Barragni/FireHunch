@@ -71,5 +71,62 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9ca7654c0b44bbe40bedcdfc537615fc, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1722061280556751070}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9ca7654c0b44bbe40bedcdfc537615fc, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 9080089822401817112}
   m_SourcePrefab: {fileID: 100100000, guid: 9ca7654c0b44bbe40bedcdfc537615fc, type: 3}
+--- !u!1 &6661655379333256597 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 9ca7654c0b44bbe40bedcdfc537615fc, type: 3}
+  m_PrefabInstance: {fileID: 5815164803403458756}
+  m_PrefabAsset: {fileID: 0}
+--- !u!195 &1722061280556751070
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6661655379333256597}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 10
+  m_Acceleration: 20
+  avoidancePriority: 50
+  m_AngularSpeed: 240
+  m_StoppingDistance: 0.2
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!114 &9080089822401817112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6661655379333256597}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1130d01272969d14d9402ab557a45b7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FollowerAI
+  followDistance: 4
+  followSpeed: 4
+  catchUpSpeed: 8
+  catchUpDistance: 7
+  acceleration: 100
+  angularSpeed: 720
+  separationDistance: 2
+  separationStrength: 2
+  movingThreshold: 0.2
+  idleThreshold: 0.05
+  speedParameter: Speed
+  movingParameter: Moving
