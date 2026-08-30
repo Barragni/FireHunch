@@ -612,11 +612,11 @@ MonoBehaviour:
   sfxSource: {fileID: 660329448}
   footstepSource: {fileID: 0}
   buttonClick: {fileID: 8300000, guid: efbf029978b8dea4f830fcc03c104a8d, type: 3}
-  decisionOpen: {fileID: 8300000, guid: f9f916b0101db6f4b8fecc5698610180, type: 3}
+  decisionOpen: {fileID: 8300000, guid: 0cd73cc15d90ac34fb19283a977ebbb9, type: 3}
   timerEnd: {fileID: 8300000, guid: efbf029978b8dea4f830fcc03c104a8d, type: 3}
   pageFlip: {fileID: 8300000, guid: 6bc2a0214a2777c4daab261c7a620c3d, type: 3}
   footstepClip: {fileID: 8300000, guid: 9abeab6045467b24d99c9bab75c1c401, type: 3}
-  footstepVolume: 1
+  footstepVolume: 0.508
 --- !u!1 &660329447
 GameObject:
   m_ObjectHideFlags: 0

@@ -31,11 +31,36 @@ public class AudioManager : MonoBehaviour
     [Range(0f, 1f)]
     [SerializeField] private float footstepVolume = 1f;
 
+    // ============================================================
+    // VOLUMEN CONFIGURADO POR EL JUGADOR
+    // ============================================================
+
     public float MasterVolume { get; private set; } = 1f;
 
     public float MusicVolume { get; private set; } = 1f;
 
     public float SFXVolume { get; private set; } = 1f;
+
+    // ============================================================
+    // MEZCLA DE LA ESCENA ACTUAL
+    // ============================================================
+
+    private float sceneMusicVolume = 0.55f;
+    private float sceneAmbienceVolume = 0.18f;
+    private float sceneSFXVolume = 0.85f;
+
+    public float SceneMusicVolume =>
+        sceneMusicVolume;
+
+    public float SceneAmbienceVolume =>
+        sceneAmbienceVolume;
+
+    public float SceneSFXVolume =>
+        sceneSFXVolume;
+
+    // ============================================================
+    // UNITY
+    // ============================================================
 
     private void Awake()
     {
@@ -45,14 +70,19 @@ public class AudioManager : MonoBehaviour
 
             DontDestroyOnLoad(gameObject);
 
+            SetupAudioSources();
             SetupFootstepSource();
 
             LoadVolumes();
+
+            ResetSceneMix();
+
             ApplyVolumes();
 
             StopAllAudio();
 
-            SceneManager.sceneLoaded += OnSceneLoaded;
+            SceneManager.sceneLoaded +=
+                OnSceneLoaded;
         }
         else
         {
@@ -64,7 +94,29 @@ public class AudioManager : MonoBehaviour
     {
         if (Instance == this)
         {
-            SceneManager.sceneLoaded -= OnSceneLoaded;
+            SceneManager.sceneLoaded -=
+                OnSceneLoaded;
+        }
+    }
+
+    private void SetupAudioSources()
+    {
+        if (musicSource != null)
+        {
+            musicSource.playOnAwake = false;
+            musicSource.loop = true;
+        }
+
+        if (ambienceSource != null)
+        {
+            ambienceSource.playOnAwake = false;
+            ambienceSource.loop = true;
+        }
+
+        if (sfxSource != null)
+        {
+            sfxSource.playOnAwake = false;
+            sfxSource.loop = false;
         }
     }
 
@@ -88,11 +140,91 @@ public class AudioManager : MonoBehaviour
         LoadSceneMode mode
     )
     {
-        StopAllAudio();
+        // ========================================================
+        // IMPORTANTE
+        // ========================================================
+        //
+        // NO detener la música aquí.
+        //
+        // La música puede necesitar sobrevivir al paso
+        // desde Gameplay hacia DecisionComic.
+        //
+        // SceneAudio decidirá qué hacer con Música y Ambiente
+        // dependiendo del tipo de escena.
+        //
+        // Los sonidos temporales, en cambio, no deben sobrevivir
+        // físicamente al cambio de escena.
+        // ========================================================
+
+        StopSFX();
+        StopFootstep();
+
+        // Restablecer la mezcla base antes de que
+        // SceneAudio configure la nueva escena.
+        ResetSceneMix();
     }
 
     // ============================================================
-    // VOLUMEN
+    // MEZCLA POR ESCENA
+    // ============================================================
+
+    /// <summary>
+    /// Configura los niveles propios de la escena actual.
+    ///
+    /// Estos valores se multiplican por los ajustes generales
+    /// seleccionados por el jugador.
+    /// </summary>
+    public void SetSceneMix(
+        float musicVolume,
+        float ambienceVolume,
+        float sfxVolume
+    )
+    {
+        sceneMusicVolume =
+            Mathf.Clamp01(
+                musicVolume
+            );
+
+        sceneAmbienceVolume =
+            Mathf.Clamp01(
+                ambienceVolume
+            );
+
+        sceneSFXVolume =
+            Mathf.Clamp01(
+                sfxVolume
+            );
+
+        ApplyVolumes();
+    }
+
+    private void ResetSceneMix()
+    {
+        // ========================================================
+        // MEZCLA PROFESIONAL BASE
+        // ========================================================
+        //
+        // Música:
+        // presente pero dejando espacio para información sonora.
+        //
+        // Ambiente:
+        // especialmente bajo pensando en una alarma de incendio
+        // continua, que puede resultar muy invasiva.
+        //
+        // SFX:
+        // por delante de música y ambiente para mantener
+        // claridad de interacción y feedback.
+        // ========================================================
+
+        sceneMusicVolume = 0.55f;
+        sceneAmbienceVolume = 0.18f;
+        sceneSFXVolume = 0.85f;
+
+        ApplyVolumes();
+    }
+
+    // ============================================================
+    // VOLUMEN GENERAL
     // ============================================================
 
     public void SetMasterVolume(float value)
@@ -189,32 +321,52 @@ public class AudioManager : MonoBehaviour
 
     private void ApplyVolumes()
     {
+        // ========================================================
+        // MÚSICA
+        // ========================================================
+
         if (musicSource != null)
         {
             musicSource.volume =
                 MasterVolume *
-                MusicVolume;
+                MusicVolume *
+                sceneMusicVolume;
         }
+
+        // ========================================================
+        // AMBIENTE
+        // ========================================================
 
         if (ambienceSource != null)
         {
             ambienceSource.volume =
                 MasterVolume *
-                SFXVolume;
+                SFXVolume *
+                sceneAmbienceVolume;
         }
+
+        // ========================================================
+        // SFX
+        // ========================================================
 
         if (sfxSource != null)
         {
             sfxSource.volume =
                 MasterVolume *
-                SFXVolume;
+                SFXVolume *
+                sceneSFXVolume;
         }
+
+        // ========================================================
+        // PASOS
+        // ========================================================
 
         if (footstepSource != null)
         {
             footstepSource.volume =
                 MasterVolume *
                 SFXVolume *
+                sceneSFXVolume *
                 footstepVolume;
         }
     }
@@ -231,6 +383,10 @@ public class AudioManager : MonoBehaviour
         StopFootstep();
     }
 
+    // ============================================================
+    // MUSIC
+    // ============================================================
+
     public void StopMusic()
     {
         if (musicSource == null)
@@ -240,29 +396,19 @@ public class AudioManager : MonoBehaviour
         musicSource.clip = null;
     }
 
-    public void StopAmbience()
-    {
-        if (ambienceSource == null)
-            return;
-
-        ambienceSource.Stop();
-        ambienceSource.clip = null;
-    }
-
-    public void StopSFX()
-    {
-        if (sfxSource == null)
-            return;
-
-        sfxSource.Stop();
-        sfxSource.clip = null;
-    }
-
-    // ============================================================
-    // MUSIC
-    // ============================================================
-
-    public void PlayMusic(AudioClip clip)
+    /// <summary>
+    /// Reproduce música.
+    ///
+    /// Si restartEvenIfSame es false y ya está sonando
+    /// exactamente el mismo clip, continúa sin reiniciarlo.
+    ///
+    /// Si restartEvenIfSame es true, el clip comienza
+    /// obligatoriamente desde el principio.
+    /// </summary>
+    public void PlayMusic(
+        AudioClip clip,
+        bool restartEvenIfSame = false
+    )
     {
         if (musicSource == null)
             return;
@@ -274,6 +420,7 @@ public class AudioManager : MonoBehaviour
         }
 
         if (
+            !restartEvenIfSame &&
             musicSource.clip == clip &&
             musicSource.isPlaying
         )
@@ -286,12 +433,45 @@ public class AudioManager : MonoBehaviour
         musicSource.clip = clip;
         musicSource.loop = true;
 
+        ApplyVolumes();
+
         musicSource.Play();
+    }
+
+    /// <summary>
+    /// Devuelve true si actualmente existe
+    /// una música reproduciéndose.
+    /// </summary>
+    public bool IsMusicPlaying()
+    {
+        return
+            musicSource != null &&
+            musicSource.clip != null &&
+            musicSource.isPlaying;
+    }
+
+    public AudioClip GetCurrentMusic()
+    {
+        if (musicSource == null)
+        {
+            return null;
+        }
+
+        return musicSource.clip;
     }
 
     // ============================================================
     // AMBIENCE
     // ============================================================
+
+    public void StopAmbience()
+    {
+        if (ambienceSource == null)
+            return;
+
+        ambienceSource.Stop();
+        ambienceSource.clip = null;
+    }
 
     public void PlayAmbience(AudioClip clip)
     {
@@ -317,12 +497,23 @@ public class AudioManager : MonoBehaviour
         ambienceSource.clip = clip;
         ambienceSource.loop = true;
 
+        ApplyVolumes();
+
         ambienceSource.Play();
     }
 
     // ============================================================
     // SFX
     // ============================================================
+
+    public void StopSFX()
+    {
+        if (sfxSource == null)
+            return;
+
+        sfxSource.Stop();
+        sfxSource.clip = null;
+    }
 
     public void PlaySFX(AudioClip clip)
     {
@@ -333,6 +524,8 @@ public class AudioManager : MonoBehaviour
         {
             return;
         }
+
+        ApplyVolumes();
 
         sfxSource.PlayOneShot(clip);
     }
@@ -364,6 +557,7 @@ public class AudioManager : MonoBehaviour
         footstepSource.volume =
             MasterVolume *
             SFXVolume *
+            sceneSFXVolume *
             footstepVolume;
 
         if (!footstepSource.isPlaying)
