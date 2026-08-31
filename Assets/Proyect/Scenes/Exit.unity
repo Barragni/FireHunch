@@ -3513,7 +3513,7 @@ MonoBehaviour:
   sceneType: 0
   musicClip: {fileID: 8300000, guid: 0ad195edcdd339045afea5901383b17d, type: 3}
   keepPreviousMusicInComic: 0
-  ambienceClip: {fileID: 8300000, guid: c7e1737ed6f7c7840a1340e8cc298334, type: 3}
+  ambienceClip: {fileID: 8300000, guid: 26733b9cf22167648b6266ed0c22d522, type: 3}
   musicVolume: 0.55
   ambienceVolume: 0.18
   sfxVolume: 0.85
