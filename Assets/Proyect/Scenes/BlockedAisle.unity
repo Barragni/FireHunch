@@ -3685,7 +3685,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneAudio
   sceneType: 0
-  musicClip: {fileID: 8300000, guid: 099478cd50d9ad14d870caa2f4f63dbc, type: 3}
+  musicClip: {fileID: 8300000, guid: 0ea62ca8bd581a342a68b9585cdd1309, type: 3}
   keepPreviousMusicInComic: 0
   ambienceClip: {fileID: 8300000, guid: 0b385201d4f56dc44a80a20276ce9697, type: 3}
   musicVolume: 0.55

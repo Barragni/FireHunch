@@ -829,7 +829,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -110}
-  m_SizeDelta: {x: 323.3, y: 68.6}
+  m_SizeDelta: {x: 323.3, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &770864020
 MonoBehaviour:
@@ -1533,8 +1533,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -207}
-  m_SizeDelta: {x: 323.3, y: 68.6}
+  m_AnchoredPosition: {x: 0, y: -210}
+  m_SizeDelta: {x: 323.3, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1219851752
 MonoBehaviour:
@@ -1978,6 +1978,57 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -20, y: -20}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1397665327
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1397665329}
+  - component: {fileID: 1397665328}
+  m_Layer: 0
+  m_Name: SceneAudio
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1397665328
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1397665327}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39e143d9b4916974d99b434c9b71d161, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SceneAudio
+  sceneType: 0
+  musicClip: {fileID: 8300000, guid: 5600a0189643c9946bdc35ded41cfe39, type: 3}
+  keepPreviousMusicInComic: 0
+  ambienceClip: {fileID: 0}
+  musicVolume: 0.55
+  ambienceVolume: 0.18
+  sfxVolume: 0.85
+--- !u!4 &1397665329
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1397665327}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1025.1189, y: 0, z: -928.95496}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1432749372
 GameObject:
   m_ObjectHideFlags: 0
@@ -2478,7 +2529,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -160}
-  m_SizeDelta: {x: 323.3, y: 68.6}
+  m_SizeDelta: {x: 323.3, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1731395404
 MonoBehaviour:
@@ -3214,3 +3265,4 @@ SceneRoots:
   - {fileID: 1487965653}
   - {fileID: 1376267935}
   - {fileID: 1502395170}
+  - {fileID: 1397665329}
