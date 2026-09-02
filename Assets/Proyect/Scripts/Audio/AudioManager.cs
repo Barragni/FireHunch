@@ -9,6 +9,10 @@ public class AudioManager : MonoBehaviour
     private const string MUSIC_KEY = "MusicVolume";
     private const string SFX_KEY = "SFXVolume";
 
+    // ============================================================
+    // AUDIO SOURCES
+    // ============================================================
+
     [Header("Audio Sources")]
     [SerializeField] private AudioSource musicSource;
     [SerializeField] private AudioSource ambienceSource;
@@ -17,13 +21,44 @@ public class AudioManager : MonoBehaviour
     [Header("Audio Source - Pasos")]
     [SerializeField] private AudioSource footstepSource;
 
+    // ============================================================
+    // UI SFX
+    // ============================================================
+
     [Header("UI SFX")]
     [SerializeField] private AudioClip buttonClick;
     [SerializeField] private AudioClip decisionOpen;
     [SerializeField] private AudioClip timerEnd;
 
+    // ============================================================
+    // COMIC SFX
+    // ============================================================
+
     [Header("Comic SFX")]
     [SerializeField] private AudioClip pageFlip;
+
+    // ============================================================
+    // MÚSICA DE MUERTE
+    // ============================================================
+
+    [Header("Música de muerte")]
+
+    [Tooltip(
+        "Música que se reproduce cuando el jugador muere. " +
+        "Reemplaza inmediatamente cualquier música que estuviera sonando."
+    )]
+    [SerializeField] private AudioClip deathMusic;
+
+    [Tooltip(
+        "Volumen independiente de la música de muerte. " +
+        "1 = volumen completo, 0 = silencio."
+    )]
+    [Range(0f, 1f)]
+    [SerializeField] private float deathMusicVolume = 0.5f;
+
+    // ============================================================
+    // PASOS DEL JUGADOR
+    // ============================================================
 
     [Header("Pasos del jugador")]
     [SerializeField] private AudioClip footstepClip;
@@ -46,7 +81,9 @@ public class AudioManager : MonoBehaviour
     // ============================================================
 
     private float sceneMusicVolume = 0.55f;
+
     private float sceneAmbienceVolume = 0.18f;
+
     private float sceneSFXVolume = 0.85f;
 
     public float SceneMusicVolume =>
@@ -57,6 +94,12 @@ public class AudioManager : MonoBehaviour
 
     public float SceneSFXVolume =>
         sceneSFXVolume;
+
+    // ============================================================
+    // ESTADO DE MÚSICA DE MUERTE
+    // ============================================================
+
+    private bool isDeathMusicPlaying;
 
     // ============================================================
     // UNITY
@@ -71,6 +114,7 @@ public class AudioManager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
 
             SetupAudioSources();
+
             SetupFootstepSource();
 
             LoadVolumes();
@@ -99,31 +143,43 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    // ============================================================
+    // CONFIGURAR AUDIO SOURCES
+    // ============================================================
+
     private void SetupAudioSources()
     {
         if (musicSource != null)
         {
             musicSource.playOnAwake = false;
+
             musicSource.loop = true;
         }
 
         if (ambienceSource != null)
         {
             ambienceSource.playOnAwake = false;
+
             ambienceSource.loop = true;
         }
 
         if (sfxSource != null)
         {
             sfxSource.playOnAwake = false;
+
             sfxSource.loop = false;
         }
     }
+
+    // ============================================================
+    // CONFIGURAR SOURCE DE PASOS
+    // ============================================================
 
     private void SetupFootstepSource()
     {
         // Si no se asignó manualmente en el Inspector,
         // crear uno automáticamente.
+
         if (footstepSource == null)
         {
             footstepSource =
@@ -131,9 +187,15 @@ public class AudioManager : MonoBehaviour
         }
 
         footstepSource.playOnAwake = false;
+
         footstepSource.loop = false;
+
         footstepSource.spatialBlend = 0f;
     }
+
+    // ============================================================
+    // CAMBIO DE ESCENA
+    // ============================================================
 
     private void OnSceneLoaded(
         Scene scene,
@@ -146,21 +208,19 @@ public class AudioManager : MonoBehaviour
         //
         // NO detener la música aquí.
         //
-        // La música puede necesitar sobrevivir al paso
-        // desde Gameplay hacia DecisionComic.
+        // SceneAudio decide posteriormente qué música debe sonar.
         //
-        // SceneAudio decidirá qué hacer con Música y Ambiente
-        // dependiendo del tipo de escena.
-        //
-        // Los sonidos temporales, en cambio, no deben sobrevivir
-        // físicamente al cambio de escena.
+        // Esto permite que Keep Previous Music funcione
+        // correctamente entre escenas.
         // ========================================================
 
         StopSFX();
+
         StopFootstep();
 
         // Restablecer la mezcla base antes de que
         // SceneAudio configure la nueva escena.
+
         ResetSceneMix();
     }
 
@@ -201,23 +261,13 @@ public class AudioManager : MonoBehaviour
     private void ResetSceneMix()
     {
         // ========================================================
-        // MEZCLA PROFESIONAL BASE
-        // ========================================================
-        //
-        // Música:
-        // presente pero dejando espacio para información sonora.
-        //
-        // Ambiente:
-        // especialmente bajo pensando en una alarma de incendio
-        // continua, que puede resultar muy invasiva.
-        //
-        // SFX:
-        // por delante de música y ambiente para mantener
-        // claridad de interacción y feedback.
+        // MEZCLA BASE
         // ========================================================
 
         sceneMusicVolume = 0.55f;
+
         sceneAmbienceVolume = 0.18f;
+
         sceneSFXVolume = 0.85f;
 
         ApplyVolumes();
@@ -275,7 +325,9 @@ public class AudioManager : MonoBehaviour
     public void ResetVolumes()
     {
         MasterVolume = 1f;
+
         MusicVolume = 1f;
+
         SFXVolume = 1f;
 
         ApplyVolumes();
@@ -298,6 +350,10 @@ public class AudioManager : MonoBehaviour
         PlayerPrefs.Save();
     }
 
+    // ============================================================
+    // CARGAR VOLUMEN
+    // ============================================================
+
     private void LoadVolumes()
     {
         MasterVolume =
@@ -319,6 +375,10 @@ public class AudioManager : MonoBehaviour
             );
     }
 
+    // ============================================================
+    // APLICAR VOLUMEN
+    // ============================================================
+
     private void ApplyVolumes()
     {
         // ========================================================
@@ -327,10 +387,25 @@ public class AudioManager : MonoBehaviour
 
         if (musicSource != null)
         {
-            musicSource.volume =
-                MasterVolume *
-                MusicVolume *
-                sceneMusicVolume;
+            if (isDeathMusicPlaying)
+            {
+                // La música de muerte tiene su propio volumen.
+
+                musicSource.volume =
+                    MasterVolume *
+                    MusicVolume *
+                    sceneMusicVolume *
+                    deathMusicVolume;
+            }
+            else
+            {
+                // Música normal.
+
+                musicSource.volume =
+                    MasterVolume *
+                    MusicVolume *
+                    sceneMusicVolume;
+            }
         }
 
         // ========================================================
@@ -378,8 +453,11 @@ public class AudioManager : MonoBehaviour
     public void StopAllAudio()
     {
         StopMusic();
+
         StopAmbience();
+
         StopSFX();
+
         StopFootstep();
     }
 
@@ -393,7 +471,12 @@ public class AudioManager : MonoBehaviour
             return;
 
         musicSource.Stop();
+
         musicSource.clip = null;
+
+        isDeathMusicPlaying = false;
+
+        ApplyVolumes();
     }
 
     /// <summary>
@@ -416,27 +499,103 @@ public class AudioManager : MonoBehaviour
         if (clip == null)
         {
             StopMusic();
+
             return;
         }
 
         if (
             !restartEvenIfSame &&
             musicSource.clip == clip &&
-            musicSource.isPlaying
+            musicSource.isPlaying &&
+            !isDeathMusicPlaying
         )
         {
             return;
         }
 
+        // ========================================================
+        // YA NO ES MÚSICA DE MUERTE
+        // ========================================================
+
+        isDeathMusicPlaying = false;
+
+        // ========================================================
+        // DETENER CUALQUIER MÚSICA ANTERIOR
+        // ========================================================
+
         musicSource.Stop();
 
+        // ========================================================
+        // ASIGNAR NUEVA MÚSICA
+        // ========================================================
+
         musicSource.clip = clip;
+
         musicSource.loop = true;
 
         ApplyVolumes();
 
         musicSource.Play();
     }
+
+    // ============================================================
+    // MÚSICA DE MUERTE
+    // ============================================================
+
+    /// <summary>
+    /// Detiene inmediatamente la música que estuviera sonando
+    /// y reproduce la música específica de muerte.
+    ///
+    /// Utiliza el mismo AudioSource de música general, por lo que
+    /// nunca se reproducen simultáneamente la música normal y
+    /// la música de muerte.
+    ///
+    /// Death Music Volume permite ajustar exclusivamente
+    /// el volumen de esta música desde el Inspector.
+    /// </summary>
+    public void PlayDeathMusic()
+    {
+        if (musicSource == null)
+            return;
+
+        if (deathMusic == null)
+        {
+            Debug.LogWarning(
+                "AudioManager: No se asignó una música en Death Music."
+            );
+
+            return;
+        }
+
+        // ========================================================
+        // DETENER MÚSICA ANTERIOR
+        // ========================================================
+
+        musicSource.Stop();
+
+        // ========================================================
+        // MARCAR MÚSICA DE MUERTE
+        // ========================================================
+
+        isDeathMusicPlaying = true;
+
+        // ========================================================
+        // REPRODUCIR MÚSICA DE MUERTE
+        // ========================================================
+
+        musicSource.clip =
+            deathMusic;
+
+        musicSource.loop = true;
+
+        ApplyVolumes();
+
+        musicSource.Play();
+    }
+
+    // ============================================================
+    // CONSULTAR MÚSICA
+    // ============================================================
 
     /// <summary>
     /// Devuelve true si actualmente existe
@@ -450,6 +609,10 @@ public class AudioManager : MonoBehaviour
             musicSource.isPlaying;
     }
 
+    /// <summary>
+    /// Devuelve el AudioClip que actualmente tiene
+    /// asignado el AudioSource de música.
+    /// </summary>
     public AudioClip GetCurrentMusic()
     {
         if (musicSource == null)
@@ -470,10 +633,13 @@ public class AudioManager : MonoBehaviour
             return;
 
         ambienceSource.Stop();
+
         ambienceSource.clip = null;
     }
 
-    public void PlayAmbience(AudioClip clip)
+    public void PlayAmbience(
+        AudioClip clip
+    )
     {
         if (ambienceSource == null)
             return;
@@ -481,6 +647,7 @@ public class AudioManager : MonoBehaviour
         if (clip == null)
         {
             StopAmbience();
+
             return;
         }
 
@@ -495,6 +662,7 @@ public class AudioManager : MonoBehaviour
         ambienceSource.Stop();
 
         ambienceSource.clip = clip;
+
         ambienceSource.loop = true;
 
         ApplyVolumes();
@@ -512,10 +680,13 @@ public class AudioManager : MonoBehaviour
             return;
 
         sfxSource.Stop();
+
         sfxSource.clip = null;
     }
 
-    public void PlaySFX(AudioClip clip)
+    public void PlaySFX(
+        AudioClip clip
+    )
     {
         if (
             clip == null ||
@@ -527,7 +698,9 @@ public class AudioManager : MonoBehaviour
 
         ApplyVolumes();
 
-        sfxSource.PlayOneShot(clip);
+        sfxSource.PlayOneShot(
+            clip
+        );
     }
 
     // ============================================================

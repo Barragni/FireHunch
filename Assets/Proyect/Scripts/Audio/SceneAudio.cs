@@ -81,7 +81,7 @@ public class SceneAudio : MonoBehaviour
         );
 
         // ========================================================
-        // MÚSICA
+        // MÚSICA NORMAL DE LA ESCENA
         // ========================================================
 
         ConfigureMusic();
@@ -91,6 +91,21 @@ public class SceneAudio : MonoBehaviour
         // ========================================================
 
         ConfigureAmbience();
+
+        // ========================================================
+        // RESTAURACIÓN DESPUÉS DE MUERTE
+        // ========================================================
+        //
+        // IMPORTANTE:
+        //
+        // Esto ocurre DESPUÉS de ConfigureMusic().
+        //
+        // Por lo tanto Keep Previous Music ya no puede impedir
+        // la restauración de la música que estaba sonando antes
+        // de morir.
+        // ========================================================
+
+        RestoreMusicAfterDeath();
     }
 
     // ============================================================
@@ -105,18 +120,11 @@ public class SceneAudio : MonoBehaviour
 
         if (keepPreviousMusic)
         {
-            // Si ya existe música reproduciéndose,
-            // no tocar absolutamente nada.
-            //
-            // Continúa desde exactamente el mismo punto.
             if (AudioManager.Instance.IsMusicPlaying())
             {
                 return;
             }
 
-            // Si se pidió conservar música pero realmente
-            // no había ninguna reproduciéndose, utilizar
-            // Music Clip como respaldo.
             if (musicClip != null)
             {
                 AudioManager.Instance.PlayMusic(
@@ -131,12 +139,6 @@ public class SceneAudio : MonoBehaviour
         // --------------------------------------------------------
         // USAR MÚSICA DE ESTA ESCENA
         // --------------------------------------------------------
-        //
-        // PlayMusic se encarga de detener la música anterior
-        // antes de reproducir la nueva.
-        //
-        // Por lo tanto nunca existen dos músicas simultáneas.
-        // --------------------------------------------------------
 
         AudioManager.Instance.PlayMusic(
             musicClip,
@@ -150,14 +152,58 @@ public class SceneAudio : MonoBehaviour
 
     private void ConfigureAmbience()
     {
-        // Cada SceneAudio controla directamente
-        // el ambiente correspondiente a su escena.
-        //
-        // Si ambienceClip es null, AudioManager
-        // detendrá el ambiente anterior.
-
         AudioManager.Instance.PlayAmbience(
             ambienceClip
         );
+    }
+
+    // ============================================================
+    // RESTAURAR MÚSICA DESPUÉS DE MUERTE
+    // ============================================================
+
+    private void RestoreMusicAfterDeath()
+    {
+        if (!NarrativeState.RestoreMusicAfterDeath)
+        {
+            return;
+        }
+
+        AudioClip previousMusic =
+            NarrativeState.MusicBeforeDeath;
+
+        if (previousMusic == null)
+        {
+            NarrativeState.RestoreMusicAfterDeath =
+                false;
+
+            return;
+        }
+
+        // ========================================================
+        // RESTAURAR LA MÚSICA ORIGINAL
+        // ========================================================
+        //
+        // restartEvenIfSame = true garantiza que si por alguna
+        // razón SceneAudio dejó exactamente el mismo clip,
+        // igualmente vuelva a comenzar.
+        //
+        // La música restaurada es la que estaba sonando antes
+        // de la muerte.
+        // ========================================================
+
+        AudioManager.Instance.PlayMusic(
+            previousMusic,
+            true
+        );
+
+        // ========================================================
+        // CONSUMIR LA ORDEN DE RESTAURACIÓN
+        // ========================================================
+
+        NarrativeState.RestoreMusicAfterDeath =
+            false;
+
+        NarrativeState.MusicBeforeDeath =
+            null;
     }
 }

@@ -244,6 +244,23 @@ public class ComicPlayer : MonoBehaviour
             DecisionOutcomeType.Death
         )
         {
+            // ----------------------------------------------------
+            // CAMBIAR MÚSICA
+            // ----------------------------------------------------
+            //
+            // Esto detiene inmediatamente cualquier música que
+            // estuviera sonando y reproduce la música de fallo.
+            // ----------------------------------------------------
+
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlayDeathMusic();
+            }
+
+            // ----------------------------------------------------
+            // MOSTRAR PANEL DE MUERTE
+            // ----------------------------------------------------
+
             deathPanelUI.Panel.SetActive(true);
 
             deathPanelUI.FeedbackText.text =
@@ -304,16 +321,6 @@ public class ComicPlayer : MonoBehaviour
         // CONSERVAR LA DECISIÓN QUE SE ESTABA RESOLVIENDO
         // ========================================================
 
-        // PendingDecision ya fue guardada por DecisionPlayer
-        // antes de salir hacia DecisionComic.
-        //
-        // NO debemos reemplazar ComicState.CurrentSequence
-        // con el comic de la opción mortal.
-        //
-        // Al volver a la escena, DecisionResumeManager utilizará
-        // NarrativeState.PendingDecision.
-        // ========================================================
-
         ComicState.CurrentSequence =
             null;
 
@@ -365,9 +372,6 @@ public class ComicPlayer : MonoBehaviour
         {
             AudioManager.Instance.PlayButtonClick();
 
-            // El botón puede terminar de reproducirse,
-            // pero ningún sonido de la escena debe sobrevivir
-            // a la transición hacia el menú.
             AudioManager.Instance.StopMusic();
             AudioManager.Instance.StopAmbience();
         }
