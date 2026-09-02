@@ -3,22 +3,6 @@ using UnityEngine;
 public class SceneAudio : MonoBehaviour
 {
     // ============================================================
-    // TIPO DE ESCENA
-    // ============================================================
-
-    public enum SceneAudioType
-    {
-        Gameplay,
-        Comic,
-        Other
-    }
-
-    [Header("Tipo de escena")]
-    [SerializeField]
-    private SceneAudioType sceneType =
-        SceneAudioType.Gameplay;
-
-    // ============================================================
     // MÚSICA
     // ============================================================
 
@@ -26,14 +10,13 @@ public class SceneAudio : MonoBehaviour
     [SerializeField]
     private AudioClip musicClip;
 
-    [Header("Comportamiento de música en Comic")]
     [Tooltip(
-        "Si está activado, una escena Comic conserva la música " +
+        "Si está activado, esta escena conserva exactamente la música " +
         "que venía reproduciéndose desde la escena anterior. " +
         "Si no había ninguna música sonando, utilizará Music Clip."
     )]
     [SerializeField]
-    private bool keepPreviousMusicInComic = true;
+    private bool keepPreviousMusic = false;
 
     // ============================================================
     // AMBIENTE
@@ -58,9 +41,7 @@ public class SceneAudio : MonoBehaviour
     private float musicVolume = 0.55f;
 
     [Tooltip(
-        "Nivel del sonido ambiente de esta escena. " +
-        "0.18 está pensado para una alarma de incendios " +
-        "continua sin tapar música ni SFX."
+        "Nivel del sonido ambiente de esta escena."
     )]
     [Range(0f, 1f)]
     [SerializeField]
@@ -83,14 +64,14 @@ public class SceneAudio : MonoBehaviour
         if (AudioManager.Instance == null)
         {
             Debug.LogWarning(
-                "No existe AudioManager en la escena Bootstrap."
+                "SceneAudio: No existe AudioManager."
             );
 
             return;
         }
 
         // ========================================================
-        // APLICAR MEZCLA PROPIA DE ESTA ESCENA
+        // MEZCLA DE LA ESCENA
         // ========================================================
 
         AudioManager.Instance.SetSceneMix(
@@ -100,109 +81,42 @@ public class SceneAudio : MonoBehaviour
         );
 
         // ========================================================
-        // COMIC
-        // ========================================================
-
-        if (
-            sceneType ==
-            SceneAudioType.Comic
-        )
-        {
-            ConfigureComicAudio();
-
-            return;
-        }
-
-        // ========================================================
-        // GAMEPLAY
-        // ========================================================
-
-        if (
-            sceneType ==
-            SceneAudioType.Gameplay
-        )
-        {
-            ConfigureGameplayAudio();
-
-            return;
-        }
-
-        // ========================================================
-        // OTRAS ESCENAS
-        // ========================================================
-
-        ConfigureOtherAudio();
-    }
-
-    // ============================================================
-    // GAMEPLAY
-    // ============================================================
-
-    private void ConfigureGameplayAudio()
-    {
-        // ========================================================
         // MÚSICA
         // ========================================================
-        //
-        // Gameplay SIEMPRE corta cualquier música anterior
-        // y comienza la música asignada desde el principio.
-        //
-        // Esto impide que la música de un cómic sobreviva
-        // accidentalmente al regresar al gameplay.
-        // ========================================================
 
-        AudioManager.Instance.PlayMusic(
-            musicClip,
-            true
-        );
+        ConfigureMusic();
 
         // ========================================================
         // AMBIENTE
         // ========================================================
 
-        AudioManager.Instance.PlayAmbience(
-            ambienceClip
-        );
+        ConfigureAmbience();
     }
 
     // ============================================================
-    // COMIC
+    // MÚSICA
     // ============================================================
 
-    private void ConfigureComicAudio()
+    private void ConfigureMusic()
     {
-        // ========================================================
-        // AMBIENTE
-        // ========================================================
-        //
-        // REGLA OBLIGATORIA:
-        //
-        // ningún sonido ambiente de Gameplay puede sobrevivir
-        // a una escena Comic.
-        //
-        // Esto corta, por ejemplo, la alarma de incendios.
-        // ========================================================
+        // --------------------------------------------------------
+        // CONSERVAR MÚSICA ANTERIOR
+        // --------------------------------------------------------
 
-        AudioManager.Instance.StopAmbience();
-
-        // ========================================================
-        // MÚSICA
-        // ========================================================
-
-        if (keepPreviousMusicInComic)
+        if (keepPreviousMusic)
         {
-            // Si ya viene música desde Gameplay,
-            // simplemente dejarla continuar exactamente
-            // desde el punto donde estaba.
-            if (
-                AudioManager.Instance.IsMusicPlaying()
-            )
+            // Si ya existe música reproduciéndose,
+            // no tocar absolutamente nada.
+            //
+            // Continúa desde exactamente el mismo punto.
+            if (AudioManager.Instance.IsMusicPlaying())
             {
                 return;
             }
 
-            // Si llegamos al Comic sin música previa,
-            // puede utilizarse Music Clip como respaldo.
+            // Si se pidió conservar música pero realmente
+            // no había ninguna reproduciéndose, utilizar
+            // Music Clip como respaldo.
             if (musicClip != null)
             {
                 AudioManager.Instance.PlayMusic(
@@ -214,9 +128,16 @@ public class SceneAudio : MonoBehaviour
             return;
         }
 
-        // Si deliberadamente desactivamos
-        // Keep Previous Music In Comic,
-        // el Comic controla su propia música.
+        // --------------------------------------------------------
+        // USAR MÚSICA DE ESTA ESCENA
+        // --------------------------------------------------------
+        //
+        // PlayMusic se encarga de detener la música anterior
+        // antes de reproducir la nueva.
+        //
+        // Por lo tanto nunca existen dos músicas simultáneas.
+        // --------------------------------------------------------
+
         AudioManager.Instance.PlayMusic(
             musicClip,
             true
@@ -224,15 +145,16 @@ public class SceneAudio : MonoBehaviour
     }
 
     // ============================================================
-    // OTRAS ESCENAS
+    // AMBIENTE
     // ============================================================
 
-    private void ConfigureOtherAudio()
+    private void ConfigureAmbience()
     {
-        AudioManager.Instance.PlayMusic(
-            musicClip,
-            false
-        );
+        // Cada SceneAudio controla directamente
+        // el ambiente correspondiente a su escena.
+        //
+        // Si ambienceClip es null, AudioManager
+        // detendrá el ambiente anterior.
 
         AudioManager.Instance.PlayAmbience(
             ambienceClip
