@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -44,17 +45,21 @@ public class AudioManager : MonoBehaviour
     [Header("Música de muerte")]
 
     [Tooltip(
-        "Música que se reproduce cuando el jugador muere. " +
-        "Reemplaza inmediatamente cualquier música que estuviera sonando."
+        "Música que se reproduce cuando el jugador muere."
     )]
     [SerializeField] private AudioClip deathMusic;
 
     [Tooltip(
-        "Volumen independiente de la música de muerte. " +
-        "1 = volumen completo, 0 = silencio."
+        "Volumen máximo de la música de muerte."
     )]
     [Range(0f, 1f)]
     [SerializeField] private float deathMusicVolume = 0.5f;
+
+    [Tooltip(
+        "Tiempo que tarda la música de muerte en subir " +
+        "desde silencio hasta su volumen configurado."
+    )]
+    [SerializeField] private float deathMusicFadeInDuration = 1.5f;
 
     // ============================================================
     // PASOS DEL JUGADOR
@@ -100,6 +105,8 @@ public class AudioManager : MonoBehaviour
     // ============================================================
 
     private bool isDeathMusicPlaying;
+
+    private Coroutine deathMusicFadeCoroutine;
 
     // ============================================================
     // UNITY
@@ -177,9 +184,6 @@ public class AudioManager : MonoBehaviour
 
     private void SetupFootstepSource()
     {
-        // Si no se asignó manualmente en el Inspector,
-        // crear uno automáticamente.
-
         if (footstepSource == null)
         {
             footstepSource =
@@ -202,24 +206,9 @@ public class AudioManager : MonoBehaviour
         LoadSceneMode mode
     )
     {
-        // ========================================================
-        // IMPORTANTE
-        // ========================================================
-        //
-        // NO detener la música aquí.
-        //
-        // SceneAudio decide posteriormente qué música debe sonar.
-        //
-        // Esto permite que Keep Previous Music funcione
-        // correctamente entre escenas.
-        // ========================================================
-
         StopSFX();
 
         StopFootstep();
-
-        // Restablecer la mezcla base antes de que
-        // SceneAudio configure la nueva escena.
 
         ResetSceneMix();
     }
@@ -228,12 +217,6 @@ public class AudioManager : MonoBehaviour
     // MEZCLA POR ESCENA
     // ============================================================
 
-    /// <summary>
-    /// Configura los niveles propios de la escena actual.
-    ///
-    /// Estos valores se multiplican por los ajustes generales
-    /// seleccionados por el jugador.
-    /// </summary>
     public void SetSceneMix(
         float musicVolume,
         float ambienceVolume,
@@ -260,10 +243,6 @@ public class AudioManager : MonoBehaviour
 
     private void ResetSceneMix()
     {
-        // ========================================================
-        // MEZCLA BASE
-        // ========================================================
-
         sceneMusicVolume = 0.55f;
 
         sceneAmbienceVolume = 0.18f;
@@ -381,16 +360,10 @@ public class AudioManager : MonoBehaviour
 
     private void ApplyVolumes()
     {
-        // ========================================================
-        // MÚSICA
-        // ========================================================
-
         if (musicSource != null)
         {
             if (isDeathMusicPlaying)
             {
-                // La música de muerte tiene su propio volumen.
-
                 musicSource.volume =
                     MasterVolume *
                     MusicVolume *
@@ -399,18 +372,12 @@ public class AudioManager : MonoBehaviour
             }
             else
             {
-                // Música normal.
-
                 musicSource.volume =
                     MasterVolume *
                     MusicVolume *
                     sceneMusicVolume;
             }
         }
-
-        // ========================================================
-        // AMBIENTE
-        // ========================================================
 
         if (ambienceSource != null)
         {
@@ -420,10 +387,6 @@ public class AudioManager : MonoBehaviour
                 sceneAmbienceVolume;
         }
 
-        // ========================================================
-        // SFX
-        // ========================================================
-
         if (sfxSource != null)
         {
             sfxSource.volume =
@@ -431,10 +394,6 @@ public class AudioManager : MonoBehaviour
                 SFXVolume *
                 sceneSFXVolume;
         }
-
-        // ========================================================
-        // PASOS
-        // ========================================================
 
         if (footstepSource != null)
         {
@@ -467,6 +426,15 @@ public class AudioManager : MonoBehaviour
 
     public void StopMusic()
     {
+        if (deathMusicFadeCoroutine != null)
+        {
+            StopCoroutine(
+                deathMusicFadeCoroutine
+            );
+
+            deathMusicFadeCoroutine = null;
+        }
+
         if (musicSource == null)
             return;
 
@@ -479,15 +447,10 @@ public class AudioManager : MonoBehaviour
         ApplyVolumes();
     }
 
-    /// <summary>
-    /// Reproduce música.
-    ///
-    /// Si restartEvenIfSame es false y ya está sonando
-    /// exactamente el mismo clip, continúa sin reiniciarlo.
-    ///
-    /// Si restartEvenIfSame es true, el clip comienza
-    /// obligatoriamente desde el principio.
-    /// </summary>
+    // ============================================================
+    // REPRODUCIR MÚSICA NORMAL
+    // ============================================================
+
     public void PlayMusic(
         AudioClip clip,
         bool restartEvenIfSame = false
@@ -503,21 +466,25 @@ public class AudioManager : MonoBehaviour
             return;
         }
 
+        if (deathMusicFadeCoroutine != null)
+        {
+            StopCoroutine(
+                deathMusicFadeCoroutine
+            );
+
+            deathMusicFadeCoroutine = null;
+        }
+
+        isDeathMusicPlaying = false;
+
         if (
             !restartEvenIfSame &&
             musicSource.clip == clip &&
-            musicSource.isPlaying &&
-            !isDeathMusicPlaying
+            musicSource.isPlaying
         )
         {
             return;
         }
-
-        // ========================================================
-        // YA NO ES MÚSICA DE MUERTE
-        // ========================================================
-
-        isDeathMusicPlaying = false;
 
         // ========================================================
         // DETENER CUALQUIER MÚSICA ANTERIOR
@@ -543,15 +510,9 @@ public class AudioManager : MonoBehaviour
     // ============================================================
 
     /// <summary>
-    /// Detiene inmediatamente la música que estuviera sonando
-    /// y reproduce la música específica de muerte.
-    ///
-    /// Utiliza el mismo AudioSource de música general, por lo que
-    /// nunca se reproducen simultáneamente la música normal y
-    /// la música de muerte.
-    ///
-    /// Death Music Volume permite ajustar exclusivamente
-    /// el volumen de esta música desde el Inspector.
+    /// Detiene inmediatamente la música que estaba sonando
+    /// y comienza la música de muerte desde volumen 0,
+    /// realizando posteriormente un fade in hasta su volumen normal.
     /// </summary>
     public void PlayDeathMusic()
     {
@@ -568,19 +529,34 @@ public class AudioManager : MonoBehaviour
         }
 
         // ========================================================
-        // DETENER MÚSICA ANTERIOR
+        // CANCELAR FADE ANTERIOR
+        // ========================================================
+
+        if (deathMusicFadeCoroutine != null)
+        {
+            StopCoroutine(
+                deathMusicFadeCoroutine
+            );
+
+            deathMusicFadeCoroutine = null;
+        }
+
+        // ========================================================
+        // DETENER MÚSICA ACTUAL
         // ========================================================
 
         musicSource.Stop();
 
+        musicSource.clip = null;
+
         // ========================================================
-        // MARCAR MÚSICA DE MUERTE
+        // MARCAR COMO MÚSICA DE MUERTE
         // ========================================================
 
         isDeathMusicPlaying = true;
 
         // ========================================================
-        // REPRODUCIR MÚSICA DE MUERTE
+        // ASIGNAR MÚSICA DE MUERTE
         // ========================================================
 
         musicSource.clip =
@@ -588,19 +564,95 @@ public class AudioManager : MonoBehaviour
 
         musicSource.loop = true;
 
-        ApplyVolumes();
+        // ========================================================
+        // COMENZAR DESDE SILENCIO
+        // ========================================================
+
+        musicSource.volume = 0f;
 
         musicSource.Play();
+
+        // ========================================================
+        // INICIAR FADE IN
+        // ========================================================
+
+        deathMusicFadeCoroutine =
+            StartCoroutine(
+                FadeInDeathMusic()
+            );
+    }
+
+    // ============================================================
+    // FADE IN DE MÚSICA DE MUERTE
+    // ============================================================
+
+    private IEnumerator FadeInDeathMusic()
+    {
+        float duration =
+            Mathf.Max(
+                0f,
+                deathMusicFadeInDuration
+            );
+
+        float targetVolume =
+            MasterVolume *
+            MusicVolume *
+            sceneMusicVolume *
+            deathMusicVolume;
+
+        // Si el tiempo es 0, entra inmediatamente
+        // al volumen configurado.
+
+        if (duration <= 0f)
+        {
+            musicSource.volume =
+                targetVolume;
+
+            deathMusicFadeCoroutine = null;
+
+            yield break;
+        }
+
+        float elapsed = 0f;
+
+        while (
+            elapsed <
+            duration
+        )
+        {
+            elapsed +=
+                Time.unscaledDeltaTime;
+
+            float progress =
+                Mathf.Clamp01(
+                    elapsed /
+                    duration
+                );
+
+            musicSource.volume =
+                Mathf.Lerp(
+                    0f,
+                    targetVolume,
+                    progress
+                );
+
+            yield return null;
+        }
+
+        // ========================================================
+        // ASEGURAR VOLUMEN FINAL EXACTO
+        // ========================================================
+
+        musicSource.volume =
+            targetVolume;
+
+        deathMusicFadeCoroutine = null;
     }
 
     // ============================================================
     // CONSULTAR MÚSICA
     // ============================================================
 
-    /// <summary>
-    /// Devuelve true si actualmente existe
-    /// una música reproduciéndose.
-    /// </summary>
     public bool IsMusicPlaying()
     {
         return
@@ -609,10 +661,6 @@ public class AudioManager : MonoBehaviour
             musicSource.isPlaying;
     }
 
-    /// <summary>
-    /// Devuelve el AudioClip que actualmente tiene
-    /// asignado el AudioSource de música.
-    /// </summary>
     public AudioClip GetCurrentMusic()
     {
         if (musicSource == null)
@@ -707,11 +755,6 @@ public class AudioManager : MonoBehaviour
     // PASOS
     // ============================================================
 
-    /// <summary>
-    /// Comienza el sonido de pasos.
-    ///
-    /// El clip NO se reinicia mientras ya esté sonando.
-    /// </summary>
     public void PlayFootstep()
     {
         if (

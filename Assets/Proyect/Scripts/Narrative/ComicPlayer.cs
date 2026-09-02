@@ -16,6 +16,10 @@ public class ComicPlayer : MonoBehaviour
     private int currentPanel;
     private bool changingPage;
 
+    // ============================================================
+    // START
+    // ============================================================
+
     private void Start()
     {
         if (deathPanelUI != null)
@@ -23,6 +27,7 @@ public class ComicPlayer : MonoBehaviour
             deathPanelUI.Panel.SetActive(false);
 
             deathPanelUI.RetryButton.onClick.RemoveAllListeners();
+
             deathPanelUI.MenuButton.onClick.RemoveAllListeners();
 
             deathPanelUI.RetryButton.onClick.AddListener(
@@ -56,6 +61,10 @@ public class ComicPlayer : MonoBehaviour
         );
     }
 
+    // ============================================================
+    // UPDATE
+    // ============================================================
+
     private void Update()
     {
         if (changingPage)
@@ -77,6 +86,10 @@ public class ComicPlayer : MonoBehaviour
         }
     }
 
+    // ============================================================
+    // INICIAR SECUENCIA
+    // ============================================================
+
     private void StartSequence(
         ComicSequence sequence
     )
@@ -96,6 +109,10 @@ public class ComicPlayer : MonoBehaviour
             ].text
         );
     }
+
+    // ============================================================
+    // SIGUIENTE PANEL
+    // ============================================================
 
     private IEnumerator NextPanel()
     {
@@ -134,6 +151,10 @@ public class ComicPlayer : MonoBehaviour
 
         changingPage = false;
     }
+
+    // ============================================================
+    // FINAL DEL CÓMIC
+    // ============================================================
 
     private IEnumerator HandleEnd()
     {
@@ -244,22 +265,10 @@ public class ComicPlayer : MonoBehaviour
             DecisionOutcomeType.Death
         )
         {
-            // ----------------------------------------------------
-            // CAMBIAR MÚSICA
-            // ----------------------------------------------------
-            //
-            // Esto detiene inmediatamente cualquier música que
-            // estuviera sonando y reproduce la música de fallo.
-            // ----------------------------------------------------
-
             if (AudioManager.Instance != null)
             {
                 AudioManager.Instance.PlayDeathMusic();
             }
-
-            // ----------------------------------------------------
-            // MOSTRAR PANEL DE MUERTE
-            // ----------------------------------------------------
 
             deathPanelUI.Panel.SetActive(true);
 
@@ -307,6 +316,22 @@ public class ComicPlayer : MonoBehaviour
 
     private void RetryDecision()
     {
+        // ========================================================
+        // DETENER LA MÚSICA DE MUERTE INMEDIATAMENTE
+        // ========================================================
+        //
+        // Esto también cancela el fade de la música de muerte.
+        //
+        // Se hace ANTES de cargar ReturnScene para evitar que
+        // SceneAudio interprete la música de muerte como la música
+        // anterior de la escena.
+        // ========================================================
+
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.StopMusic();
+        }
+
         // ========================================================
         // INDICAR QUE VOLVEMOS DE UNA MUERTE
         // ========================================================
@@ -373,6 +398,7 @@ public class ComicPlayer : MonoBehaviour
             AudioManager.Instance.PlayButtonClick();
 
             AudioManager.Instance.StopMusic();
+
             AudioManager.Instance.StopAmbience();
         }
 
