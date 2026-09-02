@@ -270,10 +270,10 @@ public class ComicPlayer : MonoBehaviour
                 AudioManager.Instance.PlayDeathMusic();
             }
 
-            deathPanelUI.Panel.SetActive(true);
-
             deathPanelUI.FeedbackText.text =
                 option.deathFeedback;
+
+            deathPanelUI.Show();
 
             yield break;
         }
@@ -316,20 +316,34 @@ public class ComicPlayer : MonoBehaviour
 
     private void RetryDecision()
     {
+        StartCoroutine(
+            RetryDecisionRoutine()
+        );
+    }
+
+    private IEnumerator RetryDecisionRoutine()
+    {
         // ========================================================
-        // DETENER LA MÚSICA DE MUERTE INMEDIATAMENTE
-        // ========================================================
-        //
-        // Esto también cancela el fade de la música de muerte.
-        //
-        // Se hace ANTES de cargar ReturnScene para evitar que
-        // SceneAudio interprete la música de muerte como la música
-        // anterior de la escena.
+        // SONIDO DEL BOTÓN
         // ========================================================
 
         if (AudioManager.Instance != null)
         {
+            AudioManager.Instance.PlayButtonClick();
+
+            // Detener inmediatamente la música de muerte.
             AudioManager.Instance.StopMusic();
+        }
+
+        // ========================================================
+        // ANIMACIÓN INVERSA
+        // ========================================================
+
+        if (deathPanelUI != null)
+        {
+            yield return StartCoroutine(
+                deathPanelUI.HideAnimated()
+            );
         }
 
         // ========================================================
@@ -343,7 +357,7 @@ public class ComicPlayer : MonoBehaviour
             true;
 
         // ========================================================
-        // CONSERVAR LA DECISIÓN QUE SE ESTABA RESOLVIENDO
+        // LIMPIAR ESTADO DEL CÓMIC
         // ========================================================
 
         ComicState.CurrentSequence =
@@ -356,14 +370,14 @@ public class ComicPlayer : MonoBehaviour
             string.Empty;
 
         // ========================================================
-        // LA OPCIÓN MORTAL YA NO DEBE QUEDAR COMO SELECCIONADA
+        // LIMPIAR OPCIÓN MORTAL
         // ========================================================
 
         DecisionState.SelectedOption =
             null;
 
         // ========================================================
-        // VOLVER A LA ESCENA DONDE ESTABA LA DECISIÓN
+        // COMPROBAR ESCENA DE RETORNO
         // ========================================================
 
         if (
@@ -379,8 +393,12 @@ public class ComicPlayer : MonoBehaviour
             NarrativeState.ReturningFromDeath =
                 false;
 
-            return;
+            yield break;
         }
+
+        // ========================================================
+        // VOLVER A LA ESCENA
+        // ========================================================
 
         SceneTransitionManager.Instance.LoadScene(
             NarrativeState.ReturnScene
@@ -393,6 +411,17 @@ public class ComicPlayer : MonoBehaviour
 
     private void ReturnToMenu()
     {
+        StartCoroutine(
+            ReturnToMenuRoutine()
+        );
+    }
+
+    private IEnumerator ReturnToMenuRoutine()
+    {
+        // ========================================================
+        // SONIDO DEL BOTÓN
+        // ========================================================
+
         if (AudioManager.Instance != null)
         {
             AudioManager.Instance.PlayButtonClick();
@@ -402,10 +431,29 @@ public class ComicPlayer : MonoBehaviour
             AudioManager.Instance.StopAmbience();
         }
 
+        // ========================================================
+        // ANIMACIÓN INVERSA
+        // ========================================================
+
+        if (deathPanelUI != null)
+        {
+            yield return StartCoroutine(
+                deathPanelUI.HideAnimated()
+            );
+        }
+
+        // ========================================================
+        // REINICIAR GAME STATE
+        // ========================================================
+
         if (GameState.Instance != null)
         {
             GameState.Instance.ResetData();
         }
+
+        // ========================================================
+        // LIMPIAR ESTADO DEL CÓMIC
+        // ========================================================
 
         ComicState.CurrentSequence =
             null;
@@ -416,11 +464,19 @@ public class ComicPlayer : MonoBehaviour
         ComicState.IntroNextScene =
             string.Empty;
 
+        // ========================================================
+        // LIMPIAR DECISIÓN
+        // ========================================================
+
         DecisionState.CurrentDecision =
             null;
 
         DecisionState.SelectedOption =
             null;
+
+        // ========================================================
+        // LIMPIAR ESTADO NARRATIVO
+        // ========================================================
 
         NarrativeState.PendingDecision =
             null;
@@ -436,6 +492,10 @@ public class ComicPlayer : MonoBehaviour
 
         NarrativeState.ReturnNodeID =
             string.Empty;
+
+        // ========================================================
+        // VOLVER AL MENÚ
+        // ========================================================
 
         SceneTransitionManager.Instance.LoadScene(
             "Menu"
