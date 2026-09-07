@@ -32,6 +32,20 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip timerEnd;
 
     // ============================================================
+    // DIÁLOGO
+    // ============================================================
+
+    [Header("Diálogo")]
+    [SerializeField] private AudioClip dialogueBlip;
+
+    [Tooltip(
+        "Volumen independiente del sonido que se reproduce " +
+        "cada vez que aparece una nueva línea de diálogo."
+    )]
+    [Range(0f, 1f)]
+    [SerializeField] private float dialogueVolume = 1f;
+
+    // ============================================================
     // COMIC SFX
     // ============================================================
 
@@ -486,15 +500,7 @@ public class AudioManager : MonoBehaviour
             return;
         }
 
-        // ========================================================
-        // DETENER CUALQUIER MÚSICA ANTERIOR
-        // ========================================================
-
         musicSource.Stop();
-
-        // ========================================================
-        // ASIGNAR NUEVA MÚSICA
-        // ========================================================
 
         musicSource.clip = clip;
 
@@ -509,11 +515,6 @@ public class AudioManager : MonoBehaviour
     // MÚSICA DE MUERTE
     // ============================================================
 
-    /// <summary>
-    /// Detiene inmediatamente la música que estaba sonando
-    /// y comienza la música de muerte desde volumen 0,
-    /// realizando posteriormente un fade in hasta su volumen normal.
-    /// </summary>
     public void PlayDeathMusic()
     {
         if (musicSource == null)
@@ -528,10 +529,6 @@ public class AudioManager : MonoBehaviour
             return;
         }
 
-        // ========================================================
-        // CANCELAR FADE ANTERIOR
-        // ========================================================
-
         if (deathMusicFadeCoroutine != null)
         {
             StopCoroutine(
@@ -541,40 +538,20 @@ public class AudioManager : MonoBehaviour
             deathMusicFadeCoroutine = null;
         }
 
-        // ========================================================
-        // DETENER MÚSICA ACTUAL
-        // ========================================================
-
         musicSource.Stop();
 
         musicSource.clip = null;
 
-        // ========================================================
-        // MARCAR COMO MÚSICA DE MUERTE
-        // ========================================================
-
         isDeathMusicPlaying = true;
-
-        // ========================================================
-        // ASIGNAR MÚSICA DE MUERTE
-        // ========================================================
 
         musicSource.clip =
             deathMusic;
 
         musicSource.loop = true;
 
-        // ========================================================
-        // COMENZAR DESDE SILENCIO
-        // ========================================================
-
         musicSource.volume = 0f;
 
         musicSource.Play();
-
-        // ========================================================
-        // INICIAR FADE IN
-        // ========================================================
 
         deathMusicFadeCoroutine =
             StartCoroutine(
@@ -599,9 +576,6 @@ public class AudioManager : MonoBehaviour
             MusicVolume *
             sceneMusicVolume *
             deathMusicVolume;
-
-        // Si el tiempo es 0, entra inmediatamente
-        // al volumen configurado.
 
         if (duration <= 0f)
         {
@@ -638,10 +612,6 @@ public class AudioManager : MonoBehaviour
 
             yield return null;
         }
-
-        // ========================================================
-        // ASEGURAR VOLUMEN FINAL EXACTO
-        // ========================================================
 
         musicSource.volume =
             targetVolume;
@@ -809,6 +779,28 @@ public class AudioManager : MonoBehaviour
     public void PlayTimerEnd()
     {
         PlaySFX(timerEnd);
+    }
+
+    // ============================================================
+    // DIÁLOGO
+    // ============================================================
+
+    public void PlayDialogueBlip()
+    {
+        if (
+            dialogueBlip == null ||
+            sfxSource == null
+        )
+        {
+            return;
+        }
+
+        ApplyVolumes();
+
+        sfxSource.PlayOneShot(
+            dialogueBlip,
+            dialogueVolume
+        );
     }
 
     // ============================================================

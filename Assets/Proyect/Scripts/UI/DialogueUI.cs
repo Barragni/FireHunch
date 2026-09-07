@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,20 +18,242 @@ public class DialogueUI : MonoBehaviour
     [Header("Click para continuar")]
     [SerializeField] private GameObject continueText;
 
+    [Header("Animación de diálogo")]
+    [SerializeField] private float transitionDuration = 0.18f;
+
+    [SerializeField] private float transitionDistance = 25f;
+
+    [Range(0.8f, 1f)]
+    [SerializeField] private float startingScale = 0.96f;
+
+    private RectTransform dialoguePanelRect;
+    private CanvasGroup canvasGroup;
+
+    private Vector2 originalPosition;
+
+    private Coroutine transitionCoroutine;
+
+    private void Awake()
+    {
+        if (dialoguePanel == null)
+            return;
+
+        dialoguePanelRect = dialoguePanel.GetComponent<RectTransform>();
+
+        canvasGroup = dialoguePanel.GetComponent<CanvasGroup>();
+
+        if (canvasGroup == null)
+        {
+            canvasGroup = dialoguePanel.AddComponent<CanvasGroup>();
+        }
+
+        originalPosition = dialoguePanelRect.anchoredPosition;
+    }
+
     public void ShowDialogue(DialogueLine line)
     {
-        dialoguePanel.SetActive(true);
+        if (line == null || dialoguePanel == null)
+            return;
 
+        // Si no había diálogo visible, mostrar directamente.
+        if (!dialoguePanel.activeSelf)
+        {
+            dialoguePanel.SetActive(true);
+
+            SetDialogueContent(line);
+
+            canvasGroup.alpha = 1f;
+            dialoguePanelRect.anchoredPosition = originalPosition;
+            dialoguePanelRect.localScale = Vector3.one;
+
+            PlayDialogueSound();
+
+            return;
+        }
+
+        if (transitionCoroutine != null)
+        {
+            StopCoroutine(transitionCoroutine);
+        }
+
+        transitionCoroutine = StartCoroutine(
+            TransitionToNewDialogue(line)
+        );
+    }
+
+    private IEnumerator TransitionToNewDialogue(DialogueLine newLine)
+    {
+        float duration = Mathf.Max(0.01f, transitionDuration);
+
+        // =========================================================
+        // CREAR UNA COPIA DEL DIÁLOGO ACTUAL
+        // =========================================================
+
+        GameObject oldPanel =
+            Instantiate(dialoguePanel, dialoguePanel.transform.parent);
+
+        RectTransform oldRect =
+            oldPanel.GetComponent<RectTransform>();
+
+        CanvasGroup oldGroup =
+            oldPanel.GetComponent<CanvasGroup>();
+
+        if (oldGroup == null)
+        {
+            oldGroup = oldPanel.AddComponent<CanvasGroup>();
+        }
+
+        // Copiar posición y tamaño
+        oldRect.anchorMin = dialoguePanelRect.anchorMin;
+        oldRect.anchorMax = dialoguePanelRect.anchorMax;
+        oldRect.pivot = dialoguePanelRect.pivot;
+        oldRect.sizeDelta = dialoguePanelRect.sizeDelta;
+        oldRect.anchoredPosition = originalPosition;
+        oldRect.localScale = Vector3.one;
+
+        oldGroup.alpha = 1f;
+
+        // La copia debe estar visualmente delante del nuevo.
+        oldPanel.transform.SetAsLastSibling();
+
+        // =========================================================
+        // PREPARAR EL NUEVO DIÁLOGO
+        // =========================================================
+
+        SetDialogueContent(newLine);
+
+        dialoguePanelRect.anchoredPosition =
+            originalPosition +
+            Vector2.down * transitionDistance;
+
+        dialoguePanelRect.localScale =
+            Vector3.one * startingScale;
+
+        canvasGroup.alpha = 0f;
+
+        // El nuevo panel debe quedar delante de la copia.
+        dialoguePanel.transform.SetAsLastSibling();
+
+        PlayDialogueSound();
+
+        // =========================================================
+        // ANIMAR AMBOS AL MISMO TIEMPO
+        // =========================================================
+
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+
+            float t = Mathf.Clamp01(elapsed / duration);
+
+            // Suavizado
+            float smoothT =
+                1f - Mathf.Pow(1f - t, 3f);
+
+            // -----------------------------------------------------
+            // PANEL VIEJO
+            // Baja y se aleja
+            // -----------------------------------------------------
+
+            oldRect.anchoredPosition =
+                Vector2.Lerp(
+                    originalPosition,
+                    originalPosition +
+                    Vector2.down * transitionDistance,
+                    smoothT
+                );
+
+            oldRect.localScale =
+                Vector3.Lerp(
+                    Vector3.one,
+                    Vector3.one * startingScale,
+                    smoothT
+                );
+
+            oldGroup.alpha =
+                Mathf.Lerp(1f, 0f, smoothT);
+
+            // -----------------------------------------------------
+            // PANEL NUEVO
+            // Sube y se acerca
+            // -----------------------------------------------------
+
+            dialoguePanelRect.anchoredPosition =
+                Vector2.Lerp(
+                    originalPosition +
+                    Vector2.down * transitionDistance,
+                    originalPosition,
+                    smoothT
+                );
+
+            dialoguePanelRect.localScale =
+                Vector3.Lerp(
+                    Vector3.one * startingScale,
+                    Vector3.one,
+                    smoothT
+                );
+
+            canvasGroup.alpha = smoothT;
+
+            yield return null;
+        }
+
+        // =========================================================
+        // FINAL
+        // =========================================================
+
+        dialoguePanelRect.anchoredPosition =
+            originalPosition;
+
+        dialoguePanelRect.localScale =
+            Vector3.one;
+
+        canvasGroup.alpha = 1f;
+
+        Destroy(oldPanel);
+
+        transitionCoroutine = null;
+    }
+
+    private void SetDialogueContent(DialogueLine line)
+    {
         characterNameText.text = line.speakerName;
+
         dialogueText.text = line.text;
 
         speakerPortrait.sprite = line.portrait;
-        speakerPortrait.enabled = line.portrait != null;
+
+        speakerPortrait.enabled =
+            line.portrait != null;
+    }
+
+    private void PlayDialogueSound()
+    {
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayDialogueBlip();
+        }
     }
 
     public void HideDialogue()
     {
+        if (transitionCoroutine != null)
+        {
+            StopCoroutine(transitionCoroutine);
+            transitionCoroutine = null;
+        }
+
         dialoguePanel.SetActive(false);
+
+        dialoguePanelRect.anchoredPosition =
+            originalPosition;
+
+        dialoguePanelRect.localScale =
+            Vector3.one;
+
+        canvasGroup.alpha = 1f;
     }
 
     public void ShowContinueText()
