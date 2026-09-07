@@ -26,6 +26,10 @@ public class DialogueUI : MonoBehaviour
     [Range(0.8f, 1f)]
     [SerializeField] private float startingScale = 0.96f;
 
+    // ============================================================
+    // REFERENCIAS
+    // ============================================================
+
     private RectTransform dialoguePanelRect;
     private CanvasGroup canvasGroup;
 
@@ -33,29 +37,60 @@ public class DialogueUI : MonoBehaviour
 
     private Coroutine transitionCoroutine;
 
+    // Copia temporal utilizada durante la transición.
+    // Se guarda la referencia para poder destruirla si la transición
+    // se interrumpe.
+    private GameObject oldPanel;
+
+    // ============================================================
+    // AWAKE
+    // ============================================================
+
     private void Awake()
     {
         if (dialoguePanel == null)
             return;
 
-        dialoguePanelRect = dialoguePanel.GetComponent<RectTransform>();
+        dialoguePanelRect =
+            dialoguePanel.GetComponent<RectTransform>();
 
-        canvasGroup = dialoguePanel.GetComponent<CanvasGroup>();
+        canvasGroup =
+            dialoguePanel.GetComponent<CanvasGroup>();
 
         if (canvasGroup == null)
         {
-            canvasGroup = dialoguePanel.AddComponent<CanvasGroup>();
+            canvasGroup =
+                dialoguePanel.AddComponent<CanvasGroup>();
         }
 
-        originalPosition = dialoguePanelRect.anchoredPosition;
+        originalPosition =
+            dialoguePanelRect.anchoredPosition;
+
+        // El panel principal sí puede recibir interacción
+        // cuando está visible.
+        canvasGroup.blocksRaycasts = true;
+        canvasGroup.interactable = true;
     }
+
+    // ============================================================
+    // MOSTRAR DIÁLOGO
+    // ============================================================
 
     public void ShowDialogue(DialogueLine line)
     {
         if (line == null || dialoguePanel == null)
             return;
 
-        // Si no había diálogo visible, mostrar directamente.
+        // ========================================================
+        // LIMPIAR COPIA ANTERIOR
+        // ========================================================
+
+        CleanupOldPanel();
+
+        // ========================================================
+        // SI NO HABÍA DIÁLOGO VISIBLE
+        // ========================================================
+
         if (!dialoguePanel.activeSelf)
         {
             dialoguePanel.SetActive(true);
@@ -63,34 +98,70 @@ public class DialogueUI : MonoBehaviour
             SetDialogueContent(line);
 
             canvasGroup.alpha = 1f;
-            dialoguePanelRect.anchoredPosition = originalPosition;
-            dialoguePanelRect.localScale = Vector3.one;
+
+            canvasGroup.blocksRaycasts = true;
+            canvasGroup.interactable = true;
+
+            dialoguePanelRect.anchoredPosition =
+                originalPosition;
+
+            dialoguePanelRect.localScale =
+                Vector3.one;
 
             PlayDialogueSound();
 
             return;
         }
 
+        // ========================================================
+        // DETENER TRANSICIÓN ANTERIOR
+        // ========================================================
+
         if (transitionCoroutine != null)
         {
-            StopCoroutine(transitionCoroutine);
+            StopCoroutine(
+                transitionCoroutine
+            );
+
+            transitionCoroutine = null;
         }
 
-        transitionCoroutine = StartCoroutine(
-            TransitionToNewDialogue(line)
-        );
+        // Por seguridad, eliminar cualquier copia anterior.
+        CleanupOldPanel();
+
+        // ========================================================
+        // NUEVA TRANSICIÓN
+        // ========================================================
+
+        transitionCoroutine =
+            StartCoroutine(
+                TransitionToNewDialogue(line)
+            );
     }
 
-    private IEnumerator TransitionToNewDialogue(DialogueLine newLine)
+    // ============================================================
+    // TRANSICIÓN ENTRE DIÁLOGOS
+    // ============================================================
+
+    private IEnumerator TransitionToNewDialogue(
+        DialogueLine newLine
+    )
     {
-        float duration = Mathf.Max(0.01f, transitionDuration);
+        float duration =
+            Mathf.Max(
+                0.01f,
+                transitionDuration
+            );
 
-        // =========================================================
-        // CREAR UNA COPIA DEL DIÁLOGO ACTUAL
-        // =========================================================
+        // ========================================================
+        // CREAR COPIA DEL DIÁLOGO ACTUAL
+        // ========================================================
 
-        GameObject oldPanel =
-            Instantiate(dialoguePanel, dialoguePanel.transform.parent);
+        oldPanel =
+            Instantiate(
+                dialoguePanel,
+                dialoguePanel.transform.parent
+            );
 
         RectTransform oldRect =
             oldPanel.GetComponent<RectTransform>();
@@ -100,25 +171,48 @@ public class DialogueUI : MonoBehaviour
 
         if (oldGroup == null)
         {
-            oldGroup = oldPanel.AddComponent<CanvasGroup>();
+            oldGroup =
+                oldPanel.AddComponent<CanvasGroup>();
         }
 
-        // Copiar posición y tamaño
-        oldRect.anchorMin = dialoguePanelRect.anchorMin;
-        oldRect.anchorMax = dialoguePanelRect.anchorMax;
-        oldRect.pivot = dialoguePanelRect.pivot;
-        oldRect.sizeDelta = dialoguePanelRect.sizeDelta;
-        oldRect.anchoredPosition = originalPosition;
-        oldRect.localScale = Vector3.one;
+        // ========================================================
+        // CONFIGURAR COPIA
+        // ========================================================
+
+        oldRect.anchorMin =
+            dialoguePanelRect.anchorMin;
+
+        oldRect.anchorMax =
+            dialoguePanelRect.anchorMax;
+
+        oldRect.pivot =
+            dialoguePanelRect.pivot;
+
+        oldRect.sizeDelta =
+            dialoguePanelRect.sizeDelta;
+
+        oldRect.anchoredPosition =
+            originalPosition;
+
+        oldRect.localScale =
+            Vector3.one;
 
         oldGroup.alpha = 1f;
 
-        // La copia debe estar visualmente delante del nuevo.
+        // ========================================================
+        // MUY IMPORTANTE:
+        // LA COPIA NUNCA DEBE BLOQUEAR LOS CLICS
+        // ========================================================
+
+        oldGroup.blocksRaycasts = false;
+        oldGroup.interactable = false;
+
+        // La copia queda visualmente detrás.
         oldPanel.transform.SetAsLastSibling();
 
-        // =========================================================
-        // PREPARAR EL NUEVO DIÁLOGO
-        // =========================================================
+        // ========================================================
+        // PREPARAR NUEVO DIÁLOGO
+        // ========================================================
 
         SetDialogueContent(newLine);
 
@@ -127,82 +221,101 @@ public class DialogueUI : MonoBehaviour
             Vector2.down * transitionDistance;
 
         dialoguePanelRect.localScale =
-            Vector3.one * startingScale;
+            Vector3.one *
+            startingScale;
 
         canvasGroup.alpha = 0f;
 
-        // El nuevo panel debe quedar delante de la copia.
+        // El panel nuevo queda delante de la copia.
         dialoguePanel.transform.SetAsLastSibling();
+
+        canvasGroup.blocksRaycasts = true;
+        canvasGroup.interactable = true;
 
         PlayDialogueSound();
 
-        // =========================================================
-        // ANIMAR AMBOS AL MISMO TIEMPO
-        // =========================================================
+        // ========================================================
+        // ANIMAR AMBOS
+        // ========================================================
 
         float elapsed = 0f;
 
         while (elapsed < duration)
         {
-            elapsed += Time.unscaledDeltaTime;
+            elapsed +=
+                Time.unscaledDeltaTime;
 
-            float t = Mathf.Clamp01(elapsed / duration);
+            float t =
+                Mathf.Clamp01(
+                    elapsed / duration
+                );
 
-            // Suavizado
+            // Suavizado.
             float smoothT =
-                1f - Mathf.Pow(1f - t, 3f);
+                1f -
+                Mathf.Pow(
+                    1f - t,
+                    3f
+                );
 
-            // -----------------------------------------------------
+            // ----------------------------------------------------
             // PANEL VIEJO
-            // Baja y se aleja
-            // -----------------------------------------------------
+            // ----------------------------------------------------
 
             oldRect.anchoredPosition =
                 Vector2.Lerp(
                     originalPosition,
                     originalPosition +
-                    Vector2.down * transitionDistance,
+                    Vector2.down *
+                    transitionDistance,
                     smoothT
                 );
 
             oldRect.localScale =
                 Vector3.Lerp(
                     Vector3.one,
-                    Vector3.one * startingScale,
+                    Vector3.one *
+                    startingScale,
                     smoothT
                 );
 
             oldGroup.alpha =
-                Mathf.Lerp(1f, 0f, smoothT);
+                Mathf.Lerp(
+                    1f,
+                    0f,
+                    smoothT
+                );
 
-            // -----------------------------------------------------
+            // ----------------------------------------------------
             // PANEL NUEVO
-            // Sube y se acerca
-            // -----------------------------------------------------
+            // ----------------------------------------------------
 
             dialoguePanelRect.anchoredPosition =
                 Vector2.Lerp(
                     originalPosition +
-                    Vector2.down * transitionDistance,
+                    Vector2.down *
+                    transitionDistance,
                     originalPosition,
                     smoothT
                 );
 
             dialoguePanelRect.localScale =
                 Vector3.Lerp(
-                    Vector3.one * startingScale,
+                    Vector3.one *
+                    startingScale,
                     Vector3.one,
                     smoothT
                 );
 
-            canvasGroup.alpha = smoothT;
+            canvasGroup.alpha =
+                smoothT;
 
             yield return null;
         }
 
-        // =========================================================
+        // ========================================================
         // FINAL
-        // =========================================================
+        // ========================================================
 
         dialoguePanelRect.anchoredPosition =
             originalPosition;
@@ -212,22 +325,44 @@ public class DialogueUI : MonoBehaviour
 
         canvasGroup.alpha = 1f;
 
-        Destroy(oldPanel);
+        canvasGroup.blocksRaycasts = true;
+        canvasGroup.interactable = true;
+
+        // ========================================================
+        // DESTRUIR COPIA
+        // ========================================================
+
+        if (oldPanel != null)
+        {
+            Destroy(oldPanel);
+            oldPanel = null;
+        }
 
         transitionCoroutine = null;
     }
 
+    // ============================================================
+    // ESTABLECER CONTENIDO
+    // ============================================================
+
     private void SetDialogueContent(DialogueLine line)
     {
-        characterNameText.text = line.speakerName;
+        characterNameText.text =
+            line.speakerName;
 
-        dialogueText.text = line.text;
+        dialogueText.text =
+            line.text;
 
-        speakerPortrait.sprite = line.portrait;
+        speakerPortrait.sprite =
+            line.portrait;
 
         speakerPortrait.enabled =
             line.portrait != null;
     }
+
+    // ============================================================
+    // SONIDO DE DIÁLOGO
+    // ============================================================
 
     private void PlayDialogueSound()
     {
@@ -237,13 +372,47 @@ public class DialogueUI : MonoBehaviour
         }
     }
 
+    // ============================================================
+    // LIMPIAR COPIA DE TRANSICIÓN
+    // ============================================================
+
+    private void CleanupOldPanel()
+    {
+        if (oldPanel != null)
+        {
+            Destroy(oldPanel);
+            oldPanel = null;
+        }
+    }
+
+    // ============================================================
+    // OCULTAR DIÁLOGO
+    // ============================================================
+
     public void HideDialogue()
     {
+        // ========================================================
+        // DETENER TRANSICIÓN
+        // ========================================================
+
         if (transitionCoroutine != null)
         {
-            StopCoroutine(transitionCoroutine);
+            StopCoroutine(
+                transitionCoroutine
+            );
+
             transitionCoroutine = null;
         }
+
+        // ========================================================
+        // ELIMINAR COPIA QUE PODRÍA HABER QUEDADO
+        // ========================================================
+
+        CleanupOldPanel();
+
+        // ========================================================
+        // OCULTAR PANEL PRINCIPAL
+        // ========================================================
 
         dialoguePanel.SetActive(false);
 
@@ -254,7 +423,14 @@ public class DialogueUI : MonoBehaviour
             Vector3.one;
 
         canvasGroup.alpha = 1f;
+
+        canvasGroup.blocksRaycasts = true;
+        canvasGroup.interactable = true;
     }
+
+    // ============================================================
+    // TEXTO DE CONTINUAR
+    // ============================================================
 
     public void ShowContinueText()
     {

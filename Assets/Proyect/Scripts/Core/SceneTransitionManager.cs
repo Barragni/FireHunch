@@ -13,6 +13,9 @@ public class SceneTransitionManager : MonoBehaviour
 
     private bool isTransitioning;
 
+    // Permite que otros scripts sepan si hay una transición activa.
+    public bool IsTransitioning => isTransitioning;
+
     private void Awake()
     {
         if (Instance != null)
@@ -106,7 +109,8 @@ public class SceneTransitionManager : MonoBehaviour
 
         yield return Fade(0f, 1f);
 
-        AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
+        AsyncOperation operation =
+            SceneManager.LoadSceneAsync(sceneName);
 
         while (!operation.isDone)
             yield return null;
@@ -124,7 +128,12 @@ public class SceneTransitionManager : MonoBehaviour
         {
             elapsed += Time.unscaledDeltaTime;
 
-            c.a = Mathf.Lerp(from, to, elapsed / fadeDuration);
+            c.a = Mathf.Lerp(
+                from,
+                to,
+                elapsed / fadeDuration
+            );
+
             fadeImage.color = c;
 
             yield return null;

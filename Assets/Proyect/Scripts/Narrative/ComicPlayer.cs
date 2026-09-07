@@ -70,6 +70,27 @@ public class ComicPlayer : MonoBehaviour
         if (changingPage)
             return;
 
+        // No permitir clics mientras se está realizando
+        // una transición de escena o un fade.
+        if (
+            SceneTransitionManager.Instance != null &&
+            SceneTransitionManager.Instance.IsTransitioning
+        )
+        {
+            return;
+        }
+
+        // Si el panel de muerte está abierto,
+        // ignorar cualquier clic en la pantalla.
+        if (
+            deathPanelUI != null &&
+            deathPanelUI.Panel != null &&
+            deathPanelUI.Panel.activeSelf
+        )
+        {
+            return;
+        }
+
         if (
             decisionPlayer != null &&
             decisionPlayer.IsDecisionOpen
