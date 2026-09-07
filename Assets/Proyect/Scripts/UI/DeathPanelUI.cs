@@ -43,14 +43,9 @@ public class DeathPanelUI : MonoBehaviour
     [Header("Animación de cierre")]
 
     [Tooltip(
-        "Duración de la animación al cerrar el panel."
+        "Duración de la animación de cierre."
     )]
-    [SerializeField] private float hideAnimationDuration = 0.45f;
-
-    [Tooltip(
-        "Escala mínima a la que llega el panel al cerrarse."
-    )]
-    [SerializeField] private float hideEndScale = 0.82f;
+    [SerializeField] private float hideAnimationDuration = 0.75f;
 
     // ============================================================
     // VARIABLES
@@ -63,6 +58,9 @@ public class DeathPanelUI : MonoBehaviour
     private Vector3 originalScale;
 
     private Coroutine animationRoutine;
+
+    // Bloquea completamente una segunda ejecución del cierre.
+    private bool isHiding;
 
     // ============================================================
     // PROPIEDADES
@@ -110,10 +108,6 @@ public class DeathPanelUI : MonoBehaviour
         // ========================================================
         // GUARDAR ESCALA ORIGINAL
         // ========================================================
-        //
-        // Esta es la escala REAL que tienes configurada en Unity.
-        // La animación siempre vuelve exactamente a ella.
-        // ========================================================
 
         originalScale =
             panelRect.localScale;
@@ -140,6 +134,8 @@ public class DeathPanelUI : MonoBehaviour
         panelRect.localScale =
             originalScale *
             startScale;
+
+        isHiding = false;
     }
 
     // ============================================================
@@ -151,11 +147,16 @@ public class DeathPanelUI : MonoBehaviour
         if (panel == null)
             return;
 
+        // Si se estaba cerrando, cancelar ese cierre.
+        isHiding = false;
+
         if (animationRoutine != null)
         {
             StopCoroutine(
                 animationRoutine
             );
+
+            animationRoutine = null;
         }
 
         panel.SetActive(true);
@@ -172,6 +173,8 @@ public class DeathPanelUI : MonoBehaviour
 
     public void Hide()
     {
+        isHiding = false;
+
         if (animationRoutine != null)
         {
             StopCoroutine(
@@ -213,6 +216,23 @@ public class DeathPanelUI : MonoBehaviour
             yield break;
         }
 
+        // ========================================================
+        // BLOQUEAR SEGUNDA ACTIVACIÓN
+        // ========================================================
+
+        // Si otro botón o evento intenta iniciar el cierre
+        // mientras ya está cerrándose, simplemente ignorarlo.
+        if (isHiding)
+        {
+            yield break;
+        }
+
+        isHiding = true;
+
+        // ========================================================
+        // DETENER CUALQUIER ANIMACIÓN ANTERIOR
+        // ========================================================
+
         if (animationRoutine != null)
         {
             StopCoroutine(
@@ -222,6 +242,38 @@ public class DeathPanelUI : MonoBehaviour
             animationRoutine = null;
         }
 
+        // ========================================================
+        // DESACTIVAR LOS BOTONES DURANTE EL CIERRE
+        // ========================================================
+
+        if (retryButton != null)
+        {
+            retryButton.interactable = false;
+        }
+
+        if (menuButton != null)
+        {
+            menuButton.interactable = false;
+        }
+
+        // ========================================================
+        // ESTADO INICIAL
+        // ========================================================
+
+        // IMPORTANTE:
+        // No usamos overshootScale aquí.
+        //
+        // El panel comienza en 1.0 y va directamente a 0.82
+        // mientras desaparece.
+        //
+        // Esto evita completamente el crecimiento antes del fade.
+        // ========================================================
+
+        panelCanvasGroup.alpha = 1f;
+
+        panelRect.localScale =
+            originalScale;
+
         float duration =
             Mathf.Max(
                 0.01f,
@@ -230,70 +282,47 @@ public class DeathPanelUI : MonoBehaviour
 
         float elapsed = 0f;
 
-        Vector3 currentScale =
-            panelRect.localScale;
-
-        float currentAlpha =
-            panelCanvasGroup.alpha;
-
-        float targetScale =
-            Mathf.Clamp01(
-                hideEndScale
-            );
-
         // ========================================================
-        // ANIMACIÓN INVERSA
-        // ========================================================
-        //
-        // El panel se desvanece mientras vuelve hacia el centro
-        // y se hace pequeño.
+        // ANIMACIÓN DE CIERRE
         // ========================================================
 
-        while (
-            elapsed <
-            duration
-        )
+        while (elapsed < duration)
         {
             elapsed +=
                 Time.unscaledDeltaTime;
 
             float t =
                 Mathf.Clamp01(
-                    elapsed /
-                    duration
+                    elapsed / duration
                 );
 
-            // ----------------------------------------------------
-            // CURVA SUAVE
-            // ----------------------------------------------------
-
+            // Curva suave.
             float smooth =
-                Mathf.SmoothStep(
-                    0f,
-                    1f,
-                    t
+                1f -
+                Mathf.Pow(
+                    1f - t,
+                    3f
                 );
 
-            // ----------------------------------------------------
+            // ====================================================
             // FADE OUT
-            // ----------------------------------------------------
+            // ====================================================
 
             panelCanvasGroup.alpha =
                 Mathf.Lerp(
-                    currentAlpha,
+                    1f,
                     0f,
                     smooth
                 );
 
-            // ----------------------------------------------------
-            // REDUCCIÓN HACIA EL CENTRO
-            // ----------------------------------------------------
+            // ====================================================
+            // ENCOGER
+            // ====================================================
 
             panelRect.localScale =
                 Vector3.Lerp(
-                    currentScale,
-                    originalScale *
-                    targetScale,
+                    originalScale,
+                    originalScale * startScale,
                     smooth
                 );
 
@@ -307,11 +336,37 @@ public class DeathPanelUI : MonoBehaviour
         panelCanvasGroup.alpha = 0f;
 
         panelRect.localScale =
-            originalScale;
+            originalScale *
+            startScale;
 
         panel.SetActive(false);
 
+        // ========================================================
+        // RESTAURAR BOTONES
+        // ========================================================
+
+        if (retryButton != null)
+        {
+            retryButton.interactable = true;
+        }
+
+        if (menuButton != null)
+        {
+            menuButton.interactable = true;
+        }
+
+        // ========================================================
+        // FINALIZAR ESTADO
+        // ========================================================
+
+        isHiding = false;
+
         animationRoutine = null;
+
+        // Dejamos la escala preparada para la próxima aparición.
+        panelRect.localScale =
+            originalScale *
+            startScale;
     }
 
     // ============================================================
@@ -320,6 +375,8 @@ public class DeathPanelUI : MonoBehaviour
 
     private IEnumerator ShowAnimation()
     {
+        isHiding = false;
+
         float duration =
             Mathf.Max(
                 0.01f,
