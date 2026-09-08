@@ -1089,7 +1089,7 @@ Transform:
   m_GameObject: {fileID: 31337799}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.2300081, y: 0, z: -37.7}
+  m_LocalPosition: {x: 13.8, y: 0, z: -37.7}
   m_LocalScale: {x: 85, y: 0.5, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -61819,7 +61819,7 @@ Transform:
   m_GameObject: {fileID: 1481903305}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 54.2, y: 0.01, z: -9.13}
+  m_LocalPosition: {x: 54, y: 0.01, z: -9.130001}
   m_LocalScale: {x: 62, y: 0.5, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -63404,7 +63404,7 @@ Transform:
   m_GameObject: {fileID: 1517573202}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 76.77, y: 0, z: 19.33}
+  m_LocalPosition: {x: 76.57, y: 0, z: 19.329998}
   m_LocalScale: {x: 50, y: 0.5, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -70072,9 +70072,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39e143d9b4916974d99b434c9b71d161, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneAudio
-  sceneType: 0
   musicClip: {fileID: 8300000, guid: be11cd4f49a97804298673b8f5db0acd, type: 3}
-  keepPreviousMusicInComic: 0
+  keepPreviousMusic: 0
   ambienceClip: {fileID: 8300000, guid: 69a823a0159c9774f85112d0da3ef0fd, type: 3}
   musicVolume: 0.55
   ambienceVolume: 0.18
