@@ -142,21 +142,21 @@ public class DecisionReviewCard : MonoBehaviour
                 case DecisionOutcomeType.Correct:
 
                     resultText.text =
-                        "✓ CORRECTA";
+                        "CORRECTA";
 
                     break;
 
                 case DecisionOutcomeType.Incorrect:
 
                     resultText.text =
-                        "✕ INCORRECTA";
+                        "INCORRECTA";
 
                     break;
 
                 case DecisionOutcomeType.Death:
 
                     resultText.text =
-                        "✕ MUERTE";
+                        "MUERTE";
 
                     break;
 

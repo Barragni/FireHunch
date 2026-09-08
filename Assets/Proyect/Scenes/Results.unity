@@ -828,7 +828,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -110}
+  m_AnchoredPosition: {x: 0, y: -157}
   m_SizeDelta: {x: 323.3, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &770864020
@@ -1257,7 +1257,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 72}
+  m_AnchoredPosition: {x: 0, y: 55}
   m_SizeDelta: {x: 533.1, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1112874037
@@ -1533,7 +1533,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -210}
+  m_AnchoredPosition: {x: 0, y: -257}
   m_SizeDelta: {x: 323.3, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1219851752
@@ -2007,9 +2007,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39e143d9b4916974d99b434c9b71d161, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneAudio
-  sceneType: 0
   musicClip: {fileID: 8300000, guid: 5600a0189643c9946bdc35ded41cfe39, type: 3}
-  keepPreviousMusicInComic: 0
+  keepPreviousMusic: 0
   ambienceClip: {fileID: 0}
   musicVolume: 0.55
   ambienceVolume: 0.18
@@ -2528,7 +2527,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -160}
+  m_AnchoredPosition: {x: 0, y: -207}
   m_SizeDelta: {x: 323.3, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1731395404
@@ -3016,7 +3015,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -24}
+  m_AnchoredPosition: {x: 0, y: -46}
   m_SizeDelta: {x: 531, y: 125}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1911388493
