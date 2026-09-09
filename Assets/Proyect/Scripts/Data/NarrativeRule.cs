@@ -22,4 +22,7 @@ public class NarrativeRule
 
     [Header("Personajes que deben aparecer")]
     public List<CompanionData> companions = new();
+
+    [Header("Personaje de rescate")]
+    public RescueCharacterData rescueCharacter;
 }

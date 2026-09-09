@@ -7,11 +7,14 @@ public class CompanionManager : MonoBehaviour
 
     private readonly List<GameObject> spawnedCompanions = new();
 
+    private readonly List<GameObject> spawnedRescueCharacters = new();
+
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
+
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -20,11 +23,20 @@ public class CompanionManager : MonoBehaviour
         }
     }
 
-    public void SpawnCompanions(List<CompanionData> companions)
+    // ============================================================
+    // COMPANIONS NORMALES
+    // ============================================================
+
+    public void SpawnCompanions(
+        List<CompanionData> companions
+    )
     {
         ClearCompanions();
 
-        if (companions == null || companions.Count == 0)
+        if (
+            companions == null ||
+            companions.Count == 0
+        )
         {
             return;
         }
@@ -46,7 +58,10 @@ public class CompanionManager : MonoBehaviour
                 FindObjectsSortMode.None
             );
 
-        foreach (CompanionData companion in companions)
+        foreach (
+            CompanionData companion
+            in companions
+        )
         {
             if (companion == null)
             {
@@ -55,7 +70,10 @@ public class CompanionManager : MonoBehaviour
 
             CompanionSpawnPoint spawnPoint = null;
 
-            foreach (CompanionSpawnPoint point in spawnPoints)
+            foreach (
+                CompanionSpawnPoint point
+                in spawnPoints
+            )
             {
                 if (
                     point.companionType ==
@@ -70,7 +88,8 @@ public class CompanionManager : MonoBehaviour
             if (spawnPoint == null)
             {
                 Debug.LogWarning(
-                    $"No existe un CompanionSpawnPoint para {companion.companionType}."
+                    $"No existe un CompanionSpawnPoint " +
+                    $"para {companion.companionType}."
                 );
 
                 continue;
@@ -79,7 +98,9 @@ public class CompanionManager : MonoBehaviour
             if (companion.prefab == null)
             {
                 Debug.LogWarning(
-                    $"El CompanionData de {companion.companionType} no tiene un prefab asignado."
+                    $"El CompanionData de " +
+                    $"{companion.companionType} " +
+                    $"no tiene un prefab asignado."
                 );
 
                 continue;
@@ -106,7 +127,8 @@ public class CompanionManager : MonoBehaviour
             if (animator == null)
             {
                 Debug.LogWarning(
-                    $"El prefab de {companion.companionType} " +
+                    $"El prefab de " +
+                    $"{companion.companionType} " +
                     $"no tiene un Animator."
                 );
             }
@@ -123,16 +145,17 @@ public class CompanionManager : MonoBehaviour
                 else
                 {
                     Debug.LogWarning(
-                        $"CompanionSpawnPoint '{spawnPoint.name}' " +
+                        $"CompanionSpawnPoint " +
+                        $"'{spawnPoint.name}' " +
                         $"no tiene asignado un Animator Controller " +
-                        $"para el estado '{spawnPoint.animationState}'. " +
-                        $"Se conservará el Controller original del prefab."
+                        $"para el estado " +
+                        $"'{spawnPoint.animationState}'."
                     );
                 }
             }
 
             // ====================================================
-            // CONFIGURAR FOLLOWER
+            // FOLLOWER
             // ====================================================
 
             CompanionFollower follower =
@@ -151,9 +174,115 @@ public class CompanionManager : MonoBehaviour
         }
     }
 
+    // ============================================================
+    // PERSONAJE DE RESCATE
+    // ============================================================
+
+    public void SpawnRescueCharacter(
+    RescueCharacterData rescueCharacter
+)
+{
+    ClearRescueCharacter();
+
+    if (rescueCharacter == null)
+    {
+        return;
+    }
+
+    if (rescueCharacter.prefab == null)
+    {
+        Debug.LogWarning(
+            $"El RescueCharacterData de " +
+            $"{rescueCharacter.characterType} " +
+            $"no tiene un prefab asignado."
+        );
+
+        return;
+    }
+
+    RescueSpawnPoint[] spawnPoints =
+        FindObjectsByType<RescueSpawnPoint>(
+            FindObjectsSortMode.None
+        );
+
+    if (spawnPoints.Length == 0)
+    {
+        Debug.LogWarning(
+            "No existe un RescueSpawnPoint en la escena."
+        );
+
+        return;
+    }
+
+    // Usamos el primer RescueSpawnPoint encontrado.
+    RescueSpawnPoint spawnPoint =
+        spawnPoints[0];
+
+    // ========================================================
+    // INSTANCIAR PERSONAJE DE RESCATE
+    // ========================================================
+
+    GameObject instance =
+        Instantiate(
+            rescueCharacter.prefab,
+            spawnPoint.transform.position,
+            spawnPoint.transform.rotation
+        );
+
+    // ========================================================
+    // CONFIGURAR ANIMATOR
+    // ========================================================
+
+    Animator animator =
+        instance.GetComponent<Animator>();
+
+    if (animator == null)
+    {
+        Debug.LogWarning(
+            $"El prefab de rescate de " +
+            $"{rescueCharacter.characterType} " +
+            $"no tiene un Animator."
+        );
+    }
+    else
+    {
+        if (rescueCharacter.injuredController != null)
+        {
+            animator.runtimeAnimatorController =
+                rescueCharacter.injuredController;
+        }
+        else
+        {
+            Debug.LogWarning(
+                $"El RescueCharacterData de " +
+                $"{rescueCharacter.characterType} " +
+                $"no tiene asignado un Injured Controller."
+            );
+        }
+    }
+
+    // ========================================================
+    // NO FOLLOWER
+    // ========================================================
+    //
+    // El personaje de rescate es completamente estático.
+    //
+
+    spawnedRescueCharacters.Add(
+        instance
+    );
+}
+
+    // ============================================================
+    // LIMPIAR COMPANIONS
+    // ============================================================
+
     public void ClearCompanions()
     {
-        foreach (GameObject companion in spawnedCompanions)
+        foreach (
+            GameObject companion
+            in spawnedCompanions
+        )
         {
             if (companion != null)
             {
@@ -162,5 +291,25 @@ public class CompanionManager : MonoBehaviour
         }
 
         spawnedCompanions.Clear();
+    }
+
+    // ============================================================
+    // LIMPIAR PERSONAJE DE RESCATE
+    // ============================================================
+
+    public void ClearRescueCharacter()
+    {
+        foreach (
+            GameObject character
+            in spawnedRescueCharacters
+        )
+        {
+            if (character != null)
+            {
+                Destroy(character);
+            }
+        }
+
+        spawnedRescueCharacters.Clear();
     }
 }
