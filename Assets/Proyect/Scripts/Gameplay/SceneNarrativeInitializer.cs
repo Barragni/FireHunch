@@ -47,6 +47,14 @@ public class SceneNarrativeInitializer : MonoBehaviour
             CompanionManager.Instance.SpawnRescueCharacter(
                 rule.rescueCharacter
             );
+
+            // ====================================================
+            // PERSONAJE CONDICIONADO POR RUTA
+            // ====================================================
+
+            CompanionManager.Instance.SpawnRouteCharacter(
+                rule.routeCharacter
+            );
         }
         else
         {

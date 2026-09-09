@@ -25,4 +25,7 @@ public class NarrativeRule
 
     [Header("Personaje de rescate")]
     public RescueCharacterData rescueCharacter;
+
+    [Header("Personaje condicionado por ruta")]
+    public RouteCharacterData routeCharacter;
 }

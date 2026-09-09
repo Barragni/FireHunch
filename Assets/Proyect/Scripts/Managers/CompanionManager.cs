@@ -9,6 +9,8 @@ public class CompanionManager : MonoBehaviour
 
     private readonly List<GameObject> spawnedRescueCharacters = new();
 
+    private readonly List<GameObject> spawnedRouteCharacters = new();
+
     private void Awake()
     {
         if (Instance == null)
@@ -179,99 +181,167 @@ public class CompanionManager : MonoBehaviour
     // ============================================================
 
     public void SpawnRescueCharacter(
-    RescueCharacterData rescueCharacter
-)
-{
-    ClearRescueCharacter();
-
-    if (rescueCharacter == null)
+        RescueCharacterData rescueCharacter
+    )
     {
-        return;
-    }
+        ClearRescueCharacter();
 
-    if (rescueCharacter.prefab == null)
-    {
-        Debug.LogWarning(
-            $"El RescueCharacterData de " +
-            $"{rescueCharacter.characterType} " +
-            $"no tiene un prefab asignado."
-        );
-
-        return;
-    }
-
-    RescueSpawnPoint[] spawnPoints =
-        FindObjectsByType<RescueSpawnPoint>(
-            FindObjectsSortMode.None
-        );
-
-    if (spawnPoints.Length == 0)
-    {
-        Debug.LogWarning(
-            "No existe un RescueSpawnPoint en la escena."
-        );
-
-        return;
-    }
-
-    // Usamos el primer RescueSpawnPoint encontrado.
-    RescueSpawnPoint spawnPoint =
-        spawnPoints[0];
-
-    // ========================================================
-    // INSTANCIAR PERSONAJE DE RESCATE
-    // ========================================================
-
-    GameObject instance =
-        Instantiate(
-            rescueCharacter.prefab,
-            spawnPoint.transform.position,
-            spawnPoint.transform.rotation
-        );
-
-    // ========================================================
-    // CONFIGURAR ANIMATOR
-    // ========================================================
-
-    Animator animator =
-        instance.GetComponent<Animator>();
-
-    if (animator == null)
-    {
-        Debug.LogWarning(
-            $"El prefab de rescate de " +
-            $"{rescueCharacter.characterType} " +
-            $"no tiene un Animator."
-        );
-    }
-    else
-    {
-        if (rescueCharacter.injuredController != null)
+        if (rescueCharacter == null)
         {
-            animator.runtimeAnimatorController =
-                rescueCharacter.injuredController;
+            return;
         }
-        else
+
+        if (rescueCharacter.prefab == null)
         {
             Debug.LogWarning(
                 $"El RescueCharacterData de " +
                 $"{rescueCharacter.characterType} " +
-                $"no tiene asignado un Injured Controller."
+                $"no tiene un prefab asignado."
+            );
+
+            return;
+        }
+
+        RescueSpawnPoint[] spawnPoints =
+            FindObjectsByType<RescueSpawnPoint>(
+                FindObjectsSortMode.None
+            );
+
+        if (spawnPoints.Length == 0)
+        {
+            Debug.LogWarning(
+                "No existe un RescueSpawnPoint en la escena."
+            );
+
+            return;
+        }
+
+        // Usamos el primer RescueSpawnPoint encontrado.
+        RescueSpawnPoint spawnPoint =
+            spawnPoints[0];
+
+        // ========================================================
+        // INSTANCIAR PERSONAJE DE RESCATE
+        // ========================================================
+
+        GameObject instance =
+            Instantiate(
+                rescueCharacter.prefab,
+                spawnPoint.transform.position,
+                spawnPoint.transform.rotation
+            );
+
+        // ========================================================
+        // CONFIGURAR ANIMATOR
+        // ========================================================
+
+        Animator animator =
+            instance.GetComponent<Animator>();
+
+        if (animator == null)
+        {
+            Debug.LogWarning(
+                $"El prefab de rescate de " +
+                $"{rescueCharacter.characterType} " +
+                $"no tiene un Animator."
             );
         }
+        else
+        {
+            if (rescueCharacter.injuredController != null)
+            {
+                animator.runtimeAnimatorController =
+                    rescueCharacter.injuredController;
+            }
+            else
+            {
+                Debug.LogWarning(
+                    $"El RescueCharacterData de " +
+                    $"{rescueCharacter.characterType} " +
+                    $"no tiene asignado un Injured Controller."
+                );
+            }
+        }
+
+        // ========================================================
+        // NO FOLLOWER
+        // ========================================================
+        //
+        // El personaje de rescate es completamente estático.
+        //
+
+        spawnedRescueCharacters.Add(
+            instance
+        );
     }
 
-    // ========================================================
-    // NO FOLLOWER
-    // ========================================================
-    //
-    // El personaje de rescate es completamente estático.
-    //
+    // ============================================================
+    // PERSONAJE CONDICIONADO POR RUTA
+    // ============================================================
 
-    spawnedRescueCharacters.Add(
-        instance
-    );
-}
+    public void SpawnRouteCharacter(
+        RouteCharacterData routeCharacter
+    )
+    {
+        ClearRouteCharacter();
+
+        // Si la ruta no tiene personaje asignado,
+        // simplemente no aparece ninguno.
+        if (routeCharacter == null)
+        {
+            return;
+        }
+
+        if (routeCharacter.prefab == null)
+        {
+            Debug.LogWarning(
+                "El RouteCharacterData no tiene un prefab asignado."
+            );
+
+            return;
+        }
+
+        RouteCharacterSpawnPoint[] spawnPoints =
+            FindObjectsByType<RouteCharacterSpawnPoint>(
+                FindObjectsSortMode.None
+            );
+
+        if (spawnPoints.Length == 0)
+        {
+            Debug.LogWarning(
+                "No existe un RouteCharacterSpawnPoint en la escena."
+            );
+
+            return;
+        }
+
+        // Usamos el primer RouteCharacterSpawnPoint encontrado.
+        RouteCharacterSpawnPoint spawnPoint =
+            spawnPoints[0];
+
+        // ========================================================
+        // INSTANCIAR PERSONAJE
+        // ========================================================
+
+        GameObject instance =
+            Instantiate(
+                routeCharacter.prefab,
+                spawnPoint.transform.position,
+                spawnPoint.transform.rotation
+            );
+
+        // ========================================================
+        // NO FOLLOWER
+        // ========================================================
+        //
+        // Este personaje solamente aparece en determinadas rutas.
+        // No se configura CompanionFollower.
+        //
+
+        spawnedRouteCharacters.Add(
+            instance
+        );
+    }
 
     // ============================================================
     // LIMPIAR COMPANIONS
@@ -311,5 +381,25 @@ public class CompanionManager : MonoBehaviour
         }
 
         spawnedRescueCharacters.Clear();
+    }
+
+    // ============================================================
+    // LIMPIAR PERSONAJE CONDICIONADO POR RUTA
+    // ============================================================
+
+    public void ClearRouteCharacter()
+    {
+        foreach (
+            GameObject character
+            in spawnedRouteCharacters
+        )
+        {
+            if (character != null)
+            {
+                Destroy(character);
+            }
+        }
+
+        spawnedRouteCharacters.Clear();
     }
 }
