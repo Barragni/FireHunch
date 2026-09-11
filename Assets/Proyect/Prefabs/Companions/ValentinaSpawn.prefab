@@ -46,6 +46,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CompanionSpawnPoint
   companionType: 0
   animationState: 0
-  standingController: {fileID: 9100000, guid: 89459095d71e6f24d8b79fb00d1829e8, type: 2}
-  crouchingController: {fileID: 9100000, guid: af7b551a7b54a62429698433e2fc04f2, type: 2}
-  injuredController: {fileID: 9100000, guid: 8e2bd84d5656d1247a51aeadf7ee596a, type: 2}
+  standingController: {fileID: 9100000, guid: 2052fc0c459211745b1ab15f3441d209, type: 2}
+  crouchingController: {fileID: 9100000, guid: dc794233c57d57f41bfbbf0168e1c3a8, type: 2}
+  injuredController: {fileID: 9100000, guid: e97183406bfcf29478e944275437017d, type: 2}
