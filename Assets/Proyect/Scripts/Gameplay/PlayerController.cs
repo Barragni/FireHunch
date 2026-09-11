@@ -33,6 +33,9 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private float dialogueZoomDuration = 0.5f;
 
+    [Header("Altura del jugador")]
+    [SerializeField] private bool lockVerticalPosition = true;
+
     private CharacterController characterController;
 
     private Camera playerCamera;
@@ -47,6 +50,9 @@ public class PlayerController : MonoBehaviour
 
     private float defaultFOV;
 
+    // Altura que tendrá el jugador mientras esté bloqueada
+    private float lockedY;
+
     private void Start()
     {
         characterController =
@@ -60,6 +66,10 @@ public class PlayerController : MonoBehaviour
 
         defaultFOV =
             playerCamera.fieldOfView;
+
+        // Guardamos la altura inicial del jugador
+        lockedY =
+            transform.position.y;
 
         SetMovementEnabled(
             startWithMovementEnabled
@@ -83,6 +93,8 @@ public class PlayerController : MonoBehaviour
         HandleMovement();
 
         HandleFootsteps();
+
+        MaintainLockedHeight();
     }
 
     // ============================================================
@@ -138,11 +150,36 @@ public class PlayerController : MonoBehaviour
             transform.right * horizontal +
             transform.forward * vertical;
 
+        // El movimiento del jugador SIEMPRE es horizontal.
+        // Nunca enviamos movimiento vertical al CharacterController.
+        movement.y = 0f;
+
         characterController.Move(
             movement *
             moveSpeed *
             Time.deltaTime
         );
+    }
+
+    // ============================================================
+    // BLOQUEO DE ALTURA
+    // ============================================================
+
+    private void MaintainLockedHeight()
+    {
+        if (!lockVerticalPosition)
+        {
+            return;
+        }
+
+        Vector3 position =
+            transform.position;
+
+        position.y =
+            lockedY;
+
+        transform.position =
+            position;
     }
 
     // ============================================================
