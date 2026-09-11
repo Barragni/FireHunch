@@ -27163,9 +27163,9 @@ MonoBehaviour:
   dialoguePlayer: {fileID: 171933234}
   decisionPlayer: {fileID: 951126653}
   focusPoints:
-  - target: {fileID: 206288478}
-    focusDuration: 0
   - target: {fileID: 1268294214}
+    focusDuration: 0
+  - target: {fileID: 206288478}
     focusDuration: 0
 --- !u!65 &676289405
 BoxCollider:
@@ -42669,6 +42669,10 @@ PrefabInstance:
     - target: {fileID: 2884580232242910504, guid: c3371ae4de5a0ac46be5eda892a5a5cc, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6871685142094938460, guid: c3371ae4de5a0ac46be5eda892a5a5cc, type: 3}
+      propertyPath: objectiveText
+      value: ENCUENTRA UNA FORMA DE LLEGAR AL PRIMER PISO
       objectReference: {fileID: 0}
     - target: {fileID: 7327285591367158755, guid: c3371ae4de5a0ac46be5eda892a5a5cc, type: 3}
       propertyPath: m_Pivot.x

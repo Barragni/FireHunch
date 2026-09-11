@@ -66,7 +66,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4247157255660525574, guid: c26c037bceed9a64596bbab085bd7698, type: 3}
       propertyPath: m_Name
-      value: GoticaRig 1
+      value: GoticaRig 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -91,7 +91,7 @@ Animator:
   m_GameObject: {fileID: 8693896044716357073}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 426aa4bd5d1339b49b53fec5e995dd2d, type: 3}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 8f1618c79083daf40ba207bca8d888d5, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

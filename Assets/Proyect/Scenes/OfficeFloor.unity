@@ -33744,7 +33744,7 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: 80a0111bb42155644b31b0d08a9ac775, type: 2}
     - target: {fileID: 133146725743793493, guid: 824096cc0f2c7da419d4dc29f80f372f, type: 3}
       propertyPath: m_ApplyRootMotion
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6285095339721150255, guid: 824096cc0f2c7da419d4dc29f80f372f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -46624,6 +46624,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 8f1618c79083daf40ba207bca8d888d5, type: 2}
+    - target: {fileID: 4788116602504943059, guid: 2ab9989340582f34b984e87fc8469c6c, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8353399745373122411, guid: 2ab9989340582f34b984e87fc8469c6c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 15.2
@@ -52295,6 +52299,10 @@ PrefabInstance:
     - target: {fileID: 6501880438982273337, guid: c3371ae4de5a0ac46be5eda892a5a5cc, type: 3}
       propertyPath: m_AnchorMin.x
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6871685142094938460, guid: c3371ae4de5a0ac46be5eda892a5a5cc, type: 3}
+      propertyPath: objectiveText
+      value: VE A REVISAR LA SALA DE SERVIDORES
       objectReference: {fileID: 0}
     - target: {fileID: 7103726228268281826, guid: c3371ae4de5a0ac46be5eda892a5a5cc, type: 3}
       propertyPath: m_AnchorMax.x
