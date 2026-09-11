@@ -74058,6 +74058,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2229756427380293062, guid: c06a901d6df3d9f4c91531862bad659c, type: 3}
+      propertyPath: animationState
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6943574818219595414, guid: c06a901d6df3d9f4c91531862bad659c, type: 3}
       propertyPath: m_Name
       value: BetoSpawn
