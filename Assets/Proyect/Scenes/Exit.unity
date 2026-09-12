@@ -1351,6 +1351,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Debris_Pile
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ab55f1075b2a8b54fb9fde0afacb88db, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4599,6 +4603,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 5f4fc9caf49acca4e85aaaf436568c54, type: 3}
       propertyPath: m_Name
       value: Resource_Rock_1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5f4fc9caf49acca4e85aaaf436568c54, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -13702,6 +13710,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Rock_3
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 37f1efa8480660b488545c1972eac7ee, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -15629,6 +15641,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 22af88b7994e4d2409f975f4d3858d25, type: 3}
       propertyPath: m_Name
       value: Floor_BricksSeparate2
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 22af88b7994e4d2409f975f4d3858d25, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -38537,7 +38553,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!65 &850499730
 BoxCollider:
@@ -41773,7 +41789,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5649225597432403553, guid: 0b7123567dcb2a14e931f2bfcecef8ff, type: 3}
       propertyPath: m_StaticEditorFlags
-      value: 126
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -46528,6 +46544,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: e0b7e97bf4db6a04386b4cca5a01a0cc, type: 3}
       propertyPath: m_Name
       value: Pallet_Broken
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: e0b7e97bf4db6a04386b4cca5a01a0cc, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -51685,7 +51705,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1182538647
 Transform:
@@ -51923,6 +51943,10 @@ PrefabInstance:
     - target: {fileID: 3746337428834529658, guid: 7ee4a6bb7483a2144a41d66307c6554b, type: 3}
       propertyPath: m_Name
       value: Closet
+      objectReference: {fileID: 0}
+    - target: {fileID: 3746337428834529658, guid: 7ee4a6bb7483a2144a41d66307c6554b, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 4086588567363447744, guid: 7ee4a6bb7483a2144a41d66307c6554b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -57023,6 +57047,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: WoodPlanks (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 55cdb11d317ec764595f20d342027a3f, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -61318,6 +61346,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: WoodPlanks
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 55cdb11d317ec764595f20d342027a3f, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -64069,6 +64101,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 55cdb11d317ec764595f20d342027a3f, type: 3}
       propertyPath: m_Name
       value: WoodPlanks
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 55cdb11d317ec764595f20d342027a3f, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -82075,6 +82111,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pallet_Broken
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: e0b7e97bf4db6a04386b4cca5a01a0cc, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -83500,7 +83540,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1950409407
 Transform:
@@ -91049,6 +91089,14 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 1d88b77c813487443a947b2abd9984c9, type: 2}
+    - target: {fileID: -5864810908604400224, guid: 475a77bb113fc3d4694ab7fcbd4bb407, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: -4189756817787159783, guid: 475a77bb113fc3d4694ab7fcbd4bb407, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -2720238473954368305, guid: 475a77bb113fc3d4694ab7fcbd4bb407, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -91056,6 +91104,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 475a77bb113fc3d4694ab7fcbd4bb407, type: 3}
       propertyPath: m_Name
       value: Street_Curbs_sepxW_Raw
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 475a77bb113fc3d4694ab7fcbd4bb407, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
