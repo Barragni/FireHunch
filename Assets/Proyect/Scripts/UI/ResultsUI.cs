@@ -11,6 +11,9 @@ public class ResultsUI : MonoBehaviour
     [Header("Revisión de decisiones")]
     [SerializeField] private DecisionReviewUI decisionReviewUI;
 
+    [Header("Créditos")]
+    [SerializeField] private CreditsUI creditsUI;
+
     private void Awake()
     {
         if (reviewButton != null)
@@ -102,11 +105,15 @@ public class ResultsUI : MonoBehaviour
 
     private void OpenCredits()
     {
-        if (AudioManager.Instance != null)
+        if (creditsUI == null)
         {
-            AudioManager.Instance.PlayButtonClick();
+            Debug.LogError(
+                "ResultsUI: CreditsUI NO está asignado en el Inspector."
+            );
+
+            return;
         }
 
-        Debug.Log("Créditos aún no implementados.");
+        creditsUI.OpenCredits();
     }
 }

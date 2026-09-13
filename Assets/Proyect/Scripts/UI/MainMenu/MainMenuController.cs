@@ -6,11 +6,15 @@ public class MainMenuController : MonoBehaviour
     [Header("Botones")]
     [SerializeField] private Button playButton;
     [SerializeField] private Button optionsButton;
+    [SerializeField] private Button creditsButton;
     [SerializeField] private Button quitButton;
 
     [Header("Paneles")]
     [SerializeField] private GameObject mainMenuPanel;
     [SerializeField] private GameObject volumePanel;
+
+    [Header("Créditos")]
+    [SerializeField] private CreditsUI creditsUI;
 
     [Header("Intro")]
     [SerializeField] private ComicSequence introSequence;
@@ -21,6 +25,7 @@ public class MainMenuController : MonoBehaviour
     {
         playButton.onClick.AddListener(PlayGame);
         optionsButton.onClick.AddListener(OpenVolumePanel);
+        creditsButton.onClick.AddListener(OpenCredits);
         quitButton.onClick.AddListener(QuitGame);
 
         if (mainMenuPanel != null)
@@ -57,6 +62,14 @@ public class MainMenuController : MonoBehaviour
         if (volumePanel != null)
         {
             volumePanel.SetActive(true);
+        }
+    }
+
+    private void OpenCredits()
+    {
+        if (creditsUI != null)
+        {
+            creditsUI.OpenCredits();
         }
     }
 
