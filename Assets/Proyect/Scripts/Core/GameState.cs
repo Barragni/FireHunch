@@ -27,6 +27,21 @@ public class GameState : MonoBehaviour
     public int IncorrectChoices { get; private set; }
     public int DeathChoices { get; private set; }
 
+
+    // ============================================================
+    // CONTROL DEL INTENTO ACTUAL
+    // ============================================================
+
+    // ID de la decisión que actualmente está siendo respondida.
+    private string activeDecisionID = "";
+
+    // Momento en que comenzó el intento actual.
+    private float activeDecisionStartTime;
+
+    // Número del intento actual de esa decisión.
+    private int activeDecisionAttemptNumber;
+
+
     private void Awake()
     {
         if (Instance == null)
@@ -40,6 +55,7 @@ public class GameState : MonoBehaviour
         }
     }
 
+
     // ============================================================
     // PUNTAJE
     // ============================================================
@@ -48,6 +64,171 @@ public class GameState : MonoBehaviour
     {
         score += amount;
     }
+
+
+    // ============================================================
+    // INICIAR INTENTO DE DECISIÓN
+    // ============================================================
+
+    /// <summary>
+    /// Se llama cuando aparece el panel de una decisión.
+    ///
+    /// Aquí comienza a medirse el tiempo de ESTE intento.
+    /// </summary>
+    public void BeginDecisionAttempt(
+        string decisionID,
+        string nodeID
+    )
+    {
+        if (string.IsNullOrEmpty(decisionID))
+        {
+            Debug.LogWarning(
+                "GameState: Se intentó comenzar una decisión sin decisionID."
+            );
+
+            return;
+        }
+
+        activeDecisionID = decisionID;
+
+        activeDecisionStartTime =
+            Time.unscaledTime;
+
+        DecisionRecord record =
+            GetOrCreateDecisionRecord(
+                decisionID,
+                nodeID
+            );
+
+        activeDecisionAttemptNumber =
+            record.attempts.Count + 1;
+    }
+
+
+    // ============================================================
+    // FINALIZAR INTENTO DE DECISIÓN
+    // ============================================================
+
+    /// <summary>
+    /// Registra un intento individual de una decisión.
+    ///
+    /// Ejemplo:
+    ///
+    /// Intento 1 → opción 0 → Death → 7.3 segundos
+    /// Intento 2 → opción 1 → Correct → 11.4 segundos
+    /// </summary>
+    public void RegisterDecisionAttempt(
+        string decisionID,
+        string nodeID,
+        int optionIndex,
+        DecisionOutcomeType outcome
+    )
+    {
+        if (string.IsNullOrEmpty(decisionID))
+        {
+            Debug.LogWarning(
+                "GameState: No se puede registrar un intento sin decisionID."
+            );
+
+            return;
+        }
+
+
+        // ========================================================
+        // OBTENER / CREAR REGISTRO
+        // ========================================================
+
+        DecisionRecord record =
+            GetOrCreateDecisionRecord(
+                decisionID,
+                nodeID
+            );
+
+
+        // ========================================================
+        // CALCULAR TIEMPO
+        // ========================================================
+
+        float elapsedTime = 0f;
+
+        if (activeDecisionID == decisionID)
+        {
+            elapsedTime =
+                Time.unscaledTime -
+                activeDecisionStartTime;
+        }
+
+        elapsedTime =
+            Mathf.Max(
+                0f,
+                elapsedTime
+            );
+
+
+        // ========================================================
+        // NÚMERO DE INTENTO
+        // ========================================================
+
+        int attemptNumber =
+            record.attempts.Count + 1;
+
+
+        // ========================================================
+        // CREAR REGISTRO DEL INTENTO
+        // ========================================================
+
+        DecisionAttemptRecord attempt =
+            new DecisionAttemptRecord
+            {
+                attemptNumber =
+                    attemptNumber,
+
+                selectedOptionIndex =
+                    optionIndex,
+
+                outcome =
+                    outcome,
+
+                timeSeconds =
+                    elapsedTime
+            };
+
+
+        record.attempts.Add(
+            attempt
+        );
+
+
+        // ========================================================
+        // ACTUALIZAR ESTADÍSTICAS
+        // ========================================================
+
+        record.totalTimeSeconds +=
+            elapsedTime;
+
+
+        // Una muerte significa que este intento
+        // terminó necesitando un reintento.
+        if (outcome == DecisionOutcomeType.Death)
+        {
+            record.retryCount++;
+
+            record.diedAtLeastOnce =
+                true;
+        }
+
+
+        // ========================================================
+        // FINALIZÓ EL INTENTO ACTUAL
+        // ========================================================
+
+        activeDecisionID = "";
+
+        activeDecisionStartTime = 0f;
+
+        activeDecisionAttemptNumber = 0;
+    }
+
 
     // ============================================================
     // REGISTRO DE DECISIÓN
@@ -66,6 +247,7 @@ public class GameState : MonoBehaviour
             false
         );
     }
+
 
     // ============================================================
     // REGISTRO DE RUTA
@@ -95,12 +277,14 @@ public class GameState : MonoBehaviour
 
                 break;
 
+
             case "L":
 
                 decisionPath += "L";
                 IncorrectChoices++;
 
                 break;
+
 
             case "M":
 
@@ -109,6 +293,7 @@ public class GameState : MonoBehaviour
                 DeathChoices++;
 
                 break;
+
 
             default:
 
@@ -119,6 +304,7 @@ public class GameState : MonoBehaviour
                 break;
         }
     }
+
 
     // ============================================================
     // REGISTRO DETALLADO
@@ -136,6 +322,7 @@ public class GameState : MonoBehaviour
             decisionID
         );
 
+
         switch (outcome)
         {
             case DecisionOutcomeType.Correct:
@@ -145,12 +332,14 @@ public class GameState : MonoBehaviour
 
                 break;
 
+
             case DecisionOutcomeType.Incorrect:
 
                 decisionPath += "L";
                 IncorrectChoices++;
 
                 break;
+
 
             case DecisionOutcomeType.Death:
 
@@ -160,66 +349,28 @@ public class GameState : MonoBehaviour
                 break;
         }
 
-        DecisionRecord existingRecord = null;
 
-        foreach (DecisionRecord record in decisionRecords)
+        DecisionRecord existingRecord =
+            GetOrCreateDecisionRecord(
+                decisionID,
+                nodeID
+            );
+
+
+        existingRecord.selectedOptionIndex =
+            optionIndex;
+
+        existingRecord.finalOutcome =
+            outcome;
+
+
+        if (diedAtLeastOnce)
         {
-            if (
-                record != null &&
-                record.decisionID == decisionID
-            )
-            {
-                existingRecord = record;
-                break;
-            }
+            existingRecord.diedAtLeastOnce =
+                true;
         }
-
-        if (existingRecord != null)
-        {
-            existingRecord.nodeID =
-                nodeID;
-
-            existingRecord.selectedOptionIndex =
-                optionIndex;
-
-            existingRecord.finalOutcome =
-                outcome;
-
-            if (diedAtLeastOnce)
-            {
-                existingRecord.diedAtLeastOnce =
-                    true;
-            }
-
-            return;
-        }
-
-        DecisionRecord newRecord =
-            new DecisionRecord
-            {
-                decisionID =
-                    decisionID,
-
-                nodeID =
-                    nodeID,
-
-                decisionOrder =
-                    decisionRecords.Count + 1,
-
-                selectedOptionIndex =
-                    optionIndex,
-
-                finalOutcome =
-                    outcome,
-
-                diedAtLeastOnce =
-                    diedAtLeastOnce
-            };
-
-        decisionRecords.Add(
-            newRecord
-        );
     }
+
 
     // ============================================================
     // REGISTRO DE DECISIÓN FINAL
@@ -233,66 +384,30 @@ public class GameState : MonoBehaviour
         bool diedAtLeastOnce
     )
     {
-        DecisionRecord existingRecord = null;
+        DecisionRecord existingRecord =
+            GetOrCreateDecisionRecord(
+                decisionID,
+                nodeID
+            );
 
-        foreach (DecisionRecord record in decisionRecords)
+
+        existingRecord.nodeID =
+            nodeID;
+
+        existingRecord.selectedOptionIndex =
+            optionIndex;
+
+        existingRecord.finalOutcome =
+            outcome;
+
+
+        if (diedAtLeastOnce)
         {
-            if (
-                record != null &&
-                record.decisionID == decisionID
-            )
-            {
-                existingRecord = record;
-                break;
-            }
+            existingRecord.diedAtLeastOnce =
+                true;
         }
-
-        if (existingRecord != null)
-        {
-            existingRecord.nodeID =
-                nodeID;
-
-            existingRecord.selectedOptionIndex =
-                optionIndex;
-
-            existingRecord.finalOutcome =
-                outcome;
-
-            if (diedAtLeastOnce)
-            {
-                existingRecord.diedAtLeastOnce =
-                    true;
-            }
-
-            return;
-        }
-
-        DecisionRecord newRecord =
-            new DecisionRecord
-            {
-                decisionID =
-                    decisionID,
-
-                nodeID =
-                    nodeID,
-
-                decisionOrder =
-                    decisionRecords.Count + 1,
-
-                selectedOptionIndex =
-                    optionIndex,
-
-                finalOutcome =
-                    outcome,
-
-                diedAtLeastOnce =
-                    diedAtLeastOnce
-            };
-
-        decisionRecords.Add(
-            newRecord
-        );
     }
+
 
     // ============================================================
     // REGISTRO DE MUERTE
@@ -305,6 +420,7 @@ public class GameState : MonoBehaviour
     {
         // ========================================================
         // IMPORTANTE:
+        //
         // NO agregar "M" a decisionPath.
         //
         // El jugador todavía no ha tomado una decisión definitiva.
@@ -312,30 +428,51 @@ public class GameState : MonoBehaviour
 
         DeathChoices++;
 
-        DecisionRecord existingRecord = null;
 
-        foreach (DecisionRecord record in decisionRecords)
+        DecisionRecord existingRecord =
+            GetOrCreateDecisionRecord(
+                decisionID,
+                nodeID
+            );
+
+
+        existingRecord.nodeID =
+            nodeID;
+
+        existingRecord.diedAtLeastOnce =
+            true;
+    }
+
+
+    // ============================================================
+    // OBTENER / CREAR DECISION RECORD
+    // ============================================================
+
+    private DecisionRecord GetOrCreateDecisionRecord(
+        string decisionID,
+        string nodeID
+    )
+    {
+        foreach (
+            DecisionRecord record
+            in decisionRecords
+        )
         {
             if (
                 record != null &&
                 record.decisionID == decisionID
             )
             {
-                existingRecord = record;
-                break;
+                if (!string.IsNullOrEmpty(nodeID))
+                {
+                    record.nodeID =
+                        nodeID;
+                }
+
+                return record;
             }
         }
 
-        if (existingRecord != null)
-        {
-            existingRecord.nodeID =
-                nodeID;
-
-            existingRecord.diedAtLeastOnce =
-                true;
-
-            return;
-        }
 
         DecisionRecord newRecord =
             new DecisionRecord
@@ -353,16 +490,30 @@ public class GameState : MonoBehaviour
                     -1,
 
                 finalOutcome =
-                    DecisionOutcomeType.Death,
+                    DecisionOutcomeType.Incorrect,
 
                 diedAtLeastOnce =
-                    true
+                    false,
+
+                retryCount =
+                    0,
+
+                totalTimeSeconds =
+                    0f,
+
+                attempts =
+                    new List<DecisionAttemptRecord>()
             };
+
 
         decisionRecords.Add(
             newRecord
         );
+
+
+        return newRecord;
     }
+
 
     // ============================================================
     // COMPAÑEROS
@@ -376,6 +527,7 @@ public class GameState : MonoBehaviour
         hasValentina = valentina;
         hasBeto = beto;
     }
+
 
     // ============================================================
     // REINICIAR
@@ -397,5 +549,14 @@ public class GameState : MonoBehaviour
         CorrectChoices = 0;
         IncorrectChoices = 0;
         DeathChoices = 0;
+
+
+        // Limpiar también el intento activo.
+
+        activeDecisionID = "";
+
+        activeDecisionStartTime = 0f;
+
+        activeDecisionAttemptNumber = 0;
     }
 }

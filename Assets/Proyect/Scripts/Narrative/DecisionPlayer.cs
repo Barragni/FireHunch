@@ -76,6 +76,18 @@ public class DecisionPlayer : MonoBehaviour
 
         decisionUI.DecisionPanel.SetActive(true);
 
+        // ========================================================
+        // INICIAR REGISTRO DEL INTENTO
+        // ========================================================
+
+        if (GameState.Instance != null)
+        {
+            GameState.Instance.BeginDecisionAttempt(
+                currentDecision.decisionID,
+                currentNodeID
+            );
+        }
+
         decisionUI.QuestionText.text =
             decision.question;
 
@@ -260,6 +272,20 @@ public class DecisionPlayer : MonoBehaviour
             currentDecision.options.IndexOf(
                 option
             );
+
+        // ========================================================
+        // REGISTRAR INTENTO PARA ESTADÍSTICAS
+        // ========================================================
+
+        if (GameState.Instance != null)
+        {
+            GameState.Instance.RegisterDecisionAttempt(
+                currentDecision.decisionID,
+                currentNodeID,
+                selectedOptionIndex,
+                option.outcomeType
+            );
+        }
 
         // ========================================================
         // REGISTRAR DECISIÓN

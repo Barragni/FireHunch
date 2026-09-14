@@ -22,7 +22,7 @@ public static class AttemptMapper
 
         int correctChoices = 0;
         int incorrectChoices = 0;
-        int retryChoices = 0;
+        int totalRetries = 0;
 
         AttemptData attempt = new AttemptData
         {
@@ -30,7 +30,8 @@ public static class AttemptMapper
             // Identificación
             // ==========================
 
-            attemptId = AttemptSession.Instance.AttemptId,
+            attemptId =
+                AttemptSession.Instance.AttemptId,
 
             timestampUtc =
                 AttemptSession.Instance.StartTimeUtc.ToString("o"),
@@ -59,59 +60,149 @@ public static class AttemptMapper
             // Resultado final
             // ==========================
 
-            score = finalScore,
+            score =
+                finalScore,
 
-            ending = ending,
+            ending =
+                ending,
 
             decisionPath =
                 GameState.Instance.decisionPath
         };
 
-        foreach (DecisionRecord record in GameState.Instance.decisionRecords)
+
+        // ============================================================
+        // DECISIONES
+        // ============================================================
+
+        foreach (
+            DecisionRecord record
+            in GameState.Instance.decisionRecords
+        )
         {
+            if (record == null)
+            {
+                continue;
+            }
+
+
+            // ========================================================
+            // CONTADORES GENERALES
+            // ========================================================
+
             switch (record.finalOutcome)
             {
                 case DecisionOutcomeType.Correct:
+
                     correctChoices++;
+
                     break;
 
                 case DecisionOutcomeType.Incorrect:
+
                     incorrectChoices++;
+
                     break;
             }
 
-            if (record.diedAtLeastOnce)
-            {
-                retryChoices++;
-            }
+
+            // ========================================================
+            // REINTENTOS
+            // ========================================================
+
+            totalRetries +=
+                record.retryCount;
+
+
+            // ========================================================
+            // CREAR DATOS DE LA DECISIÓN
+            // ========================================================
 
             AttemptDecisionData decision =
                 new AttemptDecisionData
                 {
-                    decisionID = record.decisionID,
+                    decisionID =
+                        record.decisionID,
 
-                    decisionOrder = record.decisionOrder,
+                    decisionOrder =
+                        record.decisionOrder,
 
-                    selectedOptionIndex =
+                    finalSelectedOptionIndex =
                         record.selectedOptionIndex,
 
                     finalOutcome =
                         record.finalOutcome.ToString(),
 
-                    diedAtLeastOnce =
-                        record.diedAtLeastOnce,
+                    retryCount =
+                        record.retryCount,
 
-                    // TODO: Se llenará cuando implementemos
-                    // el tiempo por decisión.
-                    timeSeconds = 0f
+                    totalTimeSeconds =
+                        record.totalTimeSeconds
                 };
 
-            attempt.decisions.Add(decision);
+
+            // ========================================================
+            // COPIAR HISTORIAL DE INTENTOS
+            // ========================================================
+
+            if (
+                record.attempts != null &&
+                record.attempts.Count > 0
+            )
+            {
+                foreach (
+                    DecisionAttemptRecord recordAttempt
+                    in record.attempts
+                )
+                {
+                    if (recordAttempt == null)
+                    {
+                        continue;
+                    }
+
+                    decision.attempts.Add(
+                        new DecisionAttemptRecord
+                        {
+                            attemptNumber =
+                                recordAttempt.attemptNumber,
+
+                            selectedOptionIndex =
+                                recordAttempt.selectedOptionIndex,
+
+                            outcome =
+                                recordAttempt.outcome,
+
+                            timeSeconds =
+                                recordAttempt.timeSeconds
+                        }
+                    );
+                }
+            }
+
+
+            attempt.decisions.Add(
+                decision
+            );
         }
 
-        attempt.correctChoices = correctChoices;
-        attempt.incorrectChoices = incorrectChoices;
-        attempt.deathChoices = retryChoices;
+
+        // ============================================================
+        // ESTADÍSTICAS GENERALES
+        // ============================================================
+
+        attempt.correctChoices =
+            correctChoices;
+
+        attempt.incorrectChoices =
+            incorrectChoices;
+
+        attempt.totalRetries =
+            totalRetries;
+
+        // Compatibilidad temporal con Google Sheets.
+        attempt.deathChoices =
+            GameState.Instance.DeathChoices;
+
 
         return attempt;
     }
