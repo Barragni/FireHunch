@@ -18373,6 +18373,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FirstSceneTutorialHint
   tutorialTexts:
   - {fileID: 761918455}
+  - {fileID: 1639293990}
+  - {fileID: 510488395}
   visibleDuration: 6
   fadeDuration: 0.5
 --- !u!1001 &1132241612
@@ -19210,7 +19212,7 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 7327285591367158755, guid: c3371ae4de5a0ac46be5eda892a5a5cc, type: 3}
-      insertIndex: -1
+      insertIndex: 0
       addedObject: {fileID: 1119222572}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c3371ae4de5a0ac46be5eda892a5a5cc, type: 3}

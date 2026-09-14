@@ -16,11 +16,15 @@ public class ObjectiveUI : MonoBehaviour
     [SerializeField] private float finalScale = 0.85f;
 
     [Header("Posiciones")]
-    [SerializeField] private Vector2 finalPosition = new Vector2(0f, -60f);
+    [SerializeField] private Vector2 finalPosition =
+        new Vector2(0f, -60f);
 
     [Header("Colores")]
-    [SerializeField] private Color startColor = new Color(1f, 0.25f, 0.05f);
-    [SerializeField] private Color finalColor = Color.white;
+    [SerializeField] private Color startColor =
+        new Color(1f, 0.25f, 0.05f);
+
+    [SerializeField] private Color finalColor =
+        Color.white;
 
     [Header("Tiempo antes de subir")]
     [SerializeField] private float holdTime = 0.4f;
@@ -32,12 +36,18 @@ public class ObjectiveUI : MonoBehaviour
 
     private void Awake()
     {
-        rectTransform = GetComponent<RectTransform>();
+        rectTransform =
+            GetComponent<RectTransform>();
 
-        centerPosition = Vector2.zero;
+        centerPosition =
+            Vector2.zero;
 
         gameObject.SetActive(false);
     }
+
+    // ============================================================
+    // MOSTRAR CON ANIMACIÓN
+    // ============================================================
 
     public void ShowObjective(string message)
     {
@@ -55,7 +65,8 @@ public class ObjectiveUI : MonoBehaviour
             StopCoroutine(animationCoroutine);
         }
 
-        objectiveText.text = message;
+        objectiveText.text =
+            message;
 
         gameObject.SetActive(true);
 
@@ -64,6 +75,48 @@ public class ObjectiveUI : MonoBehaviour
                 PlayObjectiveAnimation()
             );
     }
+
+    // ============================================================
+    // MOSTRAR DIRECTAMENTE EN ESTADO FINAL
+    // ============================================================
+
+    public void ShowObjectiveFinal(string message)
+    {
+        if (objectiveText == null)
+        {
+            Debug.LogError(
+                "ObjectiveUI: No hay un TMP_Text asignado."
+            );
+
+            return;
+        }
+
+        if (animationCoroutine != null)
+        {
+            StopCoroutine(animationCoroutine);
+
+            animationCoroutine = null;
+        }
+
+        objectiveText.text =
+            message;
+
+        gameObject.SetActive(true);
+
+        // Estado final directamente.
+        rectTransform.anchoredPosition =
+            finalPosition;
+
+        rectTransform.localScale =
+            Vector3.one * finalScale;
+
+        objectiveText.color =
+            finalColor;
+    }
+
+    // ============================================================
+    // ANIMACIÓN
+    // ============================================================
 
     private IEnumerator PlayObjectiveAnimation()
     {
@@ -88,15 +141,21 @@ public class ObjectiveUI : MonoBehaviour
 
         while (elapsed < introDuration)
         {
-            elapsed += Time.unscaledDeltaTime;
+            elapsed +=
+                Time.unscaledDeltaTime;
 
             float t =
                 Mathf.Clamp01(
-                    elapsed / introDuration
+                    elapsed /
+                    introDuration
                 );
 
-            // Suavizar animación
-            t = Mathf.SmoothStep(0f, 1f, t);
+            t =
+                Mathf.SmoothStep(
+                    0f,
+                    1f,
+                    t
+                );
 
             rectTransform.localScale =
                 Vector3.Lerp(
@@ -122,7 +181,7 @@ public class ObjectiveUI : MonoBehaviour
             finalColor;
 
         // ========================================================
-        // PEQUEÑA PAUSA
+        // PAUSA
         // ========================================================
 
         yield return new WaitForSecondsRealtime(
@@ -130,21 +189,28 @@ public class ObjectiveUI : MonoBehaviour
         );
 
         // ========================================================
-        // MOVER HACIA ARRIBA + HACER MÁS PEQUEÑO
+        // SUBIR + HACER MÁS PEQUEÑO
         // ========================================================
 
         elapsed = 0f;
 
         while (elapsed < moveDuration)
         {
-            elapsed += Time.unscaledDeltaTime;
+            elapsed +=
+                Time.unscaledDeltaTime;
 
             float t =
                 Mathf.Clamp01(
-                    elapsed / moveDuration
+                    elapsed /
+                    moveDuration
                 );
 
-            t = Mathf.SmoothStep(0f, 1f, t);
+            t =
+                Mathf.SmoothStep(
+                    0f,
+                    1f,
+                    t
+                );
 
             rectTransform.anchoredPosition =
                 Vector2.Lerp(
@@ -176,11 +242,17 @@ public class ObjectiveUI : MonoBehaviour
         animationCoroutine = null;
     }
 
+    // ============================================================
+    // OCULTAR
+    // ============================================================
+
     public void HideObjective()
     {
         if (animationCoroutine != null)
         {
-            StopCoroutine(animationCoroutine);
+            StopCoroutine(
+                animationCoroutine
+            );
 
             animationCoroutine = null;
         }

@@ -64,14 +64,86 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -7908826621160927196, guid: 9ca7654c0b44bbe40bedcdfc537615fc, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -7782596527849538656, guid: 9ca7654c0b44bbe40bedcdfc537615fc, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -7024102411256323354, guid: 9ca7654c0b44bbe40bedcdfc537615fc, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -6836427114910918784, guid: 9ca7654c0b44bbe40bedcdfc537615fc, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -5464215025571135699, guid: 9ca7654c0b44bbe40bedcdfc537615fc, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -4432725841046673688, guid: 9ca7654c0b44bbe40bedcdfc537615fc, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -3661973083981958169, guid: 9ca7654c0b44bbe40bedcdfc537615fc, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -1751537479281027350, guid: 9ca7654c0b44bbe40bedcdfc537615fc, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -1423117646485209595, guid: 9ca7654c0b44bbe40bedcdfc537615fc, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -1401641573510723513, guid: 9ca7654c0b44bbe40bedcdfc537615fc, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -790651889267500774, guid: 9ca7654c0b44bbe40bedcdfc537615fc, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 9ca7654c0b44bbe40bedcdfc537615fc, type: 3}
       propertyPath: m_Name
       value: BetoRig 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 930659927865223301, guid: 9ca7654c0b44bbe40bedcdfc537615fc, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2100615335465251989, guid: 9ca7654c0b44bbe40bedcdfc537615fc, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3896897658422289572, guid: 9ca7654c0b44bbe40bedcdfc537615fc, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: 9ca7654c0b44bbe40bedcdfc537615fc, type: 3}
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: f0abf16272ec5b54cae151c650bfbf1d, type: 2}
+    - target: {fileID: 5956778089287175340, guid: 9ca7654c0b44bbe40bedcdfc537615fc, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6302818958820959836, guid: 9ca7654c0b44bbe40bedcdfc537615fc, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8745315260290196629, guid: 9ca7654c0b44bbe40bedcdfc537615fc, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8830215439231109731, guid: 9ca7654c0b44bbe40bedcdfc537615fc, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

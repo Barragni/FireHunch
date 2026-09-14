@@ -7,54 +7,70 @@ public class FirstSceneTutorialHint : MonoBehaviour
 {
     [Header("Textos del tutorial")]
     [Tooltip("Puedes añadir tantos TextMeshPro como quieras.")]
-    [SerializeField] private List<TMP_Text> tutorialTexts = new List<TMP_Text>();
+    [SerializeField]
+    private List<TMP_Text> tutorialTexts =
+        new List<TMP_Text>();
 
     [Header("Tiempo")]
     [Tooltip("Tiempo que permanecen visibles antes de desaparecer.")]
-    [SerializeField] private float visibleDuration = 4f;
+    [SerializeField]
+    private float visibleDuration = 4f;
 
     [Tooltip("Duración del fade out.")]
-    [SerializeField] private float fadeDuration = 0.5f;
+    [SerializeField]
+    private float fadeDuration = 0.5f;
 
 
     private void Start()
     {
-        // Si ya se mostró durante esta partida,
-        // no volver a mostrarlo.
-        if (PlayerPrefs.GetInt("FirstSceneTutorialShown", 0) == 1)
+        // ========================================================
+        // NO MOSTRAR SI VENIMOS DE UN REINTENTO
+        // ========================================================
+
+        if (NarrativeState.ReturningFromDeath)
         {
             gameObject.SetActive(false);
             return;
         }
 
-        // Marcar como mostrado
-        PlayerPrefs.SetInt("FirstSceneTutorialShown", 1);
-        PlayerPrefs.Save();
 
+        // ========================================================
+        // MOSTRAR TUTORIAL
+        // ========================================================
 
-        // Hacer visibles todos los textos
         foreach (TMP_Text text in tutorialTexts)
         {
             if (text == null)
                 continue;
 
-            SetAlpha(text, 1f);
+            SetAlpha(
+                text,
+                1f
+            );
         }
 
-
-        StartCoroutine(ShowTutorial());
+        StartCoroutine(
+            ShowTutorial()
+        );
     }
 
 
     private IEnumerator ShowTutorial()
     {
-        // Tiempo que permanecen visibles
-        yield return new WaitForSeconds(visibleDuration);
+        // ========================================================
+        // TIEMPO VISIBLE
+        // ========================================================
+
+        yield return new WaitForSeconds(
+            visibleDuration
+        );
 
 
-        // Fade out de todos los textos
+        // ========================================================
+        // FADE OUT
+        // ========================================================
+
         float elapsed = 0f;
-
 
         while (elapsed < fadeDuration)
         {
@@ -65,7 +81,6 @@ public class FirstSceneTutorialHint : MonoBehaviour
                     elapsed / fadeDuration
                 );
 
-
             float alpha =
                 Mathf.Lerp(
                     1f,
@@ -73,38 +88,49 @@ public class FirstSceneTutorialHint : MonoBehaviour
                     t
                 );
 
-
             foreach (TMP_Text text in tutorialTexts)
             {
                 if (text == null)
                     continue;
 
-                SetAlpha(text, alpha);
+                SetAlpha(
+                    text,
+                    alpha
+                );
             }
-
 
             yield return null;
         }
 
 
-        // Asegurar que todos queden completamente invisibles
+        // ========================================================
+        // ASEGURAR ALPHA 0
+        // ========================================================
+
         foreach (TMP_Text text in tutorialTexts)
         {
             if (text == null)
                 continue;
 
-            SetAlpha(text, 0f);
+            SetAlpha(
+                text,
+                0f
+            );
         }
 
 
-        // Desactivar este objeto
+        // ========================================================
+        // DESACTIVAR
+        // ========================================================
+
         gameObject.SetActive(false);
     }
 
 
     private void SetAlpha(
         TMP_Text text,
-        float alpha)
+        float alpha
+    )
     {
         Color color = text.color;
 

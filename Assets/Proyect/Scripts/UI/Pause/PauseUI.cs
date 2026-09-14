@@ -44,6 +44,17 @@ public class PauseUI : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            // No permitir abrir/cerrar la pausa
+            // mientras hay una decisión activa.
+            DecisionPlayer decisionPlayer =
+                FindFirstObjectByType<DecisionPlayer>();
+
+            if (decisionPlayer != null &&
+                decisionPlayer.IsDecisionOpen)
+            {
+                return;
+            }
+
             if (isPaused)
             {
                 ResumeGame();

@@ -8,6 +8,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 420274184159218209, guid: c26c037bceed9a64596bbab085bd7698, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1526466982189957070, guid: c26c037bceed9a64596bbab085bd7698, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1823070532470574827, guid: c26c037bceed9a64596bbab085bd7698, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3056670566231032239, guid: c26c037bceed9a64596bbab085bd7698, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 3583527923894583996, guid: c26c037bceed9a64596bbab085bd7698, type: 3}
       propertyPath: m_LocalScale.x
       value: 26
@@ -67,6 +83,54 @@ PrefabInstance:
     - target: {fileID: 4247157255660525574, guid: c26c037bceed9a64596bbab085bd7698, type: 3}
       propertyPath: m_Name
       value: GoticaRig
+      objectReference: {fileID: 0}
+    - target: {fileID: 4800690812867730518, guid: c26c037bceed9a64596bbab085bd7698, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4836821716890404560, guid: c26c037bceed9a64596bbab085bd7698, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5090844096214450178, guid: c26c037bceed9a64596bbab085bd7698, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5221692186457802463, guid: c26c037bceed9a64596bbab085bd7698, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6123341431822290211, guid: c26c037bceed9a64596bbab085bd7698, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6415424714830204381, guid: c26c037bceed9a64596bbab085bd7698, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6900245203123512546, guid: c26c037bceed9a64596bbab085bd7698, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7005198628307739661, guid: c26c037bceed9a64596bbab085bd7698, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7660456738536534314, guid: c26c037bceed9a64596bbab085bd7698, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8186618172280211671, guid: c26c037bceed9a64596bbab085bd7698, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8403969476111037217, guid: c26c037bceed9a64596bbab085bd7698, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8973087242536983623, guid: c26c037bceed9a64596bbab085bd7698, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

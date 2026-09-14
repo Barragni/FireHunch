@@ -22,6 +22,23 @@ public class SceneObjectiveInitializer : MonoBehaviour
             return;
         }
 
+        // ========================================================
+        // SI VENIMOS DE UN RETRY
+        // ========================================================
+
+        if (NarrativeState.ReturningFromDeath)
+        {
+            objectiveUI.ShowObjectiveFinal(
+                objectiveText
+            );
+
+            return;
+        }
+
+        // ========================================================
+        // ENTRADA NORMAL
+        // ========================================================
+
         objectiveUI.ShowObjective(
             objectiveText
         );
