@@ -9,7 +9,7 @@ public class ResultsUploader : MonoBehaviour
     [Header("Backend MongoDB")]
     [SerializeField]
     private string backendUrl =
-        "http://localhost:3000/api/attempts";
+        "https://firehunchbackend.onrender.com/api/attempts";
 
     private void Awake()
     {
@@ -142,8 +142,8 @@ public class ResultsUploader : MonoBehaviour
         {
             Debug.LogError("=========================================");
             Debug.LogError("MONGODB: error enviando resultados.");
-            Debug.LogError(request.error);
             Debug.Log(request.downloadHandler.text);
+            Debug.LogError(request.error);
             Debug.Log("=========================================");
         }
     }

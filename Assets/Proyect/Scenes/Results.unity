@@ -2400,7 +2400,7 @@ MonoBehaviour:
   menuButton: {fileID: 1731395404}
   creditsButton: {fileID: 1219851752}
   decisionReviewUI: {fileID: 1774404056}
-  creditsUI: {fileID: 0}
+  creditsUI: {fileID: 1239405031}
 --- !u!1 &1502395167
 GameObject:
   m_ObjectHideFlags: 0
