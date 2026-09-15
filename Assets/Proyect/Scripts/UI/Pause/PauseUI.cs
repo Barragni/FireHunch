@@ -10,6 +10,9 @@ public class PauseUI : MonoBehaviour
     [Header("Panel de volumen")]
     [SerializeField] private GameObject volumePanel;
 
+    [Header("Tutorial")]
+    [SerializeField] private TutorialUI tutorialUI;
+
     [Header("Botones")]
     [SerializeField] private Button resumeButton;
     [SerializeField] private Button tutorialButton;
@@ -122,9 +125,16 @@ public class PauseUI : MonoBehaviour
 
     private void OpenTutorial()
     {
-        AudioManager.Instance.PlayButtonClick();
-
-        Debug.Log("Abrir tutorial");
+        if (tutorialUI != null)
+        {
+            tutorialUI.OpenTutorial();
+        }
+        else
+        {
+            Debug.LogError(
+                "PauseUI: No se ha asignado TutorialUI."
+            );
+        }
     }
 
     private void OpenSettings()

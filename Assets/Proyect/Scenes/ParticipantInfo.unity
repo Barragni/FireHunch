@@ -206,8 +206,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 1208023039
-  m_fontColor: {r: 1, g: 0.96862745, b: 0, a: 0.28235295}
+    rgba: 1212867071
+  m_fontColor: {r: 1, g: 0.88235295, b: 0.2901961, a: 0.28235295}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -480,8 +480,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190261
-  m_fontColor: {r: 0.70980394, g: 0, b: 0, a: 1}
+    rgba: 4279505024
+  m_fontColor: {r: 0.5019608, g: 0.0627451, b: 0.078431375, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1264,8 +1264,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278253311
-  m_fontColor: {r: 1, g: 0.96470594, b: 0, a: 1}
+    rgba: 4283097599
+  m_fontColor: {r: 1, g: 0.88235295, b: 0.2901961, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1385,7 +1385,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0.88235295, b: 0.2901961, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1597,8 +1597,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278253311
-  m_fontColor: {r: 1, g: 0.96470594, b: 0, a: 1}
+    rgba: 4283097599
+  m_fontColor: {r: 1, g: 0.88235295, b: 0.2901961, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1828,7 +1828,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5eedb67ba090faa4b9d3e1898c520323, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c1527c7f8730d7b45a79b37e42f1f4b3, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1979,7 +1979,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 07147ac20cc94f244afcb36752cf178e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: fa6ab98773a567a4ba01265a0fc560f1, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

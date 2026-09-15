@@ -7,6 +7,7 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] private Button playButton;
     [SerializeField] private Button optionsButton;
     [SerializeField] private Button creditsButton;
+    [SerializeField] private Button tutorialButton;
     [SerializeField] private Button quitButton;
 
     [Header("Paneles")]
@@ -15,6 +16,9 @@ public class MainMenuController : MonoBehaviour
 
     [Header("Créditos")]
     [SerializeField] private CreditsUI creditsUI;
+
+    [Header("Tutorial")]
+    [SerializeField] private TutorialUI tutorialUI;
 
     [Header("Intro")]
     [SerializeField] private ComicSequence introSequence;
@@ -26,6 +30,7 @@ public class MainMenuController : MonoBehaviour
         playButton.onClick.AddListener(PlayGame);
         optionsButton.onClick.AddListener(OpenVolumePanel);
         creditsButton.onClick.AddListener(OpenCredits);
+        tutorialButton.onClick.AddListener(OpenTutorial);
         quitButton.onClick.AddListener(QuitGame);
 
         if (mainMenuPanel != null)
@@ -70,6 +75,20 @@ public class MainMenuController : MonoBehaviour
         if (creditsUI != null)
         {
             creditsUI.OpenCredits();
+        }
+    }
+
+    private void OpenTutorial()
+    {
+        if (tutorialUI != null)
+        {
+            tutorialUI.OpenTutorial();
+        }
+        else
+        {
+            Debug.LogError(
+                "MainMenuController: No se ha asignado TutorialUI."
+            );
         }
     }
 

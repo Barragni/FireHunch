@@ -103,7 +103,6 @@ public class ObjectiveUI : MonoBehaviour
 
         gameObject.SetActive(true);
 
-        // Estado final directamente.
         rectTransform.anchoredPosition =
             finalPosition;
 
@@ -141,35 +140,39 @@ public class ObjectiveUI : MonoBehaviour
 
         while (elapsed < introDuration)
         {
-            elapsed +=
-                Time.unscaledDeltaTime;
+            // No avanzar mientras el juego esté pausado.
+            if (Time.timeScale > 0f)
+            {
+                elapsed +=
+                    Time.unscaledDeltaTime;
 
-            float t =
-                Mathf.Clamp01(
-                    elapsed /
-                    introDuration
-                );
+                float t =
+                    Mathf.Clamp01(
+                        elapsed /
+                        introDuration
+                    );
 
-            t =
-                Mathf.SmoothStep(
-                    0f,
-                    1f,
-                    t
-                );
+                t =
+                    Mathf.SmoothStep(
+                        0f,
+                        1f,
+                        t
+                    );
 
-            rectTransform.localScale =
-                Vector3.Lerp(
-                    Vector3.one * introScale,
-                    Vector3.one,
-                    t
-                );
+                rectTransform.localScale =
+                    Vector3.Lerp(
+                        Vector3.one * introScale,
+                        Vector3.one,
+                        t
+                    );
 
-            objectiveText.color =
-                Color.Lerp(
-                    startColor,
-                    finalColor,
-                    t
-                );
+                objectiveText.color =
+                    Color.Lerp(
+                        startColor,
+                        finalColor,
+                        t
+                    );
+            }
 
             yield return null;
         }
@@ -181,12 +184,22 @@ public class ObjectiveUI : MonoBehaviour
             finalColor;
 
         // ========================================================
-        // PAUSA
+        // PAUSA ANTES DE SUBIR
         // ========================================================
 
-        yield return new WaitForSecondsRealtime(
-            holdTime
-        );
+        float holdElapsed = 0f;
+
+        while (holdElapsed < holdTime)
+        {
+            // No avanzar mientras el juego esté pausado.
+            if (Time.timeScale > 0f)
+            {
+                holdElapsed +=
+                    Time.unscaledDeltaTime;
+            }
+
+            yield return null;
+        }
 
         // ========================================================
         // SUBIR + HACER MÁS PEQUEÑO
@@ -196,35 +209,39 @@ public class ObjectiveUI : MonoBehaviour
 
         while (elapsed < moveDuration)
         {
-            elapsed +=
-                Time.unscaledDeltaTime;
+            // No avanzar mientras el juego esté pausado.
+            if (Time.timeScale > 0f)
+            {
+                elapsed +=
+                    Time.unscaledDeltaTime;
 
-            float t =
-                Mathf.Clamp01(
-                    elapsed /
-                    moveDuration
-                );
+                float t =
+                    Mathf.Clamp01(
+                        elapsed /
+                        moveDuration
+                    );
 
-            t =
-                Mathf.SmoothStep(
-                    0f,
-                    1f,
-                    t
-                );
+                t =
+                    Mathf.SmoothStep(
+                        0f,
+                        1f,
+                        t
+                    );
 
-            rectTransform.anchoredPosition =
-                Vector2.Lerp(
-                    centerPosition,
-                    finalPosition,
-                    t
-                );
+                rectTransform.anchoredPosition =
+                    Vector2.Lerp(
+                        centerPosition,
+                        finalPosition,
+                        t
+                    );
 
-            rectTransform.localScale =
-                Vector3.Lerp(
-                    Vector3.one,
-                    Vector3.one * finalScale,
-                    t
-                );
+                rectTransform.localScale =
+                    Vector3.Lerp(
+                        Vector3.one,
+                        Vector3.one * finalScale,
+                        t
+                    );
+            }
 
             yield return null;
         }
