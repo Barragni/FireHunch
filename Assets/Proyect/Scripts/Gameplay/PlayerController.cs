@@ -53,7 +53,12 @@ public class PlayerController : MonoBehaviour
     // Altura que tendrá el jugador mientras esté bloqueada
     private float lockedY;
 
-    private void Start()
+
+    // ============================================================
+    // INICIALIZACIÓN
+    // ============================================================
+
+    private void Awake()
     {
         characterController =
             GetComponent<CharacterController>();
@@ -61,11 +66,14 @@ public class PlayerController : MonoBehaviour
         playerCamera =
             GetComponentInChildren<Camera>();
 
-        headBobController =
-            playerCamera.GetComponent<HeadBobController>();
+        if (playerCamera != null)
+        {
+            headBobController =
+                playerCamera.GetComponent<HeadBobController>();
 
-        defaultFOV =
-            playerCamera.fieldOfView;
+            defaultFOV =
+                playerCamera.fieldOfView;
+        }
 
         // Guardamos la altura inicial del jugador
         lockedY =
@@ -79,6 +87,7 @@ public class PlayerController : MonoBehaviour
 
         ResetFootsteps();
     }
+
 
     private void Update()
     {
@@ -97,12 +106,18 @@ public class PlayerController : MonoBehaviour
         MaintainLockedHeight();
     }
 
+
     // ============================================================
     // MOUSE LOOK
     // ============================================================
 
     private void HandleMouseLook()
     {
+        if (playerCamera == null)
+        {
+            return;
+        }
+
         float mouseX =
             Input.GetAxis("Mouse X") *
             mouseSensitivity *
@@ -134,12 +149,18 @@ public class PlayerController : MonoBehaviour
         );
     }
 
+
     // ============================================================
     // MOVIMIENTO
     // ============================================================
 
     private void HandleMovement()
     {
+        if (characterController == null)
+        {
+            return;
+        }
+
         float horizontal =
             Input.GetAxis("Horizontal");
 
@@ -161,6 +182,7 @@ public class PlayerController : MonoBehaviour
         );
     }
 
+
     // ============================================================
     // BLOQUEO DE ALTURA
     // ============================================================
@@ -181,6 +203,7 @@ public class PlayerController : MonoBehaviour
         transform.position =
             position;
     }
+
 
     // ============================================================
     // PASOS
@@ -232,6 +255,7 @@ public class PlayerController : MonoBehaviour
             isWalking;
     }
 
+
     private void ResetFootsteps()
     {
         wasWalking = false;
@@ -241,6 +265,7 @@ public class PlayerController : MonoBehaviour
             AudioManager.Instance.StopFootstep();
         }
     }
+
 
     // ============================================================
     // MOVIMIENTO ENABLE / DISABLE
@@ -271,6 +296,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+
     // ============================================================
     // HEAD BOB
     // ============================================================
@@ -282,6 +308,7 @@ public class PlayerController : MonoBehaviour
             headBobController.SetEnabled(enabled);
         }
     }
+
 
     // ============================================================
     // VISUAL
@@ -295,6 +322,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+
     public void HideVisual()
     {
         if (visual != null)
@@ -302,6 +330,7 @@ public class PlayerController : MonoBehaviour
             visual.SetActive(false);
         }
     }
+
 
     // ============================================================
     // CÁMARA
@@ -312,6 +341,7 @@ public class PlayerController : MonoBehaviour
         return playerCamera;
     }
 
+
     // ============================================================
     // MIRAR OBJETIVO
     // ============================================================
@@ -320,6 +350,11 @@ public class PlayerController : MonoBehaviour
         Transform target
     )
     {
+        if (playerCamera == null || target == null)
+        {
+            yield break;
+        }
+
         canMove = false;
 
         ResetFootsteps();
@@ -421,6 +456,7 @@ public class PlayerController : MonoBehaviour
             );
     }
 
+
     // ============================================================
     // ZOOM DE DIÁLOGO
     // ============================================================
@@ -428,6 +464,11 @@ public class PlayerController : MonoBehaviour
     public IEnumerator PlayDialogueZoom()
     {
         if (!enableDialogueZoom)
+        {
+            yield break;
+        }
+
+        if (playerCamera == null)
         {
             yield break;
         }
@@ -471,12 +512,26 @@ public class PlayerController : MonoBehaviour
             dialogueZoomFOV;
     }
 
+
     // ============================================================
     // CÁMARA DE DECISIÓN
     // ============================================================
 
     public IEnumerator PlayDecisionCamera()
     {
+        if (playerCamera == null)
+        {
+            yield break;
+        }
+
+        if (
+            decisionCameraStart == null ||
+            decisionCameraEnd == null
+        )
+        {
+            yield break;
+        }
+
         ShowVisual();
 
         ResetFootsteps();
@@ -490,51 +545,95 @@ public class PlayerController : MonoBehaviour
         playerCamera.transform.rotation =
             decisionCameraStart.rotation;
 
-        Coroutine effectRoutine =
-            StartCoroutine(
-                DecisionEffectsManager.Instance
-                    .EnterDecisionMode()
-            );
-
-        float elapsed = 0f;
-
-        while (
-            elapsed <
-            decisionCameraDuration
-        )
+        if (DecisionEffectsManager.Instance != null)
         {
-            elapsed +=
-                Time.unscaledDeltaTime;
-
-            float t =
-                Mathf.Clamp01(
-                    elapsed /
-                    decisionCameraDuration
+            Coroutine effectRoutine =
+                StartCoroutine(
+                    DecisionEffectsManager.Instance
+                        .EnterDecisionMode()
                 );
+
+            float elapsed = 0f;
+
+            while (
+                elapsed <
+                decisionCameraDuration
+            )
+            {
+                elapsed +=
+                    Time.unscaledDeltaTime;
+
+                float t =
+                    Mathf.Clamp01(
+                        elapsed /
+                        decisionCameraDuration
+                    );
+
+                playerCamera.transform.position =
+                    Vector3.Lerp(
+                        decisionCameraStart.position,
+                        decisionCameraEnd.position,
+                        t
+                    );
+
+                playerCamera.transform.rotation =
+                    Quaternion.Slerp(
+                        decisionCameraStart.rotation,
+                        decisionCameraEnd.rotation,
+                        t
+                    );
+
+                yield return null;
+            }
 
             playerCamera.transform.position =
-                Vector3.Lerp(
-                    decisionCameraStart.position,
-                    decisionCameraEnd.position,
-                    t
-                );
+                decisionCameraEnd.position;
 
             playerCamera.transform.rotation =
-                Quaternion.Slerp(
-                    decisionCameraStart.rotation,
-                    decisionCameraEnd.rotation,
-                    t
-                );
+                decisionCameraEnd.rotation;
 
-            yield return null;
+            yield return effectRoutine;
         }
+        else
+        {
+            float elapsed = 0f;
 
-        playerCamera.transform.position =
-            decisionCameraEnd.position;
+            while (
+                elapsed <
+                decisionCameraDuration
+            )
+            {
+                elapsed +=
+                    Time.unscaledDeltaTime;
 
-        playerCamera.transform.rotation =
-            decisionCameraEnd.rotation;
+                float t =
+                    Mathf.Clamp01(
+                        elapsed /
+                        decisionCameraDuration
+                    );
 
-        yield return effectRoutine;
+                playerCamera.transform.position =
+                    Vector3.Lerp(
+                        decisionCameraStart.position,
+                        decisionCameraEnd.position,
+                        t
+                    );
+
+                playerCamera.transform.rotation =
+                    Quaternion.Slerp(
+                        decisionCameraStart.rotation,
+                        decisionCameraEnd.rotation,
+                        t
+                    );
+
+                yield return null;
+            }
+
+            playerCamera.transform.position =
+                decisionCameraEnd.position;
+
+            playerCamera.transform.rotation =
+                decisionCameraEnd.rotation;
+        }
     }
 }

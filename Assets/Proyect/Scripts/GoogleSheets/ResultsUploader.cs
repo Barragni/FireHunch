@@ -22,6 +22,41 @@ public class ResultsUploader : MonoBehaviour
         Instance = this;
 
         DontDestroyOnLoad(gameObject);
+
+        // Despierta Render al iniciar la aplicación.
+        StartCoroutine(WakeBackend());
+    }
+
+    // =========================================================
+    // DESPERTAR BACKEND
+    // =========================================================
+
+    private IEnumerator WakeBackend()
+    {
+        using UnityWebRequest request =
+            UnityWebRequest.Get(
+                "https://firehunchbackend.onrender.com/api/health");
+
+        yield return request.SendWebRequest();
+
+#if UNITY_2020_2_OR_NEWER
+
+        if (request.result == UnityWebRequest.Result.Success)
+
+#else
+
+        if (!request.isNetworkError && !request.isHttpError)
+
+#endif
+        {
+            Debug.Log("BACKEND: Render está activo.");
+        }
+        else
+        {
+            Debug.LogWarning(
+                "BACKEND: No se pudo despertar Render. " +
+                request.error);
+        }
     }
 
     /// <summary>
