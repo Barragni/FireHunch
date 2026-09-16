@@ -11168,7 +11168,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39e143d9b4916974d99b434c9b71d161, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneAudio
-  musicClip: {fileID: 8300000, guid: d76761950ff11ec41ad37d54fba1e20b, type: 3}
+  musicClip: {fileID: 8300000, guid: 20e488ddb5f84aa4a9849d3fa2b1e61b, type: 3}
   keepPreviousMusic: 0
   ambienceClip: {fileID: 0}
   musicVolume: 0.55
