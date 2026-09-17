@@ -31,7 +31,7 @@ public static class FindUnusedAssets
     {
         string[] allAssets = AssetDatabase.GetAllAssetPaths();
 
-        HashSet<string> usedAssets = new HashSet<string>();
+        HashSet<string> referencedAssets = new HashSet<string>();
 
         foreach (string asset in allAssets)
         {
@@ -45,7 +45,12 @@ public static class FindUnusedAssets
 
             foreach (string dependency in dependencies)
             {
-                usedAssets.Add(dependency);
+                // IMPORTANTE:
+                // No contamos el propio asset como una referencia.
+                if (dependency != asset)
+                {
+                    referencedAssets.Add(dependency);
+                }
             }
         }
 
@@ -60,7 +65,7 @@ public static class FindUnusedAssets
             if (!IsTargetExtension(asset))
                 continue;
 
-            if (usedAssets.Contains(asset))
+            if (referencedAssets.Contains(asset))
                 continue;
 
             if (asset.Contains("/Resources/"))
@@ -89,7 +94,7 @@ public static class FindUnusedAssets
         Debug.Log("==============================================");
         Debug.Log("       ASSETS APARENTEMENTE NO USADOS");
         Debug.Log("==============================================");
-        Debug.Log($"Total de assets revisados: {allAssets.Length}");
+        Debug.Log($"Total assets revisados: {allAssets.Length}");
         Debug.Log($"Candidatos encontrados: {unusedAssets.Count}");
         Debug.Log("==============================================");
 

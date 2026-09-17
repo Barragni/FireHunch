@@ -37,6 +37,8 @@ public class DialogueUI : MonoBehaviour
 
     private Coroutine transitionCoroutine;
 
+    private int originalSiblingIndex;
+
     // Copia temporal utilizada durante la transición.
     // Se guarda la referencia para poder destruirla si la transición
     // se interrumpe.
@@ -65,6 +67,9 @@ public class DialogueUI : MonoBehaviour
 
         originalPosition =
             dialoguePanelRect.anchoredPosition;
+
+        originalSiblingIndex =
+            dialoguePanel.transform.GetSiblingIndex();
 
         // El panel principal sí puede recibir interacción
         // cuando está visible.
@@ -207,8 +212,8 @@ public class DialogueUI : MonoBehaviour
         oldGroup.blocksRaycasts = false;
         oldGroup.interactable = false;
 
-        // La copia queda visualmente detrás.
-        oldPanel.transform.SetAsLastSibling();
+        // La copia mantiene la posición original del diálogo.
+        oldPanel.transform.SetSiblingIndex(originalSiblingIndex);
 
         // ========================================================
         // PREPARAR NUEVO DIÁLOGO
@@ -225,9 +230,6 @@ public class DialogueUI : MonoBehaviour
             startingScale;
 
         canvasGroup.alpha = 0f;
-
-        // El panel nuevo queda delante de la copia.
-        dialoguePanel.transform.SetAsLastSibling();
 
         canvasGroup.blocksRaycasts = true;
         canvasGroup.interactable = true;
