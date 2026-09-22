@@ -22,8 +22,24 @@ public class IntroCinematicController : MonoBehaviour
     [Header("Duración fase 2")]
     [SerializeField] private float secondPhaseDuration = 3f;
 
+    private Vector3 originalCameraLocalPosition;
+    private Quaternion originalCameraLocalRotation;
+
     private IEnumerator Start()
     {
+        Camera playerCamera =
+            player.GetPlayerCamera();
+
+        if (playerCamera == null)
+            yield break;
+
+        // Guardar la posición y rotación normal de primera persona.
+        originalCameraLocalPosition =
+            playerCamera.transform.localPosition;
+
+        originalCameraLocalRotation =
+            playerCamera.transform.localRotation;
+
         // Mostrar el modelo durante la cinemática inicial.
         player.ShowVisual();
 
@@ -34,14 +50,14 @@ public class IntroCinematicController : MonoBehaviour
         {
             NarrativeState.ReturningFromDeath = false;
 
-            Camera skipCamera =
-                player.GetPlayerCamera();
-
-            skipCamera.transform.position =
+            playerCamera.transform.position =
                 introCameraEnd.position;
 
-            skipCamera.transform.rotation =
+            playerCamera.transform.rotation =
                 introCameraEnd.rotation;
+
+            // Volver a la posición normal de primera persona.
+            RestorePlayerCamera();
 
             // Volver a ocultar el modelo al regresar al gameplay.
             player.HideVisual();
@@ -51,9 +67,6 @@ public class IntroCinematicController : MonoBehaviour
 
             yield break;
         }
-
-        Camera playerCamera =
-            player.GetPlayerCamera();
 
         playerCamera.transform.position =
             introCameraStart.position;
@@ -68,6 +81,9 @@ public class IntroCinematicController : MonoBehaviour
         yield return StartCoroutine(
             PlayPOVTransition(playerCamera)
         );
+
+        // Restaurar la posición normal de primera persona.
+        RestorePlayerCamera();
 
         // La cámara vuelve a primera persona.
         player.HideVisual();
@@ -165,5 +181,20 @@ public class IntroCinematicController : MonoBehaviour
 
         playerCamera.transform.rotation =
             endRotation;
+    }
+
+    private void RestorePlayerCamera()
+    {
+        Camera playerCamera =
+            player.GetPlayerCamera();
+
+        if (playerCamera == null)
+            return;
+
+        playerCamera.transform.localPosition =
+            originalCameraLocalPosition;
+
+        playerCamera.transform.localRotation =
+            originalCameraLocalRotation;
     }
 }

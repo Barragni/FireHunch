@@ -29,7 +29,7 @@ public class HeadBobController : MonoBehaviour
 
     private float bobWeight;
 
-    private void Start()
+    private void Awake()
     {
         initialLocalPosition =
             transform.localPosition;
