@@ -331,6 +331,7 @@ GameObject:
   - component: {fileID: 3953515513171769313}
   - component: {fileID: 2613551008310053896}
   - component: {fileID: 2847057856720508263}
+  - component: {fileID: 6765318451432026604}
   m_Layer: 0
   m_Name: Player 2
   m_TagString: Player
@@ -475,7 +476,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   moveSpeed: 5
-  mouseSensitivity: 150
+  mouseSensitivity: 75
   startWithMovementEnabled: 1
   visual: {fileID: 8199789210792314019}
   decisionCameraStart: {fileID: 2276166282061556706}
@@ -485,6 +486,23 @@ MonoBehaviour:
   enableDialogueZoom: 1
   dialogueZoomFOV: 50
   dialogueZoomDuration: 0.5
+  lockVerticalPosition: 1
+--- !u!114 &6765318451432026604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8267507081218909972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 726b75530ed78bf439ee54cfffbac770, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MovementPerceptionEffect
+  playerCamera: {fileID: 1012198625828602199}
+  backwardOffset: 0.03
+  smoothSpeed: 5
+  minimumMovement: 0.1
 --- !u!1 &9150041766488302472
 GameObject:
   m_ObjectHideFlags: 0

@@ -508,7 +508,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -80.000015}
+  m_AnchoredPosition: {x: 0, y: -140}
   m_SizeDelta: {x: 160, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2720163359257207152
@@ -3303,7 +3303,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 59.999985}
+  m_AnchoredPosition: {x: 0, y: 20}
   m_SizeDelta: {x: 160, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2543614794183735712
@@ -3406,7 +3406,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7093235193122189200
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3424,7 +3424,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -150}
+  m_AnchoredPosition: {x: 0, y: -175.99998}
   m_SizeDelta: {x: 160, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3170397368007513481
@@ -4004,7 +4004,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 77.6}
+  m_AnchoredPosition: {x: 0, y: 75.6}
   m_SizeDelta: {x: 649.5, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4885435393194218391
@@ -4430,7 +4430,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 129.99998}
+  m_AnchoredPosition: {x: 0, y: 100}
   m_SizeDelta: {x: 160, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6089236750777253514
@@ -5919,7 +5919,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -10.000013}
+  m_AnchoredPosition: {x: 0, y: -60}
   m_SizeDelta: {x: 160, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6670160562909534943
@@ -6500,6 +6500,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7327285591367158755}
     m_Modifications:
+    - target: {fileID: 13859831893367267, guid: c533ac374823e594bb9cb40b59cf83f6, type: 3}
+      propertyPath: m_fontSize
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 13859831893367267, guid: c533ac374823e594bb9cb40b59cf83f6, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 408185257025705730, guid: c533ac374823e594bb9cb40b59cf83f6, type: 3}
+      propertyPath: m_fontSize
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 408185257025705730, guid: c533ac374823e594bb9cb40b59cf83f6, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 2641122851201001591, guid: c533ac374823e594bb9cb40b59cf83f6, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: cf79f4a15bd907a45afb660cf2244f42, type: 3}
     - target: {fileID: 3283668878593937682, guid: c533ac374823e594bb9cb40b59cf83f6, type: 3}
       propertyPath: m_Name
       value: TutorialPanel
@@ -6507,6 +6527,26 @@ PrefabInstance:
     - target: {fileID: 3283668878593937682, guid: c533ac374823e594bb9cb40b59cf83f6, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5239518457623802441, guid: c533ac374823e594bb9cb40b59cf83f6, type: 3}
+      propertyPath: m_text
+      value: "Sigue las flechas verdes para llegar a tu pr\xF3ximo objetivo."
+      objectReference: {fileID: 0}
+    - target: {fileID: 5239518457623802441, guid: c533ac374823e594bb9cb40b59cf83f6, type: 3}
+      propertyPath: m_fontSize
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 5239518457623802441, guid: c533ac374823e594bb9cb40b59cf83f6, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 7247476009070837285, guid: c533ac374823e594bb9cb40b59cf83f6, type: 3}
+      propertyPath: m_fontSize
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 7247476009070837285, guid: c533ac374823e594bb9cb40b59cf83f6, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 7753519071965290710, guid: c533ac374823e594bb9cb40b59cf83f6, type: 3}
       propertyPath: m_Pivot.x

@@ -9,9 +9,7 @@ public class GuidanceArrowTrigger : MonoBehaviour
     [SerializeField] private GameObject[] arrows;
 
     [Header("Apariencia")]
-    [ColorUsage(true, true)]
-    [SerializeField] private Color arrowColor =
-        new Color(1f, 0.824f, 0.122f, 1f);
+    [SerializeField] private string arrowColorHex = "#0FD900";
 
     [Range(0f, 1f)]
     [SerializeField] private float visibleAlpha = 0.55f;
@@ -31,6 +29,8 @@ public class GuidanceArrowTrigger : MonoBehaviour
     [Tooltip("Velocidad del movimiento.")]
     [SerializeField] private float oscillationSpeed = 2f;
 
+
+    private Color arrowColor;
 
     private enum MovementAxis
     {
@@ -56,6 +56,11 @@ public class GuidanceArrowTrigger : MonoBehaviour
 
     private void Awake()
     {
+        ColorUtility.TryParseHtmlString(
+            arrowColorHex,
+            out arrowColor
+        );
+
         if (arrows == null || arrows.Length == 0)
         {
             Debug.LogWarning(

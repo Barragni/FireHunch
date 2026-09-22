@@ -1690,6 +1690,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 817634408}
     m_Modifications:
+    - target: {fileID: 13859831893367267, guid: c533ac374823e594bb9cb40b59cf83f6, type: 3}
+      propertyPath: m_fontSize
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 13859831893367267, guid: c533ac374823e594bb9cb40b59cf83f6, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 408185257025705730, guid: c533ac374823e594bb9cb40b59cf83f6, type: 3}
+      propertyPath: m_fontSize
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 408185257025705730, guid: c533ac374823e594bb9cb40b59cf83f6, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 2641122851201001591, guid: c533ac374823e594bb9cb40b59cf83f6, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: cf79f4a15bd907a45afb660cf2244f42, type: 3}
     - target: {fileID: 3283668878593937682, guid: c533ac374823e594bb9cb40b59cf83f6, type: 3}
       propertyPath: m_Name
       value: TutorialPanel
@@ -1714,6 +1734,26 @@ PrefabInstance:
       propertyPath: m_SpriteState.m_HighlightedSprite
       value: 
       objectReference: {fileID: 21300000, guid: 9977c07f03f5d1840b522c58ba01a866, type: 3}
+    - target: {fileID: 5239518457623802441, guid: c533ac374823e594bb9cb40b59cf83f6, type: 3}
+      propertyPath: m_text
+      value: "Sigue las flechas verdes para llegar a tu pr\xF3ximo objetivo."
+      objectReference: {fileID: 0}
+    - target: {fileID: 5239518457623802441, guid: c533ac374823e594bb9cb40b59cf83f6, type: 3}
+      propertyPath: m_fontSize
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 5239518457623802441, guid: c533ac374823e594bb9cb40b59cf83f6, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 7247476009070837285, guid: c533ac374823e594bb9cb40b59cf83f6, type: 3}
+      propertyPath: m_fontSize
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 7247476009070837285, guid: c533ac374823e594bb9cb40b59cf83f6, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 16
+      objectReference: {fileID: 0}
     - target: {fileID: 7753519071965290710, guid: c533ac374823e594bb9cb40b59cf83f6, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1748,15 +1788,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7753519071965290710, guid: c533ac374823e594bb9cb40b59cf83f6, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.6
+      value: 0.76000005
       objectReference: {fileID: 0}
     - target: {fileID: 7753519071965290710, guid: c533ac374823e594bb9cb40b59cf83f6, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.6
+      value: 0.76000005
       objectReference: {fileID: 0}
     - target: {fileID: 7753519071965290710, guid: c533ac374823e594bb9cb40b59cf83f6, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.6
+      value: 0.76000005
       objectReference: {fileID: 0}
     - target: {fileID: 7753519071965290710, guid: c533ac374823e594bb9cb40b59cf83f6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2174,7 +2214,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1740692267
 RectTransform:
   m_ObjectHideFlags: 0

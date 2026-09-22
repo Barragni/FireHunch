@@ -391,7 +391,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   moveSpeed: 5
-  mouseSensitivity: 150
+  mouseSensitivity: 75
   startWithMovementEnabled: 1
   visual: {fileID: 8544337083969688888}
   decisionCameraStart: {fileID: 4745313533768100399}
@@ -401,6 +401,7 @@ MonoBehaviour:
   enableDialogueZoom: 1
   dialogueZoomFOV: 50
   dialogueZoomDuration: 0.5
+  lockVerticalPosition: 1
 --- !u!1 &5843786656423510283
 GameObject:
   m_ObjectHideFlags: 0
