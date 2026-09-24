@@ -8,6 +8,10 @@ public class DecisionPlayer : MonoBehaviour
 {
     [SerializeField] private DecisionUI decisionUI;
 
+    [Header("Controles móviles")]
+    [SerializeField] private GameObject mobileJoystick;
+    [SerializeField] private GameObject mobileLookJoystick;
+
     private DecisionSequence currentDecision;
 
     // ============================================================
@@ -25,7 +29,10 @@ public class DecisionPlayer : MonoBehaviour
     private void Start()
     {
         decisionUI.DecisionPanel.SetActive(false);
+
+        SetMobileControlsVisible(true);
     }
+
 
     // ============================================================
     // COMPATIBILIDAD
@@ -48,6 +55,7 @@ public class DecisionPlayer : MonoBehaviour
             nodeID
         );
     }
+
 
     // ============================================================
     // MOSTRAR DECISIÓN
@@ -75,6 +83,12 @@ public class DecisionPlayer : MonoBehaviour
             decision;
 
         decisionUI.DecisionPanel.SetActive(true);
+
+        // ========================================================
+        // OCULTAR CONTROLES MÓVILES
+        // ========================================================
+
+        SetMobileControlsVisible(false);
 
         // ========================================================
         // INICIAR REGISTRO DEL INTENTO
@@ -125,6 +139,7 @@ public class DecisionPlayer : MonoBehaviour
             );
     }
 
+
     // ============================================================
     // TEMPORIZADOR
     // ============================================================
@@ -152,6 +167,7 @@ public class DecisionPlayer : MonoBehaviour
 
         SelectTimeoutOption();
     }
+
 
     private void SelectTimeoutOption()
     {
@@ -183,6 +199,7 @@ public class DecisionPlayer : MonoBehaviour
             $"{currentDecision.timeoutResult}."
         );
     }
+
 
     // ============================================================
     // BOTONES
@@ -223,6 +240,7 @@ public class DecisionPlayer : MonoBehaviour
             }
         );
     }
+
 
     // ============================================================
     // SELECCIONAR OPCIÓN
@@ -267,6 +285,12 @@ public class DecisionPlayer : MonoBehaviour
         // ========================================================
 
         decisionUI.DecisionPanel.SetActive(false);
+
+        // ========================================================
+        // MOSTRAR CONTROLES MÓVILES
+        // ========================================================
+
+        SetMobileControlsVisible(true);
 
         int selectedOptionIndex =
             currentDecision.options.IndexOf(
@@ -360,5 +384,37 @@ public class DecisionPlayer : MonoBehaviour
         );
 
         yield break;
+    }
+
+
+    // ============================================================
+    // CONTROLES MÓVILES
+    // ============================================================
+
+    private void SetMobileControlsVisible(bool visible)
+    {
+        // Solo un dispositivo táctil fuera del Editor
+        // puede mostrar los controles móviles.
+        bool isMobileDevice =
+            !Application.isEditor &&
+            Input.touchSupported;
+
+        bool shouldBeVisible =
+            visible &&
+            isMobileDevice;
+
+        if (mobileJoystick != null)
+        {
+            mobileJoystick.SetActive(
+                shouldBeVisible
+            );
+        }
+
+        if (mobileLookJoystick != null)
+        {
+            mobileLookJoystick.SetActive(
+                shouldBeVisible
+            );
+        }
     }
 }

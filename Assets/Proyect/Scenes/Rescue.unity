@@ -695,7 +695,7 @@ MonoBehaviour:
   arrows:
   - {fileID: 883674227}
   - {fileID: 0}
-  arrowColor: {r: 1, g: 0.824, b: 0.122, a: 1}
+  arrowColorHex: '#0FD900'
   visibleAlpha: 0.55
   fadeDuration: 0.25
   enableOscillation: 1
@@ -2887,7 +2887,7 @@ MonoBehaviour:
   arrows:
   - {fileID: 1315031679}
   - {fileID: 402359119}
-  arrowColor: {r: 1, g: 0.824, b: 0.122, a: 1}
+  arrowColorHex: '#0FD900'
   visibleAlpha: 0.55
   fadeDuration: 0.25
   enableOscillation: 1
@@ -3207,7 +3207,7 @@ MonoBehaviour:
   arrows:
   - {fileID: 1072264482}
   - {fileID: 1210548458}
-  arrowColor: {r: 1, g: 0.824, b: 0.122, a: 1}
+  arrowColorHex: '#0FD900'
   visibleAlpha: 0.55
   fadeDuration: 0.25
   enableOscillation: 1
@@ -5067,6 +5067,14 @@ PrefabInstance:
       propertyPath: moveSpeed
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 7238461144196280205, guid: bcc7ec51a2330f64292b899c4f0bd75f, type: 3}
+      propertyPath: mobileJoystick
+      value: 
+      objectReference: {fileID: 1401543403}
+    - target: {fileID: 7238461144196280205, guid: bcc7ec51a2330f64292b899c4f0bd75f, type: 3}
+      propertyPath: mobileLookJoystick
+      value: 
+      objectReference: {fileID: 1401543401}
     - target: {fileID: 7299594890025580187, guid: bcc7ec51a2330f64292b899c4f0bd75f, type: 3}
       propertyPath: m_RenderingLayerMask
       value: 2
@@ -7922,7 +7930,7 @@ MonoBehaviour:
   arrows:
   - {fileID: 1638437587}
   - {fileID: 185212807}
-  arrowColor: {r: 1, g: 0.824, b: 0.122, a: 1}
+  arrowColorHex: '#0FD900'
   visibleAlpha: 0.55
   fadeDuration: 0.25
   enableOscillation: 1
@@ -9137,7 +9145,7 @@ MonoBehaviour:
   arrows:
   - {fileID: 1124659250}
   - {fileID: 2110344137}
-  arrowColor: {r: 1, g: 0.824, b: 0.122, a: 1}
+  arrowColorHex: '#0FD900'
   visibleAlpha: 0.55
   fadeDuration: 0.25
   enableOscillation: 1
@@ -13353,6 +13361,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DecisionPlayer
   decisionUI: {fileID: 1401543398}
+  mobileJoystick: {fileID: 1401543402}
+  mobileLookJoystick: {fileID: 1401543400}
 --- !u!4 &951126654
 Transform:
   m_ObjectHideFlags: 0
@@ -14481,7 +14491,7 @@ MonoBehaviour:
   arrows:
   - {fileID: 99050247}
   - {fileID: 553403347}
-  arrowColor: {r: 1, g: 0.824, b: 0.122, a: 1}
+  arrowColorHex: '#0FD900'
   visibleAlpha: 0.55
   fadeDuration: 0.25
   enableOscillation: 1
@@ -21101,6 +21111,38 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7327285591367158755, guid: c3371ae4de5a0ac46be5eda892a5a5cc, type: 3}
   m_PrefabInstance: {fileID: 1401543396}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1401543400 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 500922360288710272, guid: c3371ae4de5a0ac46be5eda892a5a5cc, type: 3}
+  m_PrefabInstance: {fileID: 1401543396}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1401543401 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7485353983492286763, guid: c3371ae4de5a0ac46be5eda892a5a5cc, type: 3}
+  m_PrefabInstance: {fileID: 1401543396}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1401543400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1eb7baf37a9c5e4bb38c5facb367870, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MobileJoystick
+--- !u!1 &1401543402 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5213048098213341762, guid: c3371ae4de5a0ac46be5eda892a5a5cc, type: 3}
+  m_PrefabInstance: {fileID: 1401543396}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1401543403 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8690684685057602027, guid: c3371ae4de5a0ac46be5eda892a5a5cc, type: 3}
+  m_PrefabInstance: {fileID: 1401543396}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1401543402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1eb7baf37a9c5e4bb38c5facb367870, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MobileJoystick
 --- !u!1001 &1411694956
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -21449,7 +21491,7 @@ MonoBehaviour:
   arrows:
   - {fileID: 1891971273}
   - {fileID: 1950930704}
-  arrowColor: {r: 1, g: 0.824, b: 0.122, a: 1}
+  arrowColorHex: '#0FD900'
   visibleAlpha: 0.55
   fadeDuration: 0.25
   enableOscillation: 1
@@ -23914,7 +23956,7 @@ MonoBehaviour:
   arrows:
   - {fileID: 1139289033}
   - {fileID: 928782459}
-  arrowColor: {r: 1, g: 0.824, b: 0.122, a: 1}
+  arrowColorHex: '#0FD900'
   visibleAlpha: 0.55
   fadeDuration: 0.25
   enableOscillation: 1
@@ -24855,7 +24897,7 @@ MonoBehaviour:
   arrows:
   - {fileID: 2068942091}
   - {fileID: 691836481}
-  arrowColor: {r: 1, g: 0.824, b: 0.122, a: 1}
+  arrowColorHex: '#0FD900'
   visibleAlpha: 0.55
   fadeDuration: 0.25
   enableOscillation: 1
@@ -26147,7 +26189,7 @@ MonoBehaviour:
   arrows:
   - {fileID: 1194504610}
   - {fileID: 154676369}
-  arrowColor: {r: 1, g: 0.824, b: 0.122, a: 1}
+  arrowColorHex: '#0FD900'
   visibleAlpha: 0.55
   fadeDuration: 0.25
   enableOscillation: 1
@@ -28305,7 +28347,7 @@ MonoBehaviour:
   arrows:
   - {fileID: 632930389}
   - {fileID: 663576952}
-  arrowColor: {r: 1, g: 0.824, b: 0.122, a: 1}
+  arrowColorHex: '#0FD900'
   visibleAlpha: 0.55
   fadeDuration: 0.25
   enableOscillation: 1

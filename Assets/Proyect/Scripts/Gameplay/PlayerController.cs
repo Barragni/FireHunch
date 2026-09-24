@@ -18,9 +18,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Cámara de decisión")]
     [SerializeField] private Transform decisionCameraStart;
-
     [SerializeField] private Transform decisionCameraEnd;
-
     [SerializeField] private float decisionCameraDuration = 0.8f;
 
     [Header("Enfoque narrativo")]
@@ -28,29 +26,26 @@ public class PlayerController : MonoBehaviour
 
     [Header("Zoom de diálogo")]
     [SerializeField] private bool enableDialogueZoom = true;
-
     [SerializeField] private float dialogueZoomFOV = 50f;
-
     [SerializeField] private float dialogueZoomDuration = 0.5f;
 
     [Header("Altura del jugador")]
     [SerializeField] private bool lockVerticalPosition = true;
 
+    [Header("Controles móviles")]
+    [SerializeField] private MobileJoystick mobileJoystick;
+    [SerializeField] private MobileJoystick mobileLookJoystick;
+    [SerializeField] private float mobileLookSensitivity = 100f;
+
     private CharacterController characterController;
-
     private Camera playerCamera;
-
     private HeadBobController headBobController;
 
     private float verticalRotation;
-
     private bool canMove;
-
     private bool wasWalking;
-
     private float defaultFOV;
 
-    // Altura que tendrá el jugador mientras esté bloqueada
     private float lockedY;
 
 
@@ -73,9 +68,24 @@ public class PlayerController : MonoBehaviour
 
             defaultFOV =
                 playerCamera.fieldOfView;
+
+            // Tomamos la rotación vertical inicial de la cámara
+            verticalRotation =
+                playerCamera.transform.localEulerAngles.x;
+
+            if (verticalRotation > 180f)
+            {
+                verticalRotation -= 360f;
+            }
+
+            verticalRotation =
+                Mathf.Clamp(
+                    verticalRotation,
+                    -80f,
+                    80f
+                );
         }
 
-        // Guardamos la altura inicial del jugador
         lockedY =
             transform.position.y;
 
@@ -86,6 +96,32 @@ public class PlayerController : MonoBehaviour
         HideVisual();
 
         ResetFootsteps();
+
+
+        // ========================================================
+        // CONTROLES MÓVILES
+        // ========================================================
+        // En el Editor se mantienen ocultos.
+        // En dispositivos táctiles se muestran.
+        // ========================================================
+
+        bool isMobileDevice =
+            !Application.isEditor &&
+            Input.touchSupported;
+
+        if (mobileJoystick != null)
+        {
+            mobileJoystick.gameObject.SetActive(
+                isMobileDevice
+            );
+        }
+
+        if (mobileLookJoystick != null)
+        {
+            mobileLookJoystick.gameObject.SetActive(
+                isMobileDevice
+            );
+        }
     }
 
 
@@ -97,7 +133,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        HandleMouseLook();
+        HandleLook();
 
         HandleMovement();
 
@@ -108,15 +144,76 @@ public class PlayerController : MonoBehaviour
 
 
     // ============================================================
-    // MOUSE LOOK
+    // CÁMARA
     // ============================================================
 
-    private void HandleMouseLook()
+    private void HandleLook()
     {
         if (playerCamera == null)
         {
             return;
         }
+
+
+        // ========================================================
+        // JOYSTICK DERECHO
+        // ========================================================
+
+        if (mobileLookJoystick != null)
+        {
+            Vector2 lookInput =
+                mobileLookJoystick.GetInput();
+
+            if (lookInput.sqrMagnitude > 0.001f)
+            {
+                // ----------------------------------------------
+                // IZQUIERDA / DERECHA
+                // ----------------------------------------------
+
+                float horizontalLook =
+                    lookInput.x *
+                    mobileLookSensitivity *
+                    Time.deltaTime;
+
+                transform.Rotate(
+                    Vector3.up *
+                    horizontalLook
+                );
+
+
+                // ----------------------------------------------
+                // ARRIBA / ABAJO
+                // ----------------------------------------------
+
+                float verticalLook =
+                    lookInput.y *
+                    mobileLookSensitivity *
+                    Time.deltaTime;
+
+                verticalRotation -= verticalLook;
+
+                verticalRotation =
+                    Mathf.Clamp(
+                        verticalRotation,
+                        -80f,
+                        80f
+                    );
+
+                playerCamera.transform.localRotation =
+                    Quaternion.Euler(
+                        verticalRotation,
+                        0f,
+                        0f
+                    );
+
+                return;
+            }
+        }
+
+
+        // ========================================================
+        // MOUSE
+        // ========================================================
 
         float mouseX =
             Input.GetAxis("Mouse X") *
@@ -128,6 +225,7 @@ public class PlayerController : MonoBehaviour
             mouseSensitivity *
             Time.deltaTime;
 
+
         verticalRotation -= mouseY;
 
         verticalRotation =
@@ -137,6 +235,7 @@ public class PlayerController : MonoBehaviour
                 80f
             );
 
+
         playerCamera.transform.localRotation =
             Quaternion.Euler(
                 verticalRotation,
@@ -144,8 +243,10 @@ public class PlayerController : MonoBehaviour
                 0f
             );
 
+
         transform.Rotate(
-            Vector3.up * mouseX
+            Vector3.up *
+            mouseX
         );
     }
 
@@ -161,19 +262,41 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
+
         float horizontal =
             Input.GetAxis("Horizontal");
 
         float vertical =
             Input.GetAxis("Vertical");
 
+
+        // ========================================================
+        // JOYSTICK IZQUIERDO
+        // ========================================================
+
+        if (mobileJoystick != null)
+        {
+            Vector2 mobileInput =
+                mobileJoystick.GetInput();
+
+            if (mobileInput.sqrMagnitude > 0.001f)
+            {
+                horizontal =
+                    mobileInput.x;
+
+                vertical =
+                    mobileInput.y;
+            }
+        }
+
+
         Vector3 movement =
             transform.right * horizontal +
             transform.forward * vertical;
 
-        // El movimiento del jugador SIEMPRE es horizontal.
-        // Nunca enviamos movimiento vertical al CharacterController.
+
         movement.y = 0f;
+
 
         characterController.Move(
             movement *
@@ -217,13 +340,27 @@ public class PlayerController : MonoBehaviour
         float vertical =
             Input.GetAxisRaw("Vertical");
 
+
+        if (mobileJoystick != null)
+        {
+            Vector2 mobileInput =
+                mobileJoystick.GetInput();
+
+            if (mobileInput.sqrMagnitude > 0.001f)
+            {
+                horizontal =
+                    mobileInput.x;
+
+                vertical =
+                    mobileInput.y;
+            }
+        }
+
+
         bool isWalking =
             Mathf.Abs(horizontal) > 0.01f ||
             Mathf.Abs(vertical) > 0.01f;
 
-        // --------------------------------------------------------
-        // COMENZÓ A MOVERSE
-        // --------------------------------------------------------
 
         if (
             isWalking &&
@@ -236,9 +373,6 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        // --------------------------------------------------------
-        // DEJÓ DE MOVERSE
-        // --------------------------------------------------------
 
         if (
             !isWalking &&
@@ -250,6 +384,7 @@ public class PlayerController : MonoBehaviour
                 AudioManager.Instance.StopFootstep();
             }
         }
+
 
         wasWalking =
             isWalking;
@@ -273,26 +408,31 @@ public class PlayerController : MonoBehaviour
 
     public void SetMovementEnabled(bool enabled)
     {
-        canMove = enabled;
+        canMove =
+            enabled;
+
 
         if (!enabled)
         {
             ResetFootsteps();
         }
 
+
         if (enabled)
         {
             Cursor.lockState =
                 CursorLockMode.Locked;
 
-            Cursor.visible = false;
+            Cursor.visible =
+                false;
         }
         else
         {
             Cursor.lockState =
                 CursorLockMode.None;
 
-            Cursor.visible = true;
+            Cursor.visible =
+                true;
         }
     }
 
@@ -350,20 +490,27 @@ public class PlayerController : MonoBehaviour
         Transform target
     )
     {
-        if (playerCamera == null || target == null)
+        if (
+            playerCamera == null ||
+            target == null
+        )
         {
             yield break;
         }
 
-        canMove = false;
+
+        canMove =
+            false;
 
         ResetFootsteps();
+
 
         Vector3 direction =
             (
                 target.position -
                 playerCamera.transform.position
             ).normalized;
+
 
         float targetYaw =
             Mathf.Atan2(
@@ -372,9 +519,11 @@ public class PlayerController : MonoBehaviour
             ) *
             Mathf.Rad2Deg;
 
+
         float targetPitch =
             -Mathf.Asin(direction.y) *
             Mathf.Rad2Deg;
+
 
         targetPitch =
             Mathf.Clamp(
@@ -383,8 +532,10 @@ public class PlayerController : MonoBehaviour
                 80f
             );
 
+
         Quaternion startBodyRotation =
             transform.rotation;
+
 
         Quaternion endBodyRotation =
             Quaternion.Euler(
@@ -393,10 +544,14 @@ public class PlayerController : MonoBehaviour
                 0f
             );
 
+
         float startPitch =
             verticalRotation;
 
-        float elapsed = 0f;
+
+        float elapsed =
+            0f;
+
 
         while (
             elapsed <
@@ -406,17 +561,21 @@ public class PlayerController : MonoBehaviour
             elapsed +=
                 Time.deltaTime;
 
+
             float t =
                 Mathf.Clamp01(
                     elapsed /
                     focusRotationDuration
                 );
 
-            t = Mathf.SmoothStep(
-                0f,
-                1f,
-                t
-            );
+
+            t =
+                Mathf.SmoothStep(
+                    0f,
+                    1f,
+                    t
+                );
+
 
             transform.rotation =
                 Quaternion.Slerp(
@@ -425,12 +584,14 @@ public class PlayerController : MonoBehaviour
                     t
                 );
 
+
             verticalRotation =
                 Mathf.Lerp(
                     startPitch,
                     targetPitch,
                     t
                 );
+
 
             playerCamera.transform.localRotation =
                 Quaternion.Euler(
@@ -439,14 +600,18 @@ public class PlayerController : MonoBehaviour
                     0f
                 );
 
+
             yield return null;
         }
+
 
         transform.rotation =
             endBodyRotation;
 
+
         verticalRotation =
             targetPitch;
+
 
         playerCamera.transform.localRotation =
             Quaternion.Euler(
@@ -468,15 +633,20 @@ public class PlayerController : MonoBehaviour
             yield break;
         }
 
+
         if (playerCamera == null)
         {
             yield break;
         }
 
+
         float startFOV =
             playerCamera.fieldOfView;
 
-        float elapsed = 0f;
+
+        float elapsed =
+            0f;
+
 
         while (
             elapsed <
@@ -486,17 +656,21 @@ public class PlayerController : MonoBehaviour
             elapsed +=
                 Time.deltaTime;
 
+
             float t =
                 Mathf.Clamp01(
                     elapsed /
                     dialogueZoomDuration
                 );
 
-            t = Mathf.SmoothStep(
-                0f,
-                1f,
-                t
-            );
+
+            t =
+                Mathf.SmoothStep(
+                    0f,
+                    1f,
+                    t
+                );
+
 
             playerCamera.fieldOfView =
                 Mathf.Lerp(
@@ -505,8 +679,10 @@ public class PlayerController : MonoBehaviour
                     t
                 );
 
+
             yield return null;
         }
+
 
         playerCamera.fieldOfView =
             dialogueZoomFOV;
@@ -524,6 +700,7 @@ public class PlayerController : MonoBehaviour
             yield break;
         }
 
+
         if (
             decisionCameraStart == null ||
             decisionCameraEnd == null
@@ -532,18 +709,23 @@ public class PlayerController : MonoBehaviour
             yield break;
         }
 
+
         ShowVisual();
 
         ResetFootsteps();
 
+
         playerCamera.fieldOfView =
             defaultFOV;
+
 
         playerCamera.transform.position =
             decisionCameraStart.position;
 
+
         playerCamera.transform.rotation =
             decisionCameraStart.rotation;
+
 
         if (DecisionEffectsManager.Instance != null)
         {
@@ -553,7 +735,10 @@ public class PlayerController : MonoBehaviour
                         .EnterDecisionMode()
                 );
 
-            float elapsed = 0f;
+
+            float elapsed =
+                0f;
+
 
             while (
                 elapsed <
@@ -563,11 +748,13 @@ public class PlayerController : MonoBehaviour
                 elapsed +=
                     Time.unscaledDeltaTime;
 
+
                 float t =
                     Mathf.Clamp01(
                         elapsed /
                         decisionCameraDuration
                     );
+
 
                 playerCamera.transform.position =
                     Vector3.Lerp(
@@ -576,6 +763,7 @@ public class PlayerController : MonoBehaviour
                         t
                     );
 
+
                 playerCamera.transform.rotation =
                     Quaternion.Slerp(
                         decisionCameraStart.rotation,
@@ -583,20 +771,26 @@ public class PlayerController : MonoBehaviour
                         t
                     );
 
+
                 yield return null;
             }
+
 
             playerCamera.transform.position =
                 decisionCameraEnd.position;
 
+
             playerCamera.transform.rotation =
                 decisionCameraEnd.rotation;
+
 
             yield return effectRoutine;
         }
         else
         {
-            float elapsed = 0f;
+            float elapsed =
+                0f;
+
 
             while (
                 elapsed <
@@ -606,11 +800,13 @@ public class PlayerController : MonoBehaviour
                 elapsed +=
                     Time.unscaledDeltaTime;
 
+
                 float t =
                     Mathf.Clamp01(
                         elapsed /
                         decisionCameraDuration
                     );
+
 
                 playerCamera.transform.position =
                     Vector3.Lerp(
@@ -619,6 +815,7 @@ public class PlayerController : MonoBehaviour
                         t
                     );
 
+
                 playerCamera.transform.rotation =
                     Quaternion.Slerp(
                         decisionCameraStart.rotation,
@@ -626,11 +823,14 @@ public class PlayerController : MonoBehaviour
                         t
                     );
 
+
                 yield return null;
             }
 
+
             playerCamera.transform.position =
                 decisionCameraEnd.position;
+
 
             playerCamera.transform.rotation =
                 decisionCameraEnd.rotation;

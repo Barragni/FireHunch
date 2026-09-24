@@ -102,6 +102,29 @@ public class PauseUI : MonoBehaviour
         }
     }
 
+    // ============================================================
+    // PAUSA DESDE BOTÓN MÓVIL
+    // ============================================================
+
+    public void OpenPauseFromMobile()
+    {
+        if (isPaused)
+        {
+            return;
+        }
+
+        DecisionPlayer decisionPlayer =
+            FindFirstObjectByType<DecisionPlayer>();
+
+        if (decisionPlayer != null &&
+            decisionPlayer.IsDecisionOpen)
+        {
+            return;
+        }
+
+        PauseGame();
+    }
+
     private void SetPanelInteraction(bool enabled)
     {
         if (decisionPanel != null)
