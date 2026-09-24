@@ -12244,6 +12244,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1156887796722948874, guid: f984636a8914ae543bcf09ca3510c481, type: 3}
   m_PrefabInstance: {fileID: 666838994}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &668268386 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8983232184152257268, guid: c3371ae4de5a0ac46be5eda892a5a5cc, type: 3}
+  m_PrefabInstance: {fileID: 886168695}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &669830321
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17481,6 +17486,7 @@ MonoBehaviour:
   decisionUI: {fileID: 886168697}
   mobileJoystick: {fileID: 886168701}
   mobileLookJoystick: {fileID: 886168699}
+  mobilePauseButton: {fileID: 668268386}
 --- !u!4 &951126654
 Transform:
   m_ObjectHideFlags: 0

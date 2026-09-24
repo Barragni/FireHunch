@@ -294,6 +294,9 @@ public class ComicPlayer : MonoBehaviour
             deathPanelUI.FeedbackText.text =
                 option.deathFeedback;
 
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+
             deathPanelUI.Show();
 
             yield break;

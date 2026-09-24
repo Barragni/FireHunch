@@ -106,8 +106,8 @@ public class PlayerController : MonoBehaviour
         // ========================================================
 
         bool isMobileDevice =
-            !Application.isEditor &&
-            Input.touchSupported;
+    DeviceModeManager.Instance != null &&
+    DeviceModeManager.Instance.IsMobile;
 
         if (mobileJoystick != null)
         {
@@ -208,6 +208,22 @@ public class PlayerController : MonoBehaviour
 
                 return;
             }
+        }
+
+
+        // ========================================================
+        // EN DISPOSITIVOS MÓVILES NO SE USA EL MOUSE
+        // ========================================================
+        // La cámara en móvil se controla exclusivamente
+        // mediante el joystick derecho.
+        // ========================================================
+
+        if (
+            DeviceModeManager.Instance != null &&
+            DeviceModeManager.Instance.IsMobile
+        )
+        {
+            return;
         }
 
 

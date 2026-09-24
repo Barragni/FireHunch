@@ -11,13 +11,9 @@ public class DecisionPlayer : MonoBehaviour
     [Header("Controles móviles")]
     [SerializeField] private GameObject mobileJoystick;
     [SerializeField] private GameObject mobileLookJoystick;
+    [SerializeField] private GameObject mobilePauseButton;
 
     private DecisionSequence currentDecision;
-
-    // ============================================================
-    // ESCENARIO AL QUE PERTENECE LA DECISIÓN
-    // ============================================================
-
     private string currentNodeID = "";
 
     private Coroutine timerRoutine;
@@ -25,6 +21,7 @@ public class DecisionPlayer : MonoBehaviour
     public bool IsDecisionOpen =>
         decisionUI != null &&
         decisionUI.DecisionPanel.activeSelf;
+
 
     private void Start()
     {
@@ -83,6 +80,13 @@ public class DecisionPlayer : MonoBehaviour
             decision;
 
         decisionUI.DecisionPanel.SetActive(true);
+
+        // ========================================================
+        // MOSTRAR CURSOR PARA SELECCIONAR LA DECISIÓN
+        // ========================================================
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
 
         // ========================================================
         // OCULTAR CONTROLES MÓVILES
@@ -292,6 +296,19 @@ public class DecisionPlayer : MonoBehaviour
 
         SetMobileControlsVisible(true);
 
+        // ========================================================
+        // RESTAURAR CURSOR PARA EL CONTROL NORMAL
+        // ========================================================
+
+        if (
+            DeviceModeManager.Instance != null &&
+            !DeviceModeManager.Instance.IsMobile
+        )
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+
         int selectedOptionIndex =
             currentDecision.options.IndexOf(
                 option
@@ -333,6 +350,7 @@ public class DecisionPlayer : MonoBehaviour
 
                 break;
 
+
             case DecisionOutcomeType.Incorrect:
 
                 GameState.Instance.RegisterFinalDecision(
@@ -348,6 +366,7 @@ public class DecisionPlayer : MonoBehaviour
                 );
 
                 break;
+
 
             case DecisionOutcomeType.Death:
 
@@ -393,11 +412,9 @@ public class DecisionPlayer : MonoBehaviour
 
     private void SetMobileControlsVisible(bool visible)
     {
-        // Solo un dispositivo táctil fuera del Editor
-        // puede mostrar los controles móviles.
         bool isMobileDevice =
-            !Application.isEditor &&
-            Input.touchSupported;
+            DeviceModeManager.Instance != null &&
+            DeviceModeManager.Instance.IsMobile;
 
         bool shouldBeVisible =
             visible &&
@@ -413,6 +430,13 @@ public class DecisionPlayer : MonoBehaviour
         if (mobileLookJoystick != null)
         {
             mobileLookJoystick.SetActive(
+                shouldBeVisible
+            );
+        }
+
+        if (mobilePauseButton != null)
+        {
+            mobilePauseButton.SetActive(
                 shouldBeVisible
             );
         }

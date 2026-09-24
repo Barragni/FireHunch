@@ -7835,6 +7835,11 @@ Transform:
   - {fileID: 1522601676}
   m_Father: {fileID: 1834508207}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &469335101 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8983232184152257268, guid: c3371ae4de5a0ac46be5eda892a5a5cc, type: 3}
+  m_PrefabInstance: {fileID: 1311289350}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &482011816
 GameObject:
   m_ObjectHideFlags: 0
@@ -15116,6 +15121,7 @@ MonoBehaviour:
   decisionUI: {fileID: 1311289352}
   mobileJoystick: {fileID: 1311289356}
   mobileLookJoystick: {fileID: 1311289354}
+  mobilePauseButton: {fileID: 469335101}
 --- !u!4 &951126654
 Transform:
   m_ObjectHideFlags: 0

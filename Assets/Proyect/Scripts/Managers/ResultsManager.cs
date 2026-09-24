@@ -14,6 +14,11 @@ public class ResultsManager : MonoBehaviour
 
     private void Start()
     {
+        // Mantener el cursor siempre visible y disponible
+        // durante toda la escena de resultados.
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         ShowResults();
     }
 
@@ -65,7 +70,8 @@ public class ResultsManager : MonoBehaviour
 
         float deathFactor = (float)deaths / totalDecisions;
 
-        float finalScore = (accuracy - deathFactor * deathPenalty) * 10f;
+        float finalScore =
+            (accuracy - deathFactor * deathPenalty) * 10f;
 
         return Mathf.Clamp(finalScore, 1f, 10f);
     }
