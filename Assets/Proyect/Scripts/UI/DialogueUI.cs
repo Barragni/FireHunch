@@ -26,9 +26,6 @@ public class DialogueUI : MonoBehaviour
     [Range(0.8f, 1f)]
     [SerializeField] private float startingScale = 0.96f;
 
-    // ============================================================
-    // REFERENCIAS
-    // ============================================================
 
     private RectTransform dialoguePanelRect;
     private CanvasGroup canvasGroup;
@@ -39,14 +36,8 @@ public class DialogueUI : MonoBehaviour
 
     private int originalSiblingIndex;
 
-    // Copia temporal utilizada durante la transición.
-    // Se guarda la referencia para poder destruirla si la transición
-    // se interrumpe.
     private GameObject oldPanel;
 
-    // ============================================================
-    // AWAKE
-    // ============================================================
 
     private void Awake()
     {
@@ -71,30 +62,19 @@ public class DialogueUI : MonoBehaviour
         originalSiblingIndex =
             dialoguePanel.transform.GetSiblingIndex();
 
-        // El panel principal sí puede recibir interacción
-        // cuando está visible.
         canvasGroup.blocksRaycasts = true;
         canvasGroup.interactable = true;
     }
 
-    // ============================================================
-    // MOSTRAR DIÁLOGO
-    // ============================================================
 
     public void ShowDialogue(DialogueLine line)
     {
         if (line == null || dialoguePanel == null)
             return;
 
-        // ========================================================
-        // LIMPIAR COPIA ANTERIOR
-        // ========================================================
 
         CleanupOldPanel();
 
-        // ========================================================
-        // SI NO HABÍA DIÁLOGO VISIBLE
-        // ========================================================
 
         if (!dialoguePanel.activeSelf)
         {
@@ -118,9 +98,6 @@ public class DialogueUI : MonoBehaviour
             return;
         }
 
-        // ========================================================
-        // DETENER TRANSICIÓN ANTERIOR
-        // ========================================================
 
         if (transitionCoroutine != null)
         {
@@ -131,12 +108,8 @@ public class DialogueUI : MonoBehaviour
             transitionCoroutine = null;
         }
 
-        // Por seguridad, eliminar cualquier copia anterior.
         CleanupOldPanel();
 
-        // ========================================================
-        // NUEVA TRANSICIÓN
-        // ========================================================
 
         transitionCoroutine =
             StartCoroutine(
@@ -144,9 +117,6 @@ public class DialogueUI : MonoBehaviour
             );
     }
 
-    // ============================================================
-    // TRANSICIÓN ENTRE DIÁLOGOS
-    // ============================================================
 
     private IEnumerator TransitionToNewDialogue(
         DialogueLine newLine
@@ -158,9 +128,6 @@ public class DialogueUI : MonoBehaviour
                 transitionDuration
             );
 
-        // ========================================================
-        // CREAR COPIA DEL DIÁLOGO ACTUAL
-        // ========================================================
 
         oldPanel =
             Instantiate(
@@ -180,9 +147,6 @@ public class DialogueUI : MonoBehaviour
                 oldPanel.AddComponent<CanvasGroup>();
         }
 
-        // ========================================================
-        // CONFIGURAR COPIA
-        // ========================================================
 
         oldRect.anchorMin =
             dialoguePanelRect.anchorMin;
@@ -204,10 +168,6 @@ public class DialogueUI : MonoBehaviour
 
         oldGroup.alpha = 1f;
 
-        // ========================================================
-        // MUY IMPORTANTE:
-        // LA COPIA NUNCA DEBE BLOQUEAR LOS CLICS
-        // ========================================================
 
         oldGroup.blocksRaycasts = false;
         oldGroup.interactable = false;
@@ -215,9 +175,6 @@ public class DialogueUI : MonoBehaviour
         // La copia mantiene la posición original del diálogo.
         oldPanel.transform.SetSiblingIndex(originalSiblingIndex);
 
-        // ========================================================
-        // PREPARAR NUEVO DIÁLOGO
-        // ========================================================
 
         SetDialogueContent(newLine);
 
@@ -236,9 +193,6 @@ public class DialogueUI : MonoBehaviour
 
         PlayDialogueSound();
 
-        // ========================================================
-        // ANIMAR AMBOS
-        // ========================================================
 
         float elapsed = 0f;
 
@@ -252,7 +206,6 @@ public class DialogueUI : MonoBehaviour
                     elapsed / duration
                 );
 
-            // Suavizado.
             float smoothT =
                 1f -
                 Mathf.Pow(
@@ -260,9 +213,6 @@ public class DialogueUI : MonoBehaviour
                     3f
                 );
 
-            // ----------------------------------------------------
-            // PANEL VIEJO
-            // ----------------------------------------------------
 
             oldRect.anchoredPosition =
                 Vector2.Lerp(
@@ -288,9 +238,6 @@ public class DialogueUI : MonoBehaviour
                     smoothT
                 );
 
-            // ----------------------------------------------------
-            // PANEL NUEVO
-            // ----------------------------------------------------
 
             dialoguePanelRect.anchoredPosition =
                 Vector2.Lerp(
@@ -315,9 +262,6 @@ public class DialogueUI : MonoBehaviour
             yield return null;
         }
 
-        // ========================================================
-        // FINAL
-        // ========================================================
 
         dialoguePanelRect.anchoredPosition =
             originalPosition;
@@ -330,9 +274,6 @@ public class DialogueUI : MonoBehaviour
         canvasGroup.blocksRaycasts = true;
         canvasGroup.interactable = true;
 
-        // ========================================================
-        // DESTRUIR COPIA
-        // ========================================================
 
         if (oldPanel != null)
         {
@@ -343,9 +284,6 @@ public class DialogueUI : MonoBehaviour
         transitionCoroutine = null;
     }
 
-    // ============================================================
-    // ESTABLECER CONTENIDO
-    // ============================================================
 
     private void SetDialogueContent(DialogueLine line)
     {
@@ -362,9 +300,6 @@ public class DialogueUI : MonoBehaviour
             line.portrait != null;
     }
 
-    // ============================================================
-    // SONIDO DE DIÁLOGO
-    // ============================================================
 
     private void PlayDialogueSound()
     {
@@ -374,9 +309,6 @@ public class DialogueUI : MonoBehaviour
         }
     }
 
-    // ============================================================
-    // LIMPIAR COPIA DE TRANSICIÓN
-    // ============================================================
 
     private void CleanupOldPanel()
     {
@@ -387,15 +319,9 @@ public class DialogueUI : MonoBehaviour
         }
     }
 
-    // ============================================================
-    // OCULTAR DIÁLOGO
-    // ============================================================
 
     public void HideDialogue()
     {
-        // ========================================================
-        // DETENER TRANSICIÓN
-        // ========================================================
 
         if (transitionCoroutine != null)
         {
@@ -406,15 +332,9 @@ public class DialogueUI : MonoBehaviour
             transitionCoroutine = null;
         }
 
-        // ========================================================
-        // ELIMINAR COPIA QUE PODRÍA HABER QUEDADO
-        // ========================================================
 
         CleanupOldPanel();
 
-        // ========================================================
-        // OCULTAR PANEL PRINCIPAL
-        // ========================================================
 
         dialoguePanel.SetActive(false);
 
@@ -430,9 +350,6 @@ public class DialogueUI : MonoBehaviour
         canvasGroup.interactable = true;
     }
 
-    // ============================================================
-    // TEXTO DE CONTINUAR
-    // ============================================================
 
     public void ShowContinueText()
     {

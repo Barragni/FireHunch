@@ -27,10 +27,6 @@ public class CompanionSpawnPoint : MonoBehaviour
     [Tooltip("Animator Controller utilizado cuando el compañero está herido.")]
     public RuntimeAnimatorController injuredController;
 
-    /// <summary>
-    /// Obtiene el Animator Controller correspondiente
-    /// al estado seleccionado en este Spawn Point.
-    /// </summary>
     public RuntimeAnimatorController GetSelectedController()
     {
         switch (animationState)

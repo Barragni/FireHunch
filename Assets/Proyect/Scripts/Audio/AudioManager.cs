@@ -10,9 +10,6 @@ public class AudioManager : MonoBehaviour
     private const string MUSIC_KEY = "MusicVolume";
     private const string SFX_KEY = "SFXVolume";
 
-    // ============================================================
-    // AUDIO SOURCES
-    // ============================================================
 
     [Header("Audio Sources")]
     [SerializeField] private AudioSource musicSource;
@@ -22,18 +19,12 @@ public class AudioManager : MonoBehaviour
     [Header("Audio Source - Pasos")]
     [SerializeField] private AudioSource footstepSource;
 
-    // ============================================================
-    // UI SFX
-    // ============================================================
 
     [Header("UI SFX")]
     [SerializeField] private AudioClip buttonClick;
     [SerializeField] private AudioClip decisionOpen;
     [SerializeField] private AudioClip timerEnd;
 
-    // ============================================================
-    // DIÁLOGO
-    // ============================================================
 
     [Header("Diálogo")]
     [SerializeField] private AudioClip dialogueBlip;
@@ -45,16 +36,10 @@ public class AudioManager : MonoBehaviour
     [Range(0f, 1f)]
     [SerializeField] private float dialogueVolume = 1f;
 
-    // ============================================================
-    // COMIC SFX
-    // ============================================================
 
     [Header("Comic SFX")]
     [SerializeField] private AudioClip pageFlip;
 
-    // ============================================================
-    // MÚSICA DE MUERTE
-    // ============================================================
 
     [Header("Música de muerte")]
 
@@ -75,9 +60,6 @@ public class AudioManager : MonoBehaviour
     )]
     [SerializeField] private float deathMusicFadeInDuration = 1.5f;
 
-    // ============================================================
-    // PASOS DEL JUGADOR
-    // ============================================================
 
     [Header("Pasos del jugador")]
     [SerializeField] private AudioClip footstepClip;
@@ -85,9 +67,6 @@ public class AudioManager : MonoBehaviour
     [Range(0f, 1f)]
     [SerializeField] private float footstepVolume = 1f;
 
-    // ============================================================
-    // VOLUMEN CONFIGURADO POR EL JUGADOR
-    // ============================================================
 
     public float MasterVolume { get; private set; } = 1f;
 
@@ -95,9 +74,6 @@ public class AudioManager : MonoBehaviour
 
     public float SFXVolume { get; private set; } = 1f;
 
-    // ============================================================
-    // MEZCLA DE LA ESCENA ACTUAL
-    // ============================================================
 
     private float sceneMusicVolume = 0.55f;
 
@@ -114,17 +90,11 @@ public class AudioManager : MonoBehaviour
     public float SceneSFXVolume =>
         sceneSFXVolume;
 
-    // ============================================================
-    // ESTADO DE MÚSICA DE MUERTE
-    // ============================================================
 
     private bool isDeathMusicPlaying;
 
     private Coroutine deathMusicFadeCoroutine;
 
-    // ============================================================
-    // UNITY
-    // ============================================================
 
     private void Awake()
     {
@@ -164,9 +134,6 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    // ============================================================
-    // CONFIGURAR AUDIO SOURCES
-    // ============================================================
 
     private void SetupAudioSources()
     {
@@ -192,9 +159,6 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    // ============================================================
-    // CONFIGURAR SOURCE DE PASOS
-    // ============================================================
 
     private void SetupFootstepSource()
     {
@@ -211,9 +175,6 @@ public class AudioManager : MonoBehaviour
         footstepSource.spatialBlend = 0f;
     }
 
-    // ============================================================
-    // CAMBIO DE ESCENA
-    // ============================================================
 
     private void OnSceneLoaded(
         Scene scene,
@@ -227,9 +188,6 @@ public class AudioManager : MonoBehaviour
         ResetSceneMix();
     }
 
-    // ============================================================
-    // MEZCLA POR ESCENA
-    // ============================================================
 
     public void SetSceneMix(
         float musicVolume,
@@ -266,9 +224,6 @@ public class AudioManager : MonoBehaviour
         ApplyVolumes();
     }
 
-    // ============================================================
-    // VOLUMEN GENERAL
-    // ============================================================
 
     public void SetMasterVolume(float value)
     {
@@ -343,9 +298,6 @@ public class AudioManager : MonoBehaviour
         PlayerPrefs.Save();
     }
 
-    // ============================================================
-    // CARGAR VOLUMEN
-    // ============================================================
 
     private void LoadVolumes()
     {
@@ -368,9 +320,6 @@ public class AudioManager : MonoBehaviour
             );
     }
 
-    // ============================================================
-    // APLICAR VOLUMEN
-    // ============================================================
 
     private void ApplyVolumes()
     {
@@ -419,9 +368,6 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    // ============================================================
-    // RESET GENERAL DE AUDIO
-    // ============================================================
 
     public void StopAllAudio()
     {
@@ -434,9 +380,6 @@ public class AudioManager : MonoBehaviour
         StopFootstep();
     }
 
-    // ============================================================
-    // MUSIC
-    // ============================================================
 
     public void StopMusic()
     {
@@ -461,9 +404,6 @@ public class AudioManager : MonoBehaviour
         ApplyVolumes();
     }
 
-    // ============================================================
-    // REPRODUCIR MÚSICA NORMAL
-    // ============================================================
 
     public void PlayMusic(
         AudioClip clip,
@@ -511,9 +451,6 @@ public class AudioManager : MonoBehaviour
         musicSource.Play();
     }
 
-    // ============================================================
-    // MÚSICA DE MUERTE
-    // ============================================================
 
     public void PlayDeathMusic()
     {
@@ -559,9 +496,6 @@ public class AudioManager : MonoBehaviour
             );
     }
 
-    // ============================================================
-    // FADE IN DE MÚSICA DE MUERTE
-    // ============================================================
 
     private IEnumerator FadeInDeathMusic()
     {
@@ -619,9 +553,6 @@ public class AudioManager : MonoBehaviour
         deathMusicFadeCoroutine = null;
     }
 
-    // ============================================================
-    // CONSULTAR MÚSICA
-    // ============================================================
 
     public bool IsMusicPlaying()
     {
@@ -641,9 +572,6 @@ public class AudioManager : MonoBehaviour
         return musicSource.clip;
     }
 
-    // ============================================================
-    // AMBIENCE
-    // ============================================================
 
     public void StopAmbience()
     {
@@ -688,9 +616,6 @@ public class AudioManager : MonoBehaviour
         ambienceSource.Play();
     }
 
-    // ============================================================
-    // SFX
-    // ============================================================
 
     public void StopSFX()
     {
@@ -721,9 +646,6 @@ public class AudioManager : MonoBehaviour
         );
     }
 
-    // ============================================================
-    // PASOS
-    // ============================================================
 
     public void PlayFootstep()
     {
@@ -762,9 +684,6 @@ public class AudioManager : MonoBehaviour
         footstepSource.clip = null;
     }
 
-    // ============================================================
-    // UI
-    // ============================================================
 
     public void PlayButtonClick()
     {
@@ -781,9 +700,6 @@ public class AudioManager : MonoBehaviour
         PlaySFX(timerEnd);
     }
 
-    // ============================================================
-    // DIÁLOGO
-    // ============================================================
 
     public void PlayDialogueBlip()
     {
@@ -803,9 +719,6 @@ public class AudioManager : MonoBehaviour
         );
     }
 
-    // ============================================================
-    // COMIC
-    // ============================================================
 
     public void PlayPageFlip()
     {

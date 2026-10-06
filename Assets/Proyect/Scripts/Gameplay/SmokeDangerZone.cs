@@ -17,9 +17,6 @@ public class SmokeDangerZone : MonoBehaviour
 
     private void Start()
     {
-        // Si el jugador vuelve desde la muerte,
-        // reaparece justo en la decisión,
-        // por lo que el humo debe estar al máximo.
         if (NarrativeState.ReturningFromDeath)
         {
             activated = true;

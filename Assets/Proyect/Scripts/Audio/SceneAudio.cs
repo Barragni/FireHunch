@@ -2,9 +2,6 @@ using UnityEngine;
 
 public class SceneAudio : MonoBehaviour
 {
-    // ============================================================
-    // MÚSICA
-    // ============================================================
 
     [Header("Música")]
     [SerializeField]
@@ -18,17 +15,11 @@ public class SceneAudio : MonoBehaviour
     [SerializeField]
     private bool keepPreviousMusic = false;
 
-    // ============================================================
-    // AMBIENTE
-    // ============================================================
 
     [Header("Ambiente")]
     [SerializeField]
     private AudioClip ambienceClip;
 
-    // ============================================================
-    // MEZCLA DE ESTA ESCENA
-    // ============================================================
 
     [Header("Volumen de esta escena")]
 
@@ -55,9 +46,6 @@ public class SceneAudio : MonoBehaviour
     [SerializeField]
     private float sfxVolume = 0.85f;
 
-    // ============================================================
-    // START
-    // ============================================================
 
     private void Start()
     {
@@ -70,9 +58,6 @@ public class SceneAudio : MonoBehaviour
             return;
         }
 
-        // ========================================================
-        // MEZCLA DE LA ESCENA
-        // ========================================================
 
         AudioManager.Instance.SetSceneMix(
             musicVolume,
@@ -80,43 +65,19 @@ public class SceneAudio : MonoBehaviour
             sfxVolume
         );
 
-        // ========================================================
-        // MÚSICA NORMAL DE LA ESCENA
-        // ========================================================
 
         ConfigureMusic();
 
-        // ========================================================
-        // AMBIENTE
-        // ========================================================
 
         ConfigureAmbience();
 
-        // ========================================================
-        // RESTAURACIÓN DESPUÉS DE MUERTE
-        // ========================================================
-        //
-        // IMPORTANTE:
-        //
-        // Esto ocurre DESPUÉS de ConfigureMusic().
-        //
-        // Por lo tanto Keep Previous Music ya no puede impedir
-        // la restauración de la música que estaba sonando antes
-        // de morir.
-        // ========================================================
 
         RestoreMusicAfterDeath();
     }
 
-    // ============================================================
-    // MÚSICA
-    // ============================================================
 
     private void ConfigureMusic()
     {
-        // --------------------------------------------------------
-        // CONSERVAR MÚSICA ANTERIOR
-        // --------------------------------------------------------
 
         if (keepPreviousMusic)
         {
@@ -136,9 +97,6 @@ public class SceneAudio : MonoBehaviour
             return;
         }
 
-        // --------------------------------------------------------
-        // USAR MÚSICA DE ESTA ESCENA
-        // --------------------------------------------------------
 
         AudioManager.Instance.PlayMusic(
             musicClip,
@@ -146,9 +104,6 @@ public class SceneAudio : MonoBehaviour
         );
     }
 
-    // ============================================================
-    // AMBIENTE
-    // ============================================================
 
     private void ConfigureAmbience()
     {
@@ -157,9 +112,6 @@ public class SceneAudio : MonoBehaviour
         );
     }
 
-    // ============================================================
-    // RESTAURAR MÚSICA DESPUÉS DE MUERTE
-    // ============================================================
 
     private void RestoreMusicAfterDeath()
     {
@@ -179,26 +131,11 @@ public class SceneAudio : MonoBehaviour
             return;
         }
 
-        // ========================================================
-        // RESTAURAR LA MÚSICA ORIGINAL
-        // ========================================================
-        //
-        // restartEvenIfSame = true garantiza que si por alguna
-        // razón SceneAudio dejó exactamente el mismo clip,
-        // igualmente vuelva a comenzar.
-        //
-        // La música restaurada es la que estaba sonando antes
-        // de la muerte.
-        // ========================================================
 
         AudioManager.Instance.PlayMusic(
             previousMusic,
             true
         );
-
-        // ========================================================
-        // CONSUMIR LA ORDEN DE RESTAURACIÓN
-        // ========================================================
 
         NarrativeState.RestoreMusicAfterDeath =
             false;

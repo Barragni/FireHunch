@@ -23,9 +23,6 @@ public class FirstSceneTutorialHint : MonoBehaviour
 
     private void Start()
     {
-        // ========================================================
-        // NO MOSTRAR SI VENIMOS DE UN REINTENTO
-        // ========================================================
 
         if (NarrativeState.ReturningFromDeath)
         {
@@ -34,9 +31,6 @@ public class FirstSceneTutorialHint : MonoBehaviour
         }
 
 
-        // ========================================================
-        // MOSTRAR TUTORIAL
-        // ========================================================
 
         foreach (TMP_Text text in tutorialTexts)
         {
@@ -57,18 +51,12 @@ public class FirstSceneTutorialHint : MonoBehaviour
 
     private IEnumerator ShowTutorial()
     {
-        // ========================================================
-        // TIEMPO VISIBLE
-        // ========================================================
 
         yield return new WaitForSeconds(
             visibleDuration
         );
 
 
-        // ========================================================
-        // FADE OUT
-        // ========================================================
 
         float elapsed = 0f;
 
@@ -103,9 +91,6 @@ public class FirstSceneTutorialHint : MonoBehaviour
         }
 
 
-        // ========================================================
-        // ASEGURAR ALPHA 0
-        // ========================================================
 
         foreach (TMP_Text text in tutorialTexts)
         {
@@ -119,9 +104,6 @@ public class FirstSceneTutorialHint : MonoBehaviour
         }
 
 
-        // ========================================================
-        // DESACTIVAR
-        // ========================================================
 
         gameObject.SetActive(false);
     }

@@ -47,8 +47,6 @@ public class PauseUI : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            // No permitir abrir/cerrar la pausa
-            // mientras hay una decisión activa.
             DecisionPlayer decisionPlayer =
                 FindFirstObjectByType<DecisionPlayer>();
 
@@ -102,9 +100,6 @@ public class PauseUI : MonoBehaviour
         }
     }
 
-    // ============================================================
-    // PAUSA DESDE BOTÓN MÓVIL
-    // ============================================================
 
     public void OpenPauseFromMobile()
     {
@@ -181,8 +176,6 @@ public class PauseUI : MonoBehaviour
             GameState.Instance.ResetData();
         }
 
-        // Detener música y ambiente inmediatamente.
-        // El SFX del botón puede terminar normalmente.
         if (AudioManager.Instance != null)
         {
             AudioManager.Instance.StopMusic();

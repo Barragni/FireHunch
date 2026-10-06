@@ -84,25 +84,16 @@ public class NarrativeTrigger : MonoBehaviour
 
     private IEnumerator BeginSequence()
     {
-        // ========================================================
-        // BLOQUEAR AL JUGADOR
-        // ========================================================
 
         currentPlayer.SetMovementEnabled(false);
 
         currentPlayer.SetHeadBobEnabled(false);
 
-        // ========================================================
-        // MOSTRAR MODELO
-        // ========================================================
 
         currentPlayer.ShowVisual();
 
         currentFocusIndex = 0;
 
-        // ========================================================
-        // PRIMER FOCUS POINT + ZOOM
-        // ========================================================
 
         if (focusPoints.Count > 0)
         {
@@ -114,9 +105,6 @@ public class NarrativeTrigger : MonoBehaviour
             );
         }
 
-        // ========================================================
-        // DIÁLOGO
-        // ========================================================
 
         if (currentRule.dialogue != null)
         {
@@ -140,9 +128,6 @@ public class NarrativeTrigger : MonoBehaviour
         }
     }
 
-    // ============================================================
-    // AVANCE DEL DIÁLOGO
-    // ============================================================
 
     private void HandleAdvanceRequested()
     {
@@ -152,8 +137,6 @@ public class NarrativeTrigger : MonoBehaviour
         if (sequenceFinished)
             return;
 
-        // Si todavía existen FocusPoints,
-        // primero mueve la cámara.
         if (HasNextFocusPoint())
         {
             StartCoroutine(
@@ -163,8 +146,6 @@ public class NarrativeTrigger : MonoBehaviour
             return;
         }
 
-        // Cuando ya no quedan FocusPoints,
-        // avanza el diálogo normalmente.
         bool advancedDialogue =
             dialoguePlayer.AdvanceDialogue();
 
@@ -227,9 +208,6 @@ public class NarrativeTrigger : MonoBehaviour
         );
     }
 
-    // ============================================================
-    // FIN DEL DIÁLOGO
-    // ============================================================
 
     private void HandleDialogueFinished()
     {
@@ -244,17 +222,11 @@ public class NarrativeTrigger : MonoBehaviour
         );
     }
 
-    // ============================================================
-    // CONTINUAR HACIA LA DECISIÓN
-    // ============================================================
 
     private IEnumerator ContinueSequence()
     {
         if (currentRule.decision != null)
         {
-            // ----------------------------------------------------
-            // CÁMARA DE DECISIÓN
-            // ----------------------------------------------------
 
             yield return currentPlayer.StartCoroutine(
                 currentPlayer.PlayDecisionCamera()
@@ -263,9 +235,6 @@ public class NarrativeTrigger : MonoBehaviour
             Camera cam =
                 currentPlayer.GetPlayerCamera();
 
-            // ----------------------------------------------------
-            // GUARDAR POSICIÓN
-            // ----------------------------------------------------
 
             NarrativeState.SavedPlayerPosition =
                 currentPlayer.transform.position;
@@ -279,19 +248,9 @@ public class NarrativeTrigger : MonoBehaviour
             NarrativeState.SavedCameraRotation =
                 cam.transform.rotation;
 
-            // ----------------------------------------------------
-            // SONIDO
-            // ----------------------------------------------------
 
             AudioManager.Instance.PlayDecisionOpen();
 
-            // ----------------------------------------------------
-            // MOSTRAR DECISIÓN
-            //
-            // NUEVO:
-            // También pasamos el nodeID para que la decisión
-            // pueda quedar asociada al NarrativeNode.
-            // ----------------------------------------------------
 
             decisionPlayer.ShowDecision(
                 currentRule.decision,
@@ -301,9 +260,6 @@ public class NarrativeTrigger : MonoBehaviour
             yield break;
         }
 
-        // ========================================================
-        // SI NO HAY DECISIÓN, VOLVER A PRIMERA PERSONA
-        // ========================================================
 
         currentPlayer.HideVisual();
 

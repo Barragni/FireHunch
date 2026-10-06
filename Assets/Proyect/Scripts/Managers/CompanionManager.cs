@@ -25,9 +25,6 @@ public class CompanionManager : MonoBehaviour
         }
     }
 
-    // ============================================================
-    // COMPANIONS NORMALES
-    // ============================================================
 
     public void SpawnCompanions(
         List<CompanionData> companions
@@ -108,9 +105,6 @@ public class CompanionManager : MonoBehaviour
                 continue;
             }
 
-            // ====================================================
-            // INSTANCIAR COMPAÑERO
-            // ====================================================
 
             GameObject instance =
                 Instantiate(
@@ -119,9 +113,6 @@ public class CompanionManager : MonoBehaviour
                     spawnPoint.transform.rotation
                 );
 
-            // ====================================================
-            // CONFIGURAR ANIMATOR
-            // ====================================================
 
             Animator animator =
                 instance.GetComponent<Animator>();
@@ -156,9 +147,6 @@ public class CompanionManager : MonoBehaviour
                 }
             }
 
-            // ====================================================
-            // FOLLOWER
-            // ====================================================
 
             CompanionFollower follower =
                 instance.GetComponent<CompanionFollower>();
@@ -176,9 +164,6 @@ public class CompanionManager : MonoBehaviour
         }
     }
 
-    // ============================================================
-    // PERSONAJE DE RESCATE
-    // ============================================================
 
     public void SpawnRescueCharacter(
         RescueCharacterData rescueCharacter
@@ -216,13 +201,9 @@ public class CompanionManager : MonoBehaviour
             return;
         }
 
-        // Usamos el primer RescueSpawnPoint encontrado.
         RescueSpawnPoint spawnPoint =
             spawnPoints[0];
 
-        // ========================================================
-        // INSTANCIAR PERSONAJE DE RESCATE
-        // ========================================================
 
         GameObject instance =
             Instantiate(
@@ -231,9 +212,6 @@ public class CompanionManager : MonoBehaviour
                 spawnPoint.transform.rotation
             );
 
-        // ========================================================
-        // CONFIGURAR ANIMATOR
-        // ========================================================
 
         Animator animator =
             instance.GetComponent<Animator>();
@@ -263,21 +241,12 @@ public class CompanionManager : MonoBehaviour
             }
         }
 
-        // ========================================================
-        // NO FOLLOWER
-        // ========================================================
-        //
-        // El personaje de rescate es completamente estático.
-        //
 
         spawnedRescueCharacters.Add(
             instance
         );
     }
 
-    // ============================================================
-    // PERSONAJE CONDICIONADO POR RUTA
-    // ============================================================
 
     public void SpawnRouteCharacter(
         RouteCharacterData routeCharacter
@@ -285,8 +254,6 @@ public class CompanionManager : MonoBehaviour
     {
         ClearRouteCharacter();
 
-        // Si la ruta no tiene personaje asignado,
-        // simplemente no aparece ninguno.
         if (routeCharacter == null)
         {
             return;
@@ -315,13 +282,9 @@ public class CompanionManager : MonoBehaviour
             return;
         }
 
-        // Usamos el primer RouteCharacterSpawnPoint encontrado.
         RouteCharacterSpawnPoint spawnPoint =
             spawnPoints[0];
 
-        // ========================================================
-        // INSTANCIAR PERSONAJE
-        // ========================================================
 
         GameObject instance =
             Instantiate(
@@ -330,22 +293,12 @@ public class CompanionManager : MonoBehaviour
                 spawnPoint.transform.rotation
             );
 
-        // ========================================================
-        // NO FOLLOWER
-        // ========================================================
-        //
-        // Este personaje solamente aparece en determinadas rutas.
-        // No se configura CompanionFollower.
-        //
 
         spawnedRouteCharacters.Add(
             instance
         );
     }
 
-    // ============================================================
-    // LIMPIAR COMPANIONS
-    // ============================================================
 
     public void ClearCompanions()
     {
@@ -363,9 +316,6 @@ public class CompanionManager : MonoBehaviour
         spawnedCompanions.Clear();
     }
 
-    // ============================================================
-    // LIMPIAR PERSONAJE DE RESCATE
-    // ============================================================
 
     public void ClearRescueCharacter()
     {
@@ -383,9 +333,6 @@ public class CompanionManager : MonoBehaviour
         spawnedRescueCharacters.Clear();
     }
 
-    // ============================================================
-    // LIMPIAR PERSONAJE CONDICIONADO POR RUTA
-    // ============================================================
 
     public void ClearRouteCharacter()
     {

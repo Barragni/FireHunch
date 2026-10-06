@@ -46,13 +46,10 @@ public class DialogueButtonAutoHeight : MonoBehaviour
         if (text == null)
             return;
 
-        // Actualiza el cálculo del texto
         text.ForceMeshUpdate();
 
         int lineCount = text.textInfo.lineCount;
 
-        // Una línea = 30
-        // Dos o más líneas = 42
         float targetHeight = lineCount <= 1
             ? oneLineHeight
             : twoLineHeight;

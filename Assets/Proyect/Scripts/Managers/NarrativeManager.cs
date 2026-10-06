@@ -110,14 +110,6 @@ public class NarrativeManager : MonoBehaviour
         GameState.Instance.currentNode = nodeID;
     }
 
-    // ============================================================
-    // REVISIÓN DE DECISIONES
-    // ============================================================
-
-    /// <summary>
-    /// Busca una DecisionSequence dentro de todas las reglas
-    /// del NarrativeDatabase utilizando su decisionID.
-    /// </summary>
     public DecisionSequence GetDecisionSequenceByID(
         string decisionID
     )
@@ -173,13 +165,6 @@ public class NarrativeManager : MonoBehaviour
         return null;
     }
 
-    /// <summary>
-    /// Busca el NarrativeNode que contiene la DecisionSequence
-    /// correspondiente al decisionID indicado.
-    ///
-    /// Esto permite que la revisión obtenga la imagen y la
-    /// retroalimentación propias del escenario.
-    /// </summary>
     public NarrativeNode GetNodeByDecisionID(
         string decisionID
     )

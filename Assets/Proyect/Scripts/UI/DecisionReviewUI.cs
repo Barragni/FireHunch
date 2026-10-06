@@ -94,9 +94,6 @@ public class DecisionReviewUI : MonoBehaviour
 
         ClearCards();
 
-        // ========================================================
-        // GAME STATE
-        // ========================================================
 
         if (GameState.Instance == null)
         {
@@ -111,9 +108,6 @@ public class DecisionReviewUI : MonoBehaviour
             $"DecisionReviewUI: Hay {GameState.Instance.decisionRecords.Count} DecisionRecord(s)."
         );
 
-        // ========================================================
-        // NARRATIVE MANAGER
-        // ========================================================
 
         if (NarrativeManager.Instance == null)
         {
@@ -124,9 +118,6 @@ public class DecisionReviewUI : MonoBehaviour
             return;
         }
 
-        // ========================================================
-        // CONTENT
-        // ========================================================
 
         if (content == null)
         {
@@ -141,9 +132,6 @@ public class DecisionReviewUI : MonoBehaviour
             $"DecisionReviewUI: Content asignado: {content.name}"
         );
 
-        // ========================================================
-        // PREFAB
-        // ========================================================
 
         if (cardPrefab == null)
         {
@@ -158,9 +146,6 @@ public class DecisionReviewUI : MonoBehaviour
             $"DecisionReviewUI: Card Prefab asignado: {cardPrefab.name}"
         );
 
-        // ========================================================
-        // ORDENAR DECISIONES
-        // ========================================================
 
         List<DecisionRecord> records =
             new List<DecisionRecord>(
@@ -174,9 +159,6 @@ public class DecisionReviewUI : MonoBehaviour
                 )
         );
 
-        // ========================================================
-        // CREAR TARJETAS
-        // ========================================================
 
         foreach (DecisionRecord record in records)
         {
@@ -196,9 +178,6 @@ public class DecisionReviewUI : MonoBehaviour
                 $"Resultado={record.finalOutcome}"
             );
 
-            // ----------------------------------------------------
-            // Buscar DecisionSequence
-            // ----------------------------------------------------
 
             DecisionSequence decision =
                 NarrativeManager.Instance
@@ -215,9 +194,6 @@ public class DecisionReviewUI : MonoBehaviour
                 continue;
             }
 
-            // ----------------------------------------------------
-            // Buscar NarrativeNode
-            // ----------------------------------------------------
 
             NarrativeNode narrativeNode =
                 NarrativeManager.Instance
@@ -242,9 +218,6 @@ public class DecisionReviewUI : MonoBehaviour
                 $"DecisionReviewUI: NarrativeNode encontrado: '{narrativeNode.nodeID}'"
             );
 
-            // ----------------------------------------------------
-            // Crear tarjeta
-            // ----------------------------------------------------
 
             DecisionReviewCard card =
                 Instantiate(
@@ -265,9 +238,6 @@ public class DecisionReviewUI : MonoBehaviour
                 $"DecisionReviewUI: Tarjeta creada correctamente para '{record.decisionID}'."
             );
 
-            // ----------------------------------------------------
-            // Configurar tarjeta
-            // ----------------------------------------------------
 
             card.Setup(
                 record,
@@ -278,9 +248,6 @@ public class DecisionReviewUI : MonoBehaviour
             cards.Add(card);
         }
 
-        // ========================================================
-        // ACTUALIZAR LAYOUT
-        // ========================================================
 
         Canvas.ForceUpdateCanvases();
 

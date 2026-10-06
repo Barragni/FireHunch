@@ -22,18 +22,7 @@ public static class NarrativeState
 
     public static AmbientDialogueSequence CurrentAmbientDialogue;
 
-    // ============================================================
-    // MÚSICA ANTES DE LA MUERTE
-    // ============================================================
-
-    /// <summary>
-    /// Indica que existe una música guardada de antes de morir
-    /// que debe restaurarse al pulsar Reintentar.
-    /// </summary>
     public static bool RestoreMusicAfterDeath;
 
-    /// <summary>
-    /// Música que estaba sonando inmediatamente antes de la muerte.
-    /// </summary>
     public static AudioClip MusicBeforeDeath;
 }

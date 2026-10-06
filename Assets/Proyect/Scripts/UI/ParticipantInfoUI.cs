@@ -39,7 +39,6 @@ public class ParticipantInfoUI : MonoBehaviour
     {
         HideValidation();
 
-        // Solo permitir números.
         string filtered = "";
 
         foreach (char c in value)

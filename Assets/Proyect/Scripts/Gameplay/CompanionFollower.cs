@@ -50,9 +50,6 @@ public class CompanionFollower : MonoBehaviour
         agent.stoppingDistance = followDistance;
         agent.autoBraking = false;
 
-        // No usamos el avoidance automático de Unity,
-        // porque dos companions siguiendo exactamente
-        // el mismo destino pueden entrar en conflicto.
         agent.obstacleAvoidanceType =
             ObstacleAvoidanceType.NoObstacleAvoidance;
     }
@@ -83,7 +80,6 @@ public class CompanionFollower : MonoBehaviour
         agent.obstacleAvoidanceType =
             ObstacleAvoidanceType.NoObstacleAvoidance;
 
-        // Buscar los demás companions de la escena.
         otherCompanions =
             FindObjectsByType<CompanionFollower>(
                 FindObjectsSortMode.None
@@ -101,9 +97,6 @@ public class CompanionFollower : MonoBehaviour
                 target.position
             );
 
-        // ==========================================
-        // SEGUIMIENTO
-        // ==========================================
 
         if (distance <= followDistance)
         {
@@ -126,8 +119,6 @@ public class CompanionFollower : MonoBehaviour
             Vector3 destination =
                 target.position;
 
-            // Aplicar separación solamente si
-            // otro companion está demasiado cerca.
             destination +=
                 GetSeparationOffset();
 
@@ -136,9 +127,6 @@ public class CompanionFollower : MonoBehaviour
             );
         }
 
-        // ==========================================
-        // ANIMACIÓN
-        // ==========================================
 
         float currentSpeed =
             agent.velocity.magnitude;
@@ -148,9 +136,6 @@ public class CompanionFollower : MonoBehaviour
             currentSpeed
         );
 
-        // ==========================================
-        // HISTERESIS
-        // ==========================================
 
         if (
             !isMoving &&

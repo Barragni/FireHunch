@@ -31,9 +31,6 @@ public class DecisionPlayer : MonoBehaviour
     }
 
 
-    // ============================================================
-    // COMPATIBILIDAD
-    // ============================================================
 
     public void ShowDecision(
         DecisionSequence decision
@@ -54,9 +51,6 @@ public class DecisionPlayer : MonoBehaviour
     }
 
 
-    // ============================================================
-    // MOSTRAR DECISIÓN
-    // ============================================================
 
     public void ShowDecision(
         DecisionSequence decision,
@@ -81,22 +75,13 @@ public class DecisionPlayer : MonoBehaviour
 
         decisionUI.DecisionPanel.SetActive(true);
 
-        // ========================================================
-        // MOSTRAR CURSOR PARA SELECCIONAR LA DECISIÓN
-        // ========================================================
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        // ========================================================
-        // OCULTAR CONTROLES MÓVILES
-        // ========================================================
 
         SetMobileControlsVisible(false);
 
-        // ========================================================
-        // INICIAR REGISTRO DEL INTENTO
-        // ========================================================
 
         if (GameState.Instance != null)
         {
@@ -144,9 +129,6 @@ public class DecisionPlayer : MonoBehaviour
     }
 
 
-    // ============================================================
-    // TEMPORIZADOR
-    // ============================================================
 
     private IEnumerator DecisionTimer()
     {
@@ -205,9 +187,6 @@ public class DecisionPlayer : MonoBehaviour
     }
 
 
-    // ============================================================
-    // BOTONES
-    // ============================================================
 
     private void SetupButton(
         Button button,
@@ -246,9 +225,6 @@ public class DecisionPlayer : MonoBehaviour
     }
 
 
-    // ============================================================
-    // SELECCIONAR OPCIÓN
-    // ============================================================
 
     private IEnumerator SelectOption(
         DecisionOption option
@@ -268,9 +244,6 @@ public class DecisionPlayer : MonoBehaviour
             timerRoutine = null;
         }
 
-        // ========================================================
-        // GUARDAR ESTADO DE LA DECISIÓN
-        // ========================================================
 
         DecisionState.SelectedOption =
             option;
@@ -284,21 +257,12 @@ public class DecisionPlayer : MonoBehaviour
         NarrativeState.ReturnNodeID =
             currentNodeID;
 
-        // ========================================================
-        // OCULTAR PANEL
-        // ========================================================
 
         decisionUI.DecisionPanel.SetActive(false);
 
-        // ========================================================
-        // MOSTRAR CONTROLES MÓVILES
-        // ========================================================
 
         SetMobileControlsVisible(true);
 
-        // ========================================================
-        // RESTAURAR CURSOR PARA EL CONTROL NORMAL
-        // ========================================================
 
         if (
             DeviceModeManager.Instance != null &&
@@ -314,9 +278,6 @@ public class DecisionPlayer : MonoBehaviour
                 option
             );
 
-        // ========================================================
-        // REGISTRAR INTENTO PARA ESTADÍSTICAS
-        // ========================================================
 
         if (GameState.Instance != null)
         {
@@ -328,9 +289,6 @@ public class DecisionPlayer : MonoBehaviour
             );
         }
 
-        // ========================================================
-        // REGISTRAR DECISIÓN
-        // ========================================================
 
         switch (option.outcomeType)
         {
@@ -370,12 +328,6 @@ public class DecisionPlayer : MonoBehaviour
 
             case DecisionOutcomeType.Death:
 
-                // ------------------------------------------------
-                // IMPORTANTE:
-                // RegisterDeath NO agrega "M" a decisionPath.
-                // Solamente marca que esta decisión necesitó
-                // un reintento.
-                // ------------------------------------------------
 
                 GameState.Instance.RegisterDeath(
                     currentDecision.decisionID,
@@ -385,9 +337,6 @@ public class DecisionPlayer : MonoBehaviour
                 break;
         }
 
-        // ========================================================
-        // FLUJO DEL CÓMIC
-        // ========================================================
 
         ComicState.CurrentSequence =
             option.comicSequence;
@@ -406,9 +355,6 @@ public class DecisionPlayer : MonoBehaviour
     }
 
 
-    // ============================================================
-    // CONTROLES MÓVILES
-    // ============================================================
 
     private void SetMobileControlsVisible(bool visible)
     {

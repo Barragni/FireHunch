@@ -90,8 +90,6 @@ public class ResultsUI : MonoBehaviour
             GameState.Instance.ResetData();
         }
 
-        // Cortar inmediatamente música y ambiente
-        // de Results antes de volver al menú.
         if (AudioManager.Instance != null)
         {
             AudioManager.Instance.StopMusic();

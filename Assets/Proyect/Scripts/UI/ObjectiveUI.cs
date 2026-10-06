@@ -45,9 +45,6 @@ public class ObjectiveUI : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    // ============================================================
-    // MOSTRAR CON ANIMACIÓN
-    // ============================================================
 
     public void ShowObjective(string message)
     {
@@ -76,9 +73,6 @@ public class ObjectiveUI : MonoBehaviour
             );
     }
 
-    // ============================================================
-    // MOSTRAR DIRECTAMENTE EN ESTADO FINAL
-    // ============================================================
 
     public void ShowObjectiveFinal(string message)
     {
@@ -113,15 +107,9 @@ public class ObjectiveUI : MonoBehaviour
             finalColor;
     }
 
-    // ============================================================
-    // ANIMACIÓN
-    // ============================================================
 
     private IEnumerator PlayObjectiveAnimation()
     {
-        // ========================================================
-        // ESTADO INICIAL
-        // ========================================================
 
         rectTransform.anchoredPosition =
             centerPosition;
@@ -132,15 +120,11 @@ public class ObjectiveUI : MonoBehaviour
         objectiveText.color =
             startColor;
 
-        // ========================================================
-        // APARICIÓN + CAMBIO DE COLOR + REDUCCIÓN
-        // ========================================================
 
         float elapsed = 0f;
 
         while (elapsed < introDuration)
         {
-            // No avanzar mientras el juego esté pausado.
             if (Time.timeScale > 0f)
             {
                 elapsed +=
@@ -183,9 +167,6 @@ public class ObjectiveUI : MonoBehaviour
         objectiveText.color =
             finalColor;
 
-        // ========================================================
-        // PAUSA ANTES DE SUBIR
-        // ========================================================
 
         float holdElapsed = 0f;
 
@@ -201,15 +182,11 @@ public class ObjectiveUI : MonoBehaviour
             yield return null;
         }
 
-        // ========================================================
-        // SUBIR + HACER MÁS PEQUEÑO
-        // ========================================================
 
         elapsed = 0f;
 
         while (elapsed < moveDuration)
         {
-            // No avanzar mientras el juego esté pausado.
             if (Time.timeScale > 0f)
             {
                 elapsed +=
@@ -246,9 +223,6 @@ public class ObjectiveUI : MonoBehaviour
             yield return null;
         }
 
-        // ========================================================
-        // ESTADO FINAL
-        // ========================================================
 
         rectTransform.anchoredPosition =
             finalPosition;
@@ -259,9 +233,6 @@ public class ObjectiveUI : MonoBehaviour
         animationCoroutine = null;
     }
 
-    // ============================================================
-    // OCULTAR
-    // ============================================================
 
     public void HideObjective()
     {

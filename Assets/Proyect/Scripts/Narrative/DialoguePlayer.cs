@@ -13,9 +13,6 @@ public class DialoguePlayer : MonoBehaviour
 
     public bool IsPlaying => isPlaying;
 
-    /// <summary>
-    /// Indica si todavía existe otra línea después de la actual.
-    /// </summary>
     public bool HasMoreLines
     {
         get
@@ -29,9 +26,6 @@ public class DialoguePlayer : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Indica si actualmente ya estamos mostrando la última línea.
-    /// </summary>
     public bool IsLastLine
     {
         get
@@ -45,10 +39,6 @@ public class DialoguePlayer : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Se vuelve true cuando ya no quedan más líneas por avanzar.
-    /// El diálogo sigue visible hasta que NarrativeTrigger decida finalizarlo.
-    /// </summary>
     public bool DialogueCompleted
     {
         get
@@ -107,12 +97,6 @@ public class DialoguePlayer : MonoBehaviour
         );
     }
 
-    /// <summary>
-    /// Avanza una única línea.
-    /// Devuelve true si realmente avanzó.
-    /// Si ya estaba en la última línea simplemente devuelve false,
-    /// pero NO finaliza el diálogo.
-    /// </summary>
     public bool AdvanceDialogue()
     {
         if (!HasMoreLines)
@@ -127,10 +111,6 @@ public class DialoguePlayer : MonoBehaviour
         return true;
     }
 
-    /// <summary>
-    /// Finaliza el diálogo únicamente cuando NarrativeTrigger
-    /// determine que también terminaron los FocusPoints.
-    /// </summary>
     public void FinishDialogue()
     {
         if (!isPlaying)

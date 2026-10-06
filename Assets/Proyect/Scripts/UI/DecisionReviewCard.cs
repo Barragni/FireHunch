@@ -52,9 +52,6 @@ public class DecisionReviewCard : MonoBehaviour
             return;
         }
 
-        // ========================================================
-        // NÚMERO DE DECISIÓN
-        // ========================================================
 
         if (decisionNumberText != null)
         {
@@ -62,9 +59,6 @@ public class DecisionReviewCard : MonoBehaviour
                 $"DECISIÓN {record.decisionOrder}";
         }
 
-        // ========================================================
-        // PREGUNTA
-        // ========================================================
 
         if (questionText != null)
         {
@@ -72,9 +66,6 @@ public class DecisionReviewCard : MonoBehaviour
                 decision.question;
         }
 
-        // ========================================================
-        // IMAGEN DEL ESCENARIO
-        // ========================================================
 
         if (decisionImage != null)
         {
@@ -85,9 +76,6 @@ public class DecisionReviewCard : MonoBehaviour
                 narrativeNode.decisionReviewImage != null;
         }
 
-        // ========================================================
-        // OPCIÓN FINALMENTE SELECCIONADA
-        // ========================================================
 
         DecisionOption selectedOption = null;
 
@@ -121,9 +109,6 @@ public class DecisionReviewCard : MonoBehaviour
             }
         }
 
-        // ========================================================
-        // RETROALIMENTACIÓN DEL ESCENARIO
-        // ========================================================
 
         if (feedbackText != null)
         {
@@ -131,9 +116,6 @@ public class DecisionReviewCard : MonoBehaviour
                 narrativeNode.decisionFeedback;
         }
 
-        // ========================================================
-        // RESULTADO
-        // ========================================================
 
         if (resultText != null)
         {
@@ -169,9 +151,6 @@ public class DecisionReviewCard : MonoBehaviour
             }
         }
 
-        // ========================================================
-        // INDICADOR DE REINTENTO
-        // ========================================================
 
         if (retryText != null)
         {

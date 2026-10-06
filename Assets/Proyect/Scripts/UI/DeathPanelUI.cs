@@ -15,9 +15,6 @@ public class DeathPanelUI : MonoBehaviour
     [SerializeField] private Button retryButton;
     [SerializeField] private Button menuButton;
 
-    // ============================================================
-    // ANIMACIÓN DE APARICIÓN
-    // ============================================================
 
     [Header("Animación de muerte")]
 
@@ -36,9 +33,6 @@ public class DeathPanelUI : MonoBehaviour
     )]
     [SerializeField] private float overshootScale = 1.03f;
 
-    // ============================================================
-    // ANIMACIÓN DE CIERRE
-    // ============================================================
 
     [Header("Animación de cierre")]
 
@@ -47,9 +41,6 @@ public class DeathPanelUI : MonoBehaviour
     )]
     [SerializeField] private float hideAnimationDuration = 0.75f;
 
-    // ============================================================
-    // VARIABLES
-    // ============================================================
 
     private RectTransform panelRect;
 
@@ -59,16 +50,10 @@ public class DeathPanelUI : MonoBehaviour
 
     private Coroutine animationRoutine;
 
-    // Indica que el panel ya está mostrando la muerte.
-    // Impide que Show() vuelva a iniciar la animación.
     private bool deathShown;
 
-    // Indica que el panel se encuentra en proceso de cierre.
     private bool isHiding;
 
-    // ============================================================
-    // PROPIEDADES
-    // ============================================================
 
     public GameObject Panel =>
         panel;
@@ -82,9 +67,6 @@ public class DeathPanelUI : MonoBehaviour
     public Button MenuButton =>
         menuButton;
 
-    // ============================================================
-    // AWAKE
-    // ============================================================
 
     private void Awake()
     {
@@ -109,16 +91,10 @@ public class DeathPanelUI : MonoBehaviour
             return;
         }
 
-        // ========================================================
-        // GUARDAR ESCALA ORIGINAL
-        // ========================================================
 
         originalScale =
             panelRect.localScale;
 
-        // ========================================================
-        // CANVAS GROUP
-        // ========================================================
 
         panelCanvasGroup =
             panel.GetComponent<CanvasGroup>();
@@ -129,9 +105,6 @@ public class DeathPanelUI : MonoBehaviour
                 panel.AddComponent<CanvasGroup>();
         }
 
-        // ========================================================
-        // ESTADO INICIAL
-        // ========================================================
 
         panelCanvasGroup.alpha = 0f;
 
@@ -143,9 +116,6 @@ public class DeathPanelUI : MonoBehaviour
         isHiding = false;
     }
 
-    // ============================================================
-    // MOSTRAR
-    // ============================================================
 
     public void Show()
     {
@@ -158,22 +128,12 @@ public class DeathPanelUI : MonoBehaviour
             return;
         }
 
-        // ========================================================
-        // PROTECCIÓN CONTRA REPETICIÓN
-        // ========================================================
-        //
-        // Si la muerte ya fue mostrada, NO volver a reproducir
-        // la animación.
-        //
-        // Esto evita que un clic vuelva a hacer aparecer el panel.
-        // ========================================================
 
         if (deathShown)
         {
             return;
         }
 
-        // Si está cerrándose, tampoco permitir una nueva aparición.
         if (isHiding)
         {
             return;
@@ -181,9 +141,6 @@ public class DeathPanelUI : MonoBehaviour
 
         deathShown = true;
 
-        // ========================================================
-        // DETENER CUALQUIER ANIMACIÓN ANTERIOR
-        // ========================================================
 
         if (animationRoutine != null)
         {
@@ -194,15 +151,9 @@ public class DeathPanelUI : MonoBehaviour
             animationRoutine = null;
         }
 
-        // ========================================================
-        // MOSTRAR PANEL
-        // ========================================================
 
         panel.SetActive(true);
 
-        // ========================================================
-        // ASEGURAR BOTONES ACTIVOS
-        // ========================================================
 
         if (retryButton != null)
         {
@@ -214,9 +165,6 @@ public class DeathPanelUI : MonoBehaviour
             menuButton.interactable = true;
         }
 
-        // ========================================================
-        // INICIAR ANIMACIÓN UNA SOLA VEZ
-        // ========================================================
 
         animationRoutine =
             StartCoroutine(
@@ -224,9 +172,6 @@ public class DeathPanelUI : MonoBehaviour
             );
     }
 
-    // ============================================================
-    // OCULTAR INMEDIATAMENTE
-    // ============================================================
 
     public void Hide()
     {
@@ -270,9 +215,6 @@ public class DeathPanelUI : MonoBehaviour
         }
     }
 
-    // ============================================================
-    // OCULTAR CON ANIMACIÓN
-    // ============================================================
 
     public IEnumerator HideAnimated()
     {
@@ -285,9 +227,6 @@ public class DeathPanelUI : MonoBehaviour
             yield break;
         }
 
-        // ========================================================
-        // EVITAR DOBLE CIERRE
-        // ========================================================
 
         if (isHiding)
         {
@@ -296,9 +235,6 @@ public class DeathPanelUI : MonoBehaviour
 
         isHiding = true;
 
-        // ========================================================
-        // DETENER ANIMACIÓN DE APARICIÓN
-        // ========================================================
 
         if (animationRoutine != null)
         {
@@ -309,9 +245,6 @@ public class DeathPanelUI : MonoBehaviour
             animationRoutine = null;
         }
 
-        // ========================================================
-        // BLOQUEAR BOTONES DURANTE EL CIERRE
-        // ========================================================
 
         if (retryButton != null)
         {
@@ -323,9 +256,6 @@ public class DeathPanelUI : MonoBehaviour
             menuButton.interactable = false;
         }
 
-        // ========================================================
-        // ESTADO INICIAL
-        // ========================================================
 
         panelCanvasGroup.alpha = 1f;
 
@@ -340,9 +270,6 @@ public class DeathPanelUI : MonoBehaviour
 
         float elapsed = 0f;
 
-        // ========================================================
-        // ANIMACIÓN
-        // ========================================================
 
         while (elapsed < duration)
         {
@@ -361,9 +288,6 @@ public class DeathPanelUI : MonoBehaviour
                     3f
                 );
 
-            // ----------------------------------------------------
-            // DESVANECER
-            // ----------------------------------------------------
 
             panelCanvasGroup.alpha =
                 Mathf.Lerp(
@@ -372,9 +296,6 @@ public class DeathPanelUI : MonoBehaviour
                     smooth
                 );
 
-            // ----------------------------------------------------
-            // ENCOGER
-            // ----------------------------------------------------
 
             panelRect.localScale =
                 Vector3.Lerp(
@@ -386,9 +307,6 @@ public class DeathPanelUI : MonoBehaviour
             yield return null;
         }
 
-        // ========================================================
-        // ESTADO FINAL
-        // ========================================================
 
         panelCanvasGroup.alpha = 0f;
 
@@ -398,9 +316,6 @@ public class DeathPanelUI : MonoBehaviour
 
         panel.SetActive(false);
 
-        // ========================================================
-        // RESTAURAR ESTADO PARA UNA FUTURA MUERTE
-        // ========================================================
 
         deathShown = false;
         isHiding = false;
@@ -418,9 +333,6 @@ public class DeathPanelUI : MonoBehaviour
         }
     }
 
-    // ============================================================
-    // ANIMACIÓN DE APARICIÓN
-    // ============================================================
 
     private IEnumerator ShowAnimation()
     {
@@ -432,9 +344,6 @@ public class DeathPanelUI : MonoBehaviour
 
         float elapsed = 0f;
 
-        // ========================================================
-        // ESTADO INICIAL
-        // ========================================================
 
         panelCanvasGroup.alpha = 0f;
 
@@ -442,9 +351,6 @@ public class DeathPanelUI : MonoBehaviour
             originalScale *
             startScale;
 
-        // ========================================================
-        // PRIMERA PARTE
-        // ========================================================
 
         float firstPhase =
             duration * 0.72f;
@@ -484,9 +390,6 @@ public class DeathPanelUI : MonoBehaviour
             yield return null;
         }
 
-        // ========================================================
-        // SEGUNDA PARTE
-        // ========================================================
 
         float secondPhase =
             duration * 0.28f;
@@ -525,9 +428,6 @@ public class DeathPanelUI : MonoBehaviour
             yield return null;
         }
 
-        // ========================================================
-        // ESTADO FINAL
-        // ========================================================
 
         panelCanvasGroup.alpha = 1f;
 

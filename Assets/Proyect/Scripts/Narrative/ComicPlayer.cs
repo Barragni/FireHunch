@@ -16,9 +16,6 @@ public class ComicPlayer : MonoBehaviour
     private int currentPanel;
     private bool changingPage;
 
-    // ============================================================
-    // START
-    // ============================================================
 
     private void Start()
     {
@@ -61,17 +58,12 @@ public class ComicPlayer : MonoBehaviour
         );
     }
 
-    // ============================================================
-    // UPDATE
-    // ============================================================
 
     private void Update()
     {
         if (changingPage)
             return;
 
-        // No permitir clics mientras se está realizando
-        // una transición de escena o un fade.
         if (
             SceneTransitionManager.Instance != null &&
             SceneTransitionManager.Instance.IsTransitioning
@@ -80,8 +72,6 @@ public class ComicPlayer : MonoBehaviour
             return;
         }
 
-        // Si el panel de muerte está abierto,
-        // ignorar cualquier clic en la pantalla.
         if (
             deathPanelUI != null &&
             deathPanelUI.Panel != null &&
@@ -107,9 +97,6 @@ public class ComicPlayer : MonoBehaviour
         }
     }
 
-    // ============================================================
-    // INICIAR SECUENCIA
-    // ============================================================
 
     private void StartSequence(
         ComicSequence sequence
@@ -131,9 +118,6 @@ public class ComicPlayer : MonoBehaviour
         );
     }
 
-    // ============================================================
-    // SIGUIENTE PANEL
-    // ============================================================
 
     private IEnumerator NextPanel()
     {
@@ -173,15 +157,9 @@ public class ComicPlayer : MonoBehaviour
         changingPage = false;
     }
 
-    // ============================================================
-    // FINAL DEL CÓMIC
-    // ============================================================
 
     private IEnumerator HandleEnd()
     {
-        // ========================================================
-        // INTRO
-        // ========================================================
 
         if (ComicState.IsIntro)
         {
@@ -197,9 +175,6 @@ public class ComicPlayer : MonoBehaviour
             yield break;
         }
 
-        // ========================================================
-        // DECISIÓN DESPUÉS DEL CÓMIC
-        // ========================================================
 
         if (
             currentSequence.decisionAfterComic != null
@@ -212,9 +187,6 @@ public class ComicPlayer : MonoBehaviour
             yield break;
         }
 
-        // ========================================================
-        // CÓMIC FINAL
-        // ========================================================
 
         if (
             currentSequence.endingComic != null
@@ -244,9 +216,6 @@ public class ComicPlayer : MonoBehaviour
             yield break;
         }
 
-        // ========================================================
-        // RESULTADOS
-        // ========================================================
 
         if (
             currentSequence.endsWithResults
@@ -259,9 +228,6 @@ public class ComicPlayer : MonoBehaviour
             yield break;
         }
 
-        // ========================================================
-        // A PARTIR DE AQUÍ DEBE EXISTIR UNA DECISIÓN
-        // ========================================================
 
         if (
             DecisionState.SelectedOption == null
@@ -277,9 +243,6 @@ public class ComicPlayer : MonoBehaviour
         DecisionOption option =
             DecisionState.SelectedOption;
 
-        // ========================================================
-        // MUERTE
-        // ========================================================
 
         if (
             option.outcomeType ==
@@ -302,9 +265,6 @@ public class ComicPlayer : MonoBehaviour
             yield break;
         }
 
-        // ========================================================
-        // SIGUIENTE NODO
-        // ========================================================
 
         NarrativeManager.Instance.SetCurrentNode(
             option.nextNode
@@ -334,9 +294,6 @@ public class ComicPlayer : MonoBehaviour
         );
     }
 
-    // ============================================================
-    // REINTENTAR
-    // ============================================================
 
     private void RetryDecision()
     {
@@ -347,21 +304,14 @@ public class ComicPlayer : MonoBehaviour
 
     private IEnumerator RetryDecisionRoutine()
     {
-        // ========================================================
-        // SONIDO DEL BOTÓN
-        // ========================================================
 
         if (AudioManager.Instance != null)
         {
             AudioManager.Instance.PlayButtonClick();
 
-            // Detener inmediatamente la música de muerte.
             AudioManager.Instance.StopMusic();
         }
 
-        // ========================================================
-        // ANIMACIÓN INVERSA
-        // ========================================================
 
         if (deathPanelUI != null)
         {
@@ -370,9 +320,6 @@ public class ComicPlayer : MonoBehaviour
             );
         }
 
-        // ========================================================
-        // INDICAR QUE VOLVEMOS DE UNA MUERTE
-        // ========================================================
 
         NarrativeState.ReturningFromDeath =
             true;
@@ -380,9 +327,6 @@ public class ComicPlayer : MonoBehaviour
         NarrativeState.SkipDialogue =
             true;
 
-        // ========================================================
-        // LIMPIAR ESTADO DEL CÓMIC
-        // ========================================================
 
         ComicState.CurrentSequence =
             null;
@@ -393,16 +337,10 @@ public class ComicPlayer : MonoBehaviour
         ComicState.IntroNextScene =
             string.Empty;
 
-        // ========================================================
-        // LIMPIAR OPCIÓN MORTAL
-        // ========================================================
 
         DecisionState.SelectedOption =
             null;
 
-        // ========================================================
-        // COMPROBAR ESCENA DE RETORNO
-        // ========================================================
 
         if (
             string.IsNullOrEmpty(
@@ -420,18 +358,12 @@ public class ComicPlayer : MonoBehaviour
             yield break;
         }
 
-        // ========================================================
-        // VOLVER A LA ESCENA
-        // ========================================================
 
         SceneTransitionManager.Instance.LoadScene(
             NarrativeState.ReturnScene
         );
     }
 
-    // ============================================================
-    // VOLVER AL MENÚ
-    // ============================================================
 
     private void ReturnToMenu()
     {
@@ -442,9 +374,6 @@ public class ComicPlayer : MonoBehaviour
 
     private IEnumerator ReturnToMenuRoutine()
     {
-        // ========================================================
-        // SONIDO DEL BOTÓN
-        // ========================================================
 
         if (AudioManager.Instance != null)
         {
@@ -455,9 +384,6 @@ public class ComicPlayer : MonoBehaviour
             AudioManager.Instance.StopAmbience();
         }
 
-        // ========================================================
-        // ANIMACIÓN INVERSA
-        // ========================================================
 
         if (deathPanelUI != null)
         {
@@ -466,18 +392,12 @@ public class ComicPlayer : MonoBehaviour
             );
         }
 
-        // ========================================================
-        // REINICIAR GAME STATE
-        // ========================================================
 
         if (GameState.Instance != null)
         {
             GameState.Instance.ResetData();
         }
 
-        // ========================================================
-        // LIMPIAR ESTADO DEL CÓMIC
-        // ========================================================
 
         ComicState.CurrentSequence =
             null;
@@ -488,9 +408,6 @@ public class ComicPlayer : MonoBehaviour
         ComicState.IntroNextScene =
             string.Empty;
 
-        // ========================================================
-        // LIMPIAR DECISIÓN
-        // ========================================================
 
         DecisionState.CurrentDecision =
             null;
@@ -498,9 +415,6 @@ public class ComicPlayer : MonoBehaviour
         DecisionState.SelectedOption =
             null;
 
-        // ========================================================
-        // LIMPIAR ESTADO NARRATIVO
-        // ========================================================
 
         NarrativeState.PendingDecision =
             null;
@@ -517,9 +431,6 @@ public class ComicPlayer : MonoBehaviour
         NarrativeState.ReturnNodeID =
             string.Empty;
 
-        // ========================================================
-        // VOLVER AL MENÚ
-        // ========================================================
 
         SceneTransitionManager.Instance.LoadScene(
             "Menu"

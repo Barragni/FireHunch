@@ -26,9 +26,6 @@ public static class AttemptMapper
 
         AttemptData attempt = new AttemptData
         {
-            // ==========================
-            // Identificación
-            // ==========================
 
             attemptId =
                 AttemptSession.Instance.AttemptId,
@@ -36,9 +33,6 @@ public static class AttemptMapper
             timestampUtc =
                 AttemptSession.Instance.StartTimeUtc.ToString("o"),
 
-            // ==========================
-            // Participante
-            // ==========================
 
             age =
                 AttemptSession.Instance.Age,
@@ -46,9 +40,6 @@ public static class AttemptMapper
             consentAccepted =
                 AttemptSession.Instance.ConsentAccepted,
 
-            // ==========================
-            // Información de la sesión
-            // ==========================
 
             durationSeconds =
                 AttemptSession.Instance.DurationSeconds,
@@ -56,9 +47,6 @@ public static class AttemptMapper
             platform =
                 Application.platform.ToString(),
 
-            // ==========================
-            // Resultado final
-            // ==========================
 
             score =
                 finalScore,
@@ -71,9 +59,6 @@ public static class AttemptMapper
         };
 
 
-        // ============================================================
-        // DECISIONES
-        // ============================================================
 
         foreach (
             DecisionRecord record
@@ -86,9 +71,6 @@ public static class AttemptMapper
             }
 
 
-            // ========================================================
-            // CONTADORES GENERALES
-            // ========================================================
 
             switch (record.finalOutcome)
             {
@@ -106,17 +88,11 @@ public static class AttemptMapper
             }
 
 
-            // ========================================================
-            // REINTENTOS
-            // ========================================================
 
             totalRetries +=
                 record.retryCount;
 
 
-            // ========================================================
-            // CREAR DATOS DE LA DECISIÓN
-            // ========================================================
 
             AttemptDecisionData decision =
                 new AttemptDecisionData
@@ -141,9 +117,6 @@ public static class AttemptMapper
                 };
 
 
-            // ========================================================
-            // COPIAR HISTORIAL DE INTENTOS
-            // ========================================================
 
             if (
                 record.attempts != null &&
@@ -186,9 +159,6 @@ public static class AttemptMapper
         }
 
 
-        // ============================================================
-        // ESTADÍSTICAS GENERALES
-        // ============================================================
 
         attempt.correctChoices =
             correctChoices;
@@ -199,7 +169,6 @@ public static class AttemptMapper
         attempt.totalRetries =
             totalRetries;
 
-        // Compatibilidad temporal con Google Sheets.
         attempt.deathChoices =
             GameState.Instance.DeathChoices;
 

@@ -11,13 +11,11 @@ public class TutorialUI : MonoBehaviour
 
     private void Awake()
     {
-        // El panel empieza oculto.
         if (tutorialPanel != null)
         {
             tutorialPanel.SetActive(false);
         }
 
-        // Configurar botón volver.
         if (backButton != null)
         {
             backButton.onClick.RemoveAllListeners();

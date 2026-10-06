@@ -32,25 +32,16 @@ public class SceneNarrativeInitializer : MonoBehaviour
 
         if (CompanionManager.Instance != null)
         {
-            // ====================================================
-            // COMPANIONS NORMALES
-            // ====================================================
 
             CompanionManager.Instance.SpawnCompanions(
                 rule.companions
             );
 
-            // ====================================================
-            // PERSONAJE DE RESCATE
-            // ====================================================
 
             CompanionManager.Instance.SpawnRescueCharacter(
                 rule.rescueCharacter
             );
 
-            // ====================================================
-            // PERSONAJE CONDICIONADO POR RUTA
-            // ====================================================
 
             CompanionManager.Instance.SpawnRouteCharacter(
                 rule.routeCharacter

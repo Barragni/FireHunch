@@ -49,9 +49,6 @@ public class PlayerController : MonoBehaviour
     private float lockedY;
 
 
-    // ============================================================
-    // INICIALIZACIÓN
-    // ============================================================
 
     private void Awake()
     {
@@ -69,7 +66,6 @@ public class PlayerController : MonoBehaviour
             defaultFOV =
                 playerCamera.fieldOfView;
 
-            // Tomamos la rotación vertical inicial de la cámara
             verticalRotation =
                 playerCamera.transform.localEulerAngles.x;
 
@@ -98,12 +94,6 @@ public class PlayerController : MonoBehaviour
         ResetFootsteps();
 
 
-        // ========================================================
-        // CONTROLES MÓVILES
-        // ========================================================
-        // En el Editor se mantienen ocultos.
-        // En dispositivos táctiles se muestran.
-        // ========================================================
 
         bool isMobileDevice =
     DeviceModeManager.Instance != null &&
@@ -143,9 +133,6 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    // ============================================================
-    // CÁMARA
-    // ============================================================
 
     private void HandleLook()
     {
@@ -155,9 +142,6 @@ public class PlayerController : MonoBehaviour
         }
 
 
-        // ========================================================
-        // JOYSTICK DERECHO
-        // ========================================================
 
         if (mobileLookJoystick != null)
         {
@@ -166,9 +150,6 @@ public class PlayerController : MonoBehaviour
 
             if (lookInput.sqrMagnitude > 0.001f)
             {
-                // ----------------------------------------------
-                // IZQUIERDA / DERECHA
-                // ----------------------------------------------
 
                 float horizontalLook =
                     lookInput.x *
@@ -181,9 +162,6 @@ public class PlayerController : MonoBehaviour
                 );
 
 
-                // ----------------------------------------------
-                // ARRIBA / ABAJO
-                // ----------------------------------------------
 
                 float verticalLook =
                     lookInput.y *
@@ -211,12 +189,6 @@ public class PlayerController : MonoBehaviour
         }
 
 
-        // ========================================================
-        // EN DISPOSITIVOS MÓVILES NO SE USA EL MOUSE
-        // ========================================================
-        // La cámara en móvil se controla exclusivamente
-        // mediante el joystick derecho.
-        // ========================================================
 
         if (
             DeviceModeManager.Instance != null &&
@@ -227,9 +199,6 @@ public class PlayerController : MonoBehaviour
         }
 
 
-        // ========================================================
-        // MOUSE
-        // ========================================================
 
         float mouseX =
             Input.GetAxis("Mouse X") *
@@ -267,9 +236,6 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    // ============================================================
-    // MOVIMIENTO
-    // ============================================================
 
     private void HandleMovement()
     {
@@ -286,9 +252,6 @@ public class PlayerController : MonoBehaviour
             Input.GetAxis("Vertical");
 
 
-        // ========================================================
-        // JOYSTICK IZQUIERDO
-        // ========================================================
 
         if (mobileJoystick != null)
         {
@@ -322,9 +285,6 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    // ============================================================
-    // BLOQUEO DE ALTURA
-    // ============================================================
 
     private void MaintainLockedHeight()
     {
@@ -344,9 +304,6 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    // ============================================================
-    // PASOS
-    // ============================================================
 
     private void HandleFootsteps()
     {
@@ -418,9 +375,6 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    // ============================================================
-    // MOVIMIENTO ENABLE / DISABLE
-    // ============================================================
 
     public void SetMovementEnabled(bool enabled)
     {
@@ -453,9 +407,6 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    // ============================================================
-    // HEAD BOB
-    // ============================================================
 
     public void SetHeadBobEnabled(bool enabled)
     {
@@ -466,9 +417,6 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    // ============================================================
-    // VISUAL
-    // ============================================================
 
     public void ShowVisual()
     {
@@ -488,9 +436,6 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    // ============================================================
-    // CÁMARA
-    // ============================================================
 
     public Camera GetPlayerCamera()
     {
@@ -498,9 +443,6 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    // ============================================================
-    // MIRAR OBJETIVO
-    // ============================================================
 
     public IEnumerator LookAtTarget(
         Transform target
@@ -638,9 +580,6 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    // ============================================================
-    // ZOOM DE DIÁLOGO
-    // ============================================================
 
     public IEnumerator PlayDialogueZoom()
     {
@@ -705,9 +644,6 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    // ============================================================
-    // CÁMARA DE DECISIÓN
-    // ============================================================
 
     public IEnumerator PlayDecisionCamera()
     {

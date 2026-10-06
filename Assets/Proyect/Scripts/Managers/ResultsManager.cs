@@ -14,8 +14,6 @@ public class ResultsManager : MonoBehaviour
 
     private void Start()
     {
-        // Mantener el cursor siempre visible y disponible
-        // durante toda la escena de resultados.
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 

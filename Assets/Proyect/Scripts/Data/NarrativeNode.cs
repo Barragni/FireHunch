@@ -10,9 +10,6 @@ public class NarrativeNode : ScriptableObject
     [Header("Identificador único")]
     public string nodeID;
 
-    // ============================================================
-    // REVISIÓN DE DECISIÓN
-    // ============================================================
 
     [Header("Revisión de la decisión")]
 
@@ -28,9 +25,6 @@ public class NarrativeNode : ScriptableObject
     )]
     public string decisionFeedback;
 
-    // ============================================================
-    // REGLAS
-    // ============================================================
 
     [Header("Reglas")]
     public List<NarrativeRule> rules = new();

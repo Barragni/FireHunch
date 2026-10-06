@@ -14,17 +14,14 @@ public class VolumePanel : MonoBehaviour
 
     private void Start()
     {
-        // Cargar valores actuales
         masterSlider.SetValueWithoutNotify(AudioManager.Instance.MasterVolume);
         musicSlider.SetValueWithoutNotify(AudioManager.Instance.MusicVolume);
         sfxSlider.SetValueWithoutNotify(AudioManager.Instance.SFXVolume);
 
-        // Eventos sliders
         masterSlider.onValueChanged.AddListener(OnMasterChanged);
         musicSlider.onValueChanged.AddListener(OnMusicChanged);
         sfxSlider.onValueChanged.AddListener(OnSFXChanged);
 
-        // Botones
         acceptButton.onClick.AddListener(OnAccept);
         defaultButton.onClick.AddListener(OnDefault);
     }

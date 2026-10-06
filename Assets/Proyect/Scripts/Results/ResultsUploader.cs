@@ -23,13 +23,9 @@ public class ResultsUploader : MonoBehaviour
 
         DontDestroyOnLoad(gameObject);
 
-        // Despierta Render al iniciar la aplicación.
         StartCoroutine(WakeBackend());
     }
 
-    // =========================================================
-    // DESPERTAR BACKEND
-    // =========================================================
 
     private IEnumerator WakeBackend()
     {
@@ -59,9 +55,6 @@ public class ResultsUploader : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Envía un intento tanto a Google Sheets como al backend de MongoDB.
-    /// </summary>
     public void Upload(AttemptData attempt)
     {
         if (attempt == null)
@@ -76,14 +69,10 @@ public class ResultsUploader : MonoBehaviour
         Debug.Log(json);
         Debug.Log("=========================================");
 
-        // Cada envío es independiente.
         StartCoroutine(UploadGoogleSheets(json));
         StartCoroutine(UploadMongoDB(json));
     }
 
-    // =========================================================
-    // GOOGLE SHEETS
-    // =========================================================
 
     private IEnumerator UploadGoogleSheets(string json)
     {
@@ -132,9 +121,6 @@ public class ResultsUploader : MonoBehaviour
         }
     }
 
-    // =========================================================
-    // MONGODB / BACKEND
-    // =========================================================
 
     private IEnumerator UploadMongoDB(string json)
     {

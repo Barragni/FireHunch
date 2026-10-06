@@ -28,17 +28,10 @@ public class GameState : MonoBehaviour
     public int DeathChoices { get; private set; }
 
 
-    // ============================================================
-    // CONTROL DEL INTENTO ACTUAL
-    // ============================================================
-
-    // ID de la decisión que actualmente está siendo respondida.
     private string activeDecisionID = "";
 
-    // Momento en que comenzó el intento actual.
     private float activeDecisionStartTime;
 
-    // Número del intento actual de esa decisión.
     private int activeDecisionAttemptNumber;
 
 
@@ -56,9 +49,6 @@ public class GameState : MonoBehaviour
     }
 
 
-    // ============================================================
-    // PUNTAJE
-    // ============================================================
 
     public void AddScore(int amount)
     {
@@ -66,15 +56,6 @@ public class GameState : MonoBehaviour
     }
 
 
-    // ============================================================
-    // INICIAR INTENTO DE DECISIÓN
-    // ============================================================
-
-    /// <summary>
-    /// Se llama cuando aparece el panel de una decisión.
-    ///
-    /// Aquí comienza a medirse el tiempo de ESTE intento.
-    /// </summary>
     public void BeginDecisionAttempt(
         string decisionID,
         string nodeID
@@ -105,18 +86,6 @@ public class GameState : MonoBehaviour
     }
 
 
-    // ============================================================
-    // FINALIZAR INTENTO DE DECISIÓN
-    // ============================================================
-
-    /// <summary>
-    /// Registra un intento individual de una decisión.
-    ///
-    /// Ejemplo:
-    ///
-    /// Intento 1 → opción 0 → Death → 7.3 segundos
-    /// Intento 2 → opción 1 → Correct → 11.4 segundos
-    /// </summary>
     public void RegisterDecisionAttempt(
         string decisionID,
         string nodeID,
@@ -134,9 +103,6 @@ public class GameState : MonoBehaviour
         }
 
 
-        // ========================================================
-        // OBTENER / CREAR REGISTRO
-        // ========================================================
 
         DecisionRecord record =
             GetOrCreateDecisionRecord(
@@ -145,9 +111,6 @@ public class GameState : MonoBehaviour
             );
 
 
-        // ========================================================
-        // CALCULAR TIEMPO
-        // ========================================================
 
         float elapsedTime = 0f;
 
@@ -165,17 +128,11 @@ public class GameState : MonoBehaviour
             );
 
 
-        // ========================================================
-        // NÚMERO DE INTENTO
-        // ========================================================
 
         int attemptNumber =
             record.attempts.Count + 1;
 
 
-        // ========================================================
-        // CREAR REGISTRO DEL INTENTO
-        // ========================================================
 
         DecisionAttemptRecord attempt =
             new DecisionAttemptRecord
@@ -199,16 +156,11 @@ public class GameState : MonoBehaviour
         );
 
 
-        // ========================================================
-        // ACTUALIZAR ESTADÍSTICAS
-        // ========================================================
 
         record.totalTimeSeconds +=
             elapsedTime;
 
 
-        // Una muerte significa que este intento
-        // terminó necesitando un reintento.
         if (outcome == DecisionOutcomeType.Death)
         {
             record.retryCount++;
@@ -218,9 +170,6 @@ public class GameState : MonoBehaviour
         }
 
 
-        // ========================================================
-        // FINALIZÓ EL INTENTO ACTUAL
-        // ========================================================
 
         activeDecisionID = "";
 
@@ -230,9 +179,6 @@ public class GameState : MonoBehaviour
     }
 
 
-    // ============================================================
-    // REGISTRO DE DECISIÓN
-    // ============================================================
 
     public void RegisterDecision(
         string decisionID,
@@ -249,18 +195,6 @@ public class GameState : MonoBehaviour
     }
 
 
-    // ============================================================
-    // REGISTRO DE RUTA
-    // ============================================================
-
-    /// <summary>
-    /// Registra únicamente decisiones definitivas.
-    ///
-    /// C = Correcta
-    /// L = Incorrecta
-    ///
-    /// Muerte = no modifica decisionPath.
-    /// </summary>
     public void RegisterDecision(string result)
     {
         if (string.IsNullOrEmpty(result))
@@ -288,8 +222,6 @@ public class GameState : MonoBehaviour
 
             case "M":
 
-                // Una muerte no es una decisión definitiva.
-                // Solamente cuenta como reintento.
                 DeathChoices++;
 
                 break;
@@ -306,9 +238,6 @@ public class GameState : MonoBehaviour
     }
 
 
-    // ============================================================
-    // REGISTRO DETALLADO
-    // ============================================================
 
     public void RegisterDecision(
         string decisionID,
@@ -343,7 +272,6 @@ public class GameState : MonoBehaviour
 
             case DecisionOutcomeType.Death:
 
-                // No agregar M a la ruta.
                 DeathChoices++;
 
                 break;
@@ -372,9 +300,6 @@ public class GameState : MonoBehaviour
     }
 
 
-    // ============================================================
-    // REGISTRO DE DECISIÓN FINAL
-    // ============================================================
 
     public void RegisterFinalDecision(
         string decisionID,
@@ -409,22 +334,12 @@ public class GameState : MonoBehaviour
     }
 
 
-    // ============================================================
-    // REGISTRO DE MUERTE
-    // ============================================================
 
     public void RegisterDeath(
         string decisionID,
         string nodeID
     )
     {
-        // ========================================================
-        // IMPORTANTE:
-        //
-        // NO agregar "M" a decisionPath.
-        //
-        // El jugador todavía no ha tomado una decisión definitiva.
-        // ========================================================
 
         DeathChoices++;
 
@@ -444,9 +359,6 @@ public class GameState : MonoBehaviour
     }
 
 
-    // ============================================================
-    // OBTENER / CREAR DECISION RECORD
-    // ============================================================
 
     private DecisionRecord GetOrCreateDecisionRecord(
         string decisionID,
@@ -515,9 +427,6 @@ public class GameState : MonoBehaviour
     }
 
 
-    // ============================================================
-    // COMPAÑEROS
-    // ============================================================
 
     public void SetCompanion(
         bool valentina,
@@ -529,9 +438,6 @@ public class GameState : MonoBehaviour
     }
 
 
-    // ============================================================
-    // REINICIAR
-    // ============================================================
 
     public void ResetData()
     {
@@ -551,7 +457,6 @@ public class GameState : MonoBehaviour
         DeathChoices = 0;
 
 
-        // Limpiar también el intento activo.
 
         activeDecisionID = "";
 
