@@ -75,13 +75,10 @@ public class DecisionPlayer : MonoBehaviour
 
         decisionUI.DecisionPanel.SetActive(true);
 
-
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-
         SetMobileControlsVisible(false);
-
 
         if (GameState.Instance != null)
         {

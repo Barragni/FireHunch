@@ -33,7 +33,6 @@ public static class AttemptMapper
             timestampUtc =
                 AttemptSession.Instance.StartTimeUtc.ToString("o"),
 
-
             age =
                 AttemptSession.Instance.Age,
 
@@ -57,8 +56,6 @@ public static class AttemptMapper
             decisionPath =
                 GameState.Instance.decisionPath
         };
-
-
 
         foreach (
             DecisionRecord record
@@ -86,13 +83,8 @@ public static class AttemptMapper
 
                     break;
             }
-
-
-
             totalRetries +=
                 record.retryCount;
-
-
 
             AttemptDecisionData decision =
                 new AttemptDecisionData
@@ -115,8 +107,6 @@ public static class AttemptMapper
                     totalTimeSeconds =
                         record.totalTimeSeconds
                 };
-
-
 
             if (
                 record.attempts != null &&
@@ -151,14 +141,10 @@ public static class AttemptMapper
                     );
                 }
             }
-
-
             attempt.decisions.Add(
                 decision
             );
         }
-
-
 
         attempt.correctChoices =
             correctChoices;
@@ -171,7 +157,6 @@ public static class AttemptMapper
 
         attempt.deathChoices =
             GameState.Instance.DeathChoices;
-
 
         return attempt;
     }
